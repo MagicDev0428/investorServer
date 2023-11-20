@@ -18,15 +18,16 @@ var request     = require('request');         // Request data from API's.
 const cors 		= require('cors');
 let newDate = new Date()
 let tmpDate = newDate.toString().substring(0, 21);
+const { auth } = require('express-oauth2-jwt-bearer');
 
 
 mongoose.Promise = Promise;
 
 var app = express();
 app.use(express.static(path.join(__dirname, '')));
+app.use(cors());
 
 console.log("ENVIRONMENT--", process.env.SERVER_NAME);
-
 
 
 if (process.env.SERVER_NAME === 'LIVE') {
@@ -72,6 +73,11 @@ if (process.env.SERVER_NAME === 'LIVE') {
  
 
  }
+
+const checkJwt = auth({
+   audience: global.server,
+   issuerBaseURL: `https://dev-i2zq17ecubzreyxk.us.auth0.com`,
+});
 
 
 
@@ -127,10 +133,21 @@ app.use(function (req, res, next) {
 
 
 // Default Set
-app.get('/', (req, res) => res.send('Pattaya live server running, mongodb set'))
+app.get('/', (req, res) => {
+   res.json({
+      message: 'Pattaya live server running, mongodb set'
+   });
+});
 
 // Helper port
 app.set('port', process.env.PORT || 3007);
+
+// This route needs authentication
+app.get('/private', checkJwt, (req, res) => {
+   res.json({
+      message: 'Hello from a private endpoint! You need to be authenticated to see this.'
+   });
+});
 
 // Setup server to listen
 var server = app.listen(app.get('port'), function () {
