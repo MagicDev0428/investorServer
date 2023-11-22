@@ -19,6 +19,7 @@ const cors 		= require('cors');
 let newDate = new Date()
 let tmpDate = newDate.toString().substring(0, 21);
 const { auth } = require('express-oauth2-jwt-bearer');
+const { User } = require('./models/user');
 
 
 mongoose.Promise = Promise;
@@ -147,6 +148,26 @@ app.get('/private', checkJwt, (req, res) => {
    res.json({
       message: 'Hello from a private endpoint! You need to be authenticated to see this.'
    });
+});
+
+app.post('/post-login', checkJwt, async (req, res) => {
+   const { id, name, email } = req.body;
+
+   if (!id || !name || !email) {
+      return res.status(400).json({ 'error': 'Missing parameters' });
+   }
+
+   try {
+      let user = await User.findOne({ id });
+      if (!user) {
+        user = new User({ id, name, email });
+        await user.save();
+      }
+      res.json({ id: user.id });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ 'error': 'Server error' });
+    }
 });
 
 // Setup server to listen
