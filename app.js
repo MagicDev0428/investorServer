@@ -21,6 +21,9 @@ let tmpDate = newDate.toString().substring(0, 21);
 const { auth } = require('express-oauth2-jwt-bearer');
 const { User } = require('./models/user');
 
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.local'
+});
 
 mongoose.Promise = Promise;
 
@@ -76,8 +79,8 @@ if (process.env.SERVER_NAME === 'LIVE') {
  }
 
 const checkJwt = auth({
-   audience: global.server,
-   issuerBaseURL: `https://dev-i2zq17ecubzreyxk.us.auth0.com`,
+  audience: global.server,
+  issuerBaseURL: process.env.AUTH0_DOMAIN,
 });
 
 
