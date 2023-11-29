@@ -32,3 +32,9 @@ export class ResourceExistsError extends BaseError {
     super('ResourceExistsError', message);
   }
 };
+
+export class ValidationError extends BaseError {
+  constructor(message = 'ValidationError') {
+    super('ValidationError', message);
+  }
+};

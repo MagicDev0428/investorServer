@@ -1,8 +1,9 @@
 import express from 'express';
-import { body, validationResult, ExpressValidator } from 'express-validator';
+import { body, validationResult, param } from 'express-validator';
 import { Investor, InvestorFactory } from '../utils/factories/db';
-import { ResourceExistsError } from '../utils/errors';
+import { ResourceExistsError, ValidationError } from '../utils/errors';
 import getGoogleDriveInstance from '../utils/factories/google/GoogleDriveFactory';
+import mongoose from 'mongoose';
 export const router = express.Router();
 
 /**
@@ -17,10 +18,17 @@ const validateZipcode = () => body('zipcode').trim().isPostalCode('any').withMes
 const validateCity = () => body('city').trim().notEmpty().withMessage('City is required');
 const validateCountry = () => body('country').trim().notEmpty().withMessage('Country is required');
 
-router.get('/', (req, res) => {
-  res.respond({
-    investors: []
-  })
+router.get('/', async (req, res, next) => {
+  
+  try {
+    const investors = await InvestorFactory.getInvestors();
+    res.respond({
+      investors
+    });
+  } catch (error) {
+    next(error);
+  }
+  
 });
 
 /**
@@ -58,4 +66,21 @@ router.post('/',
     next(error);    
   }
 
+});
+
+router.get('/:investorId', async (req, res, next) => {
+  const investorId = req.params.investorId;
+  if (mongoose.isValidObjectId(investorId) === false) {
+    return next(new ValidationError(`Provided investorId is not a valid id`));
+  }
+
+  try {
+    const investor = await InvestorFactory.getInvestor(investorId);
+    res.respond({
+      investor
+    });
+  } catch (error) {
+    next(error);
+  }
+  
 });
