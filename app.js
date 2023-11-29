@@ -1,4 +1,27 @@
 "use strict";
+import express from 'express'; // The Nodejs framework
+import mongoose from 'mongoose';        // The mongodb framework
+import path from 'path';            // Set absolute path to files 
+import bodyParser from 'body-parser';     // Parse data from POST requests
+import favicon from 'serve-favicon';   // Serve a favicon to all who request it
+import cron from 'node-cron';       // Run timed Cron jobs
+import request from 'request';         // Request data from API's.
+import cors from 'cors';
+import responseHelper from 'express-response-helper';
+import { auth } from 'express-oauth2-jwt-bearer';
+import { createInvoice, htmlToPdf } from './utils/functions';
+import dotenv from 'dotenv';
+import { investorRoutes } from './routes';
+import { errorMiddleware } from './utils/middlewares';
+
+
+dotenv.config({
+  path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.local'
+});
+
+let newDate = new Date();
+let tmpDate = newDate.toString().substring(0, 21);
+
 
 
 
@@ -8,29 +31,13 @@ global.isINFO   = false;
 global.isLOCAL  = false;
 
 // Standard libs
-var express     = require('express');         // The Nodejs framework
-var mongoose    = require('mongoose');        // The mongodb framework
-var path        = require('path');            // Set absolute path to files 
-var bodyParser  = require('body-parser');     // Parse data from POST requests
-var favicon     = require('serve-favicon');   // Serve a favicon to all who request it
-var cron        = require('node-cron');       // Run timed Cron jobs
-var request     = require('request');         // Request data from API's.
-const cors 		= require('cors');
-let newDate = new Date()
-let tmpDate = newDate.toString().substring(0, 21);
-const { auth } = require('express-oauth2-jwt-bearer');
-const { User } = require('./models/user');
-const { createInvoice, htmlToPdf } = require('./utils/functions');
-
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.local'
-});
 
 mongoose.Promise = Promise;
 
-var app = express();
+const app = express();
 app.use(express.static(path.join(__dirname, '')));
 app.use(cors());
+app.use(responseHelper.helper());
 
 console.log("ENVIRONMENT--", process.env.SERVER_NAME);
 
@@ -135,11 +142,11 @@ app.use(function (req, res, next) {
 	return next();
 });
 
-
+app.use('/investors', investorRoutes.router);
 
 // Default Set
 app.get('/', (req, res) => {
-  res.json({
+  res.ok({
     message: 'Pattaya live server running, mongodb set'
   });
 });
@@ -149,7 +156,7 @@ app.set('port', process.env.PORT || 3007);
 
 // This route needs authentication
 app.get('/private', checkJwt, (req, res) => {
-  res.json({
+  res.ok({
     message: 'Hello from a private endpoint! You need to be authenticated to see this.'
   });
 });
@@ -195,7 +202,7 @@ app.get('/send-mail', async (req, res) => {
   }
 
 
-  res.json({
+  res.ok({
     message: 'done'
   });
 });
@@ -205,11 +212,12 @@ var server = app.listen(app.get('port'), function () {
   console.log("Server running at " + server.address().port);
 })
 
-// Catch all normal errors
-app.use(function (err, req, res, next) {
+// // Catch all normal errors
+// app.use(function (err, req, res, next) {
 	
-	console.log(err);
-	console.trace();
-	res.json({ "err": true, "error": err.message });
-});
+// 	console.log(err);
+// 	console.trace();
+// 	res.json({ "err": true, "error": err.message });
+// });
+app.use(errorMiddleware);
 
