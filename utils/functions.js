@@ -1,9 +1,9 @@
-const { Liquid } = require('liquidjs');
-const path = require('path');
-const fs = require('fs/promises');
-const puppeteer = require('puppeteer');
+import { Liquid } from 'liquidjs';
+import path from 'path';
+import fs from 'fs/promises';
+import puppeteer from 'puppeteer';
 
-module.exports.createInvoice = params => {
+export const createInvoice = params => {
   const _path = path.join(__dirname, '../');
   const engine = new Liquid({
     root: _path + 'templates/invoice', // Specify the root directory of templates
@@ -26,7 +26,7 @@ module.exports.createInvoice = params => {
   });
 };
 
-module.exports.htmlToPdf = async html =>  {
+export const htmlToPdf = async html =>  {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(`file://${html}`);
@@ -35,4 +35,4 @@ module.exports.htmlToPdf = async html =>  {
   const pdfPath = html.replace('html', 'pdf');
   await fs.writeFile(pdfPath, pdf);
   return pdfPath;
-}
+};
