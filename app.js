@@ -9,7 +9,6 @@ import request from 'request';         // Request data from API's.
 import cors from 'cors';
 import responseHelper from 'express-response-helper';
 import { auth } from 'express-oauth2-jwt-bearer';
-import { createInvoice, htmlToPdf } from './utils/functions';
 import dotenv from 'dotenv';
 import { investorRoutes } from './routes';
 import { errorMiddleware } from './utils/middlewares';
@@ -158,52 +157,6 @@ app.set('port', process.env.PORT || 3007);
 app.get('/private', checkJwt, (req, res) => {
   res.ok({
     message: 'Hello from a private endpoint! You need to be authenticated to see this.'
-  });
-});
-
-app.get('/send-mail', async (req, res) => {
-  const html = await createInvoice({ 
-    logo_url: 'https://sparksuite.github.io/simple-html-invoice-template/images/logo.png',
-    invoice: {
-      number: '123',
-      date: 'January 1, 2023',
-      due_date: 'February 1, 2023'
-    },
-    company: {
-      name: 'Sparksuite, Inc.',
-      street: '12345 Sunny Road',
-      city: 'Sunnyville, CA',
-      zip_code: '12345'
-    },
-    investor: {
-      company_name: 'Acme Corp.',
-      name: 'John Doe',
-      email: 'john@example.com'
-    },
-    payment_method: {
-      name: 'Check',
-      type: 'Check #',
-      id: '1000'
-    },
-    collection: [
-      { name: 'Website design', price: '$300.00' },
-      { name: 'Hosting (3 months)', price: '$75.00' },
-      { name: 'Domain name (1 year)', price: '$10.00' },
-      { name: 'Website design', price: '$300.00' },
-      { name: 'Website design', price: '$300.00' },
-    ],
-    total: '$385.00'
-  });
-
-  console.log(html);
-  if (html) {
-    const pdf = await htmlToPdf(html);
-    console.log(pdf);
-  }
-
-
-  res.ok({
-    message: 'done'
   });
 });
 

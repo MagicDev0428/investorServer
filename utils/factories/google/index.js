@@ -1,5 +1,6 @@
-const { google } = require('googleapis');
-const { GoogleAuth } = require('google-auth-library');
+import { google } from 'googleapis';
+import fs from 'fs';
+import path from 'path';
 import googleDriveConfig from '../../../investor-405618-2d4ac291108c.json';
 import { FailServerError } from '../../errors';
 
@@ -34,7 +35,7 @@ const GoogleDriveFactory = config => {
       throw new FailServerError('Google Drive investor folder creation failed');
     }
   };
-  
+
   return {
     createFolders: async rootFolderName => {
       const auth = await authorize();
@@ -47,6 +48,29 @@ const GoogleDriveFactory = config => {
           return { folderId: investorFolderId, documentsFolderId: documentsFolder };
         }
       }      
+    },
+    uploadFile: async (filePath, folderId) => {
+      const auth = await authorize();
+      const drive = google.drive({ version: 'v3', auth });
+      
+      const fileMetadata = {
+        resource: {
+          parents: [folderId],
+          name: path.basename(filePath),
+        },
+        media: {
+          mimeType: 'application/pdf',
+          body: fs.createReadStream(filePath)
+        },
+        fields: 'id',        
+      };
+
+      try {
+        const response = await drive.files.create(fileMetadata);
+        return response.data.id;
+      } catch (error) {
+        throw new FailServerError('Google Drive invoice upload failed');
+      }
     },
   };
 };

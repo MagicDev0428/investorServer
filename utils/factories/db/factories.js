@@ -64,7 +64,9 @@ export const InvestorFactory = {
           zipcode: investorData.zipcode, 
           city: investorData.zipcode, 
           country: investorData.country, 
-          status: investorData.status
+          status: investorData.status,
+          folderId: investorData.folderId,
+          documentsFolderId: investorData.documentsFolderId
         };
         return investor;
       }
