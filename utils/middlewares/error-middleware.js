@@ -1,0 +1,17 @@
+import { FailServerError, ForbiddenError, NotFoundError, ResourceExistsError } from '../errors';
+
+export const errorMiddleware = (err, req, res, next) => {
+	
+  if (err instanceof FailServerError) {
+    return res.failServerError(err.message, err.name);
+  } else if (err instanceof ForbiddenError) {
+    return res.failForbidden(err.message, err.name);
+  } else if (err instanceof NotFoundError) {
+    return res.failNotFound(err.message, err.name);
+  } else if (err instanceof ResourceExistsError) {
+    return res.failResourceExists(err.message, err.name);
+  } else {
+    next(err);
+  }
+
+};
