@@ -1,0 +1,170 @@
+use InvestorSystem
+
+db.createCollection("log")
+
+db.log.insert(
+	{
+		_id : NumberInt(1699701246),
+        logBy : "Bee",       
+        logType : "ADAM",
+        investorName : "Torben Rudgaard",
+        investmentNo : NumberInt(22),
+        description : "Torben keep 2,000,000 as part of profit"
+  	}
+)
+
+db.createCollection("investor")
+
+db.investor.insert(
+	{
+		_id : "Torben Rudgaard",
+		nickName : "Torben",       
+        status : "INVESTOR",         
+        admin : true,         
+        pincode : "2525",         
+        address : "277/24 Moo 5 Soi 16/2ก  Naklua Road, Naklua, Banglamung",
+        postcode : NumberInt(20150),
+        city : "Pattaya",
+        country : "Thailand",
+        email : "torben@rudgaard.com",
+        phone : "089-821-0724",
+        facebook : "https://www.facebook.com/rudgaard",
+        passport : "212093884",      
+        beneficiaryName : "Else Marie Rudgaard",
+        beneficiaryEmail : "else@rudgaard.com",
+        beneficiaryPhone : "+45 22 67 40 66",
+        transferMethod : "Thai Bank",
+        transferInfo : "K-Bank Account No 1231231232, Name: Torben Vagn Rudgaard, Branch: Tesco Lotus", 
+        currency : "THB",      
+        passportImages : "passportTorben.png",
+        createdDate : NumberInt(1699701246),   
+        createdBy : "Torben",     
+        modifiedDate : NumberInt(1699701246),  
+        modifiedBy : "Torben"    
+  	}
+)
+
+db.createCollection("adam")
+
+db.adam.insert(
+	{
+		_id : NumberInt(1699707045),
+		amount : NumberInt(3400000),
+		transferFrom : "Adam",
+		transferTo : "Torben",
+		investorName : "Torben Rudgaard",
+		investmentNo : NumberInt(5),
+		transactionFrom : "Kbank Arindam xxx-x-x8319-x",
+		transactionTo : "Torben Kbank 562-9-09332-1",
+		transactionNo : "013087111551CTF01437", 
+		description : "Adam transfer investor profit to Torben for 15th of December 2023",     
+        attachments : [
+			"adamMessage.jpg", 
+			"transferslip.jpg"
+		],
+        createdDate : NumberInt(1699701246),   
+        createdBy : "Torben",     
+        modifiedDate : NumberInt(1699701246),  
+        modifiedBy : "Torben"    
+  	}
+)
+
+
+db.createCollection("balance")
+
+db.balance.insert(
+	{
+		_id : NumberInt(1699707045),
+		investorName : "Torben Rudgaard",
+		profitMonth : NumberInt(1699701246),
+		deposit : NumberInt(24000),         
+		withdraw : NumberInt(0),       
+		transferDate : NumberInt(1699701246),  
+		transactionFrom : "Kbank Arindam xxx-x-x8319-x",
+		transactionTo : "Torben Kbank 562-9-09332-1",
+		transactionNo : "013087111551CTF01437", 
+		transferMethod : "Thai Bank",  
+		transferCurrency : "THB",
+		emailDate : NumberInt(1699701246),        
+		description : "Transfered to Envelope",
+		hiddenRemark : "Transfered to Envelope",
+        attachments : [
+			"adamMessage.jpg", 
+			"transferslip.jpg"
+		],
+        createdDate : NumberInt(1699701246),   
+        createdBy : "Torben",     
+        modifiedDate : NumberInt(1699701246),  
+        modifiedBy : "Torben"    
+  	}
+)
+
+
+
+db.createCollection("investment")
+
+db.investment.insert(
+	{
+		_id : NumberInt(22),
+
+		startDate : NumberInt(1699701246),  
+		endDate : NumberInt(1699701246),  
+		investAmount : NumberInt(5000000),         
+        investType : "Monthly Profit",
+		
+        profitMonthly : NumberInt(200),   
+        profitYearly : NumberInt(144),   
+        profitEnd : NumberInt(300),   
+
+        Explanation : "Adam offered 4.16% on a ฿15,000,000 investment that lasts 3 years",     
+        attachments : [
+			"adamMessage.jpg", 
+			"transferslip.jpg"
+		],
+
+        createdDate : NumberInt(1699701246),   
+        createdBy : "Torben",     
+        modifiedDate : NumberInt(1699701246),  
+        modifiedBy : "Torben"    
+  	}
+)
+
+
+db.createCollection("myInvestments")
+
+db.myInvestments.insert(
+	{
+		investmentNo : NumberInt(22),
+		investorName : "Torben Rudgaard",
+		amountInvested : NumberInt(5000000),         
+        transferDate : NumberInt(1699701246),   
+		transactionFrom : "Kbank Arindam xxx-x-x8319-x",
+		transactionTo : "Torben Kbank 562-9-09332-1",
+		transactionNo : "013087111551CTF01437", 
+        documents : [
+			"contract between parties.doc", 
+			"adamMessage.jpg", 
+			"transferslip.jpg"
+		],
+        profitMonthly : NumberInt(150),   
+        profitYearly : NumberInt(100),   
+        profitEnd : NumberInt(200),   
+        investType : "Monthly Profit",
+        firstProfitDate : NumberInt(1699701246),   
+        lastProfitDate : NumberInt(1699701246),   
+        payBackDate : NumberInt(1699701246),   
+        torbenMonthly : NumberInt(50),   
+        torbenYearly : NumberInt(44),   
+        torbenEnd : NumberInt(100),   
+        description : "Special deal with Mark where he is allowed to add",     
+        createdDate : NumberInt(1699701246),   
+        createdBy : "Torben",     
+        modifiedDate : NumberInt(1699701246),  
+        modifiedBy : "Torben"    
+  	}
+)
+
+
+
+
+

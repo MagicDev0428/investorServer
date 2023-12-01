@@ -1,10 +1,7 @@
 "use strict";
 
-
-
 // Server(Environment) variables
 global.isLIVE   = false;
-global.isINFO   = false;
 global.isLOCAL  = false;
 
 // Standard libs
@@ -41,19 +38,6 @@ if (process.env.SERVER_NAME === 'LIVE') {
     global.db         = process.env.mongodbUri  // For ECS deployment from github desktop
 
 
-
- } else if (process.env.SERVER_NAME === 'INFO') {
-
-    console.log("########################################");
-    console.log("##                                    ##");
-    console.log("##      SERVER RUNNING ON INFO        ##");
-    console.log("##                                    ##");
-    console.log("##        " + tmpDate + "             ##");
-    console.log("##                                    ##");
-    console.log("########################################");
-    global.db         = "mongodb://localhost:27017/pattayanight";   // For ocean info droplet server
-
-
  } else {
 
     console.log("########################################");
@@ -69,9 +53,7 @@ if (process.env.SERVER_NAME === 'LIVE') {
     global.isLOCAL    = true;
     global.serverName = 'LOCAL';
 
- 
-
- }
+  }
 
 
 
@@ -85,7 +67,7 @@ mongoose.connection.on('connected', () => {
 
 // No we cannot, show error
 mongoose.connection.on('error', (err) => {
-	criticalLog("MongoDB cannot connect: ", JSON.stringify(err), JSON.stringify(err.stack) , "", 0, req.headers);
+//	criticalLog("MongoDB cannot connect: ", JSON.stringify(err), JSON.stringify(err.stack) , "", 0, req.headers);
 	console.log("*** MongoDB cannot connect :" + err);
 	throw new Error("*** MongoDB cannot connected " + global.db);
 });
@@ -145,3 +127,53 @@ app.use(function (err, req, res, next) {
 	res.json({ "err": true, "error": err.message });
 });
 
+//
+// Show instead of console.log cause its much easier to debug!
+// 
+global.show = (myVariable) => {
+  if (global.isLIVE) {return;};
+  if (!myVariable && typeof(myVariable) != "object") {
+      console.log(myVariable)
+      return;
+  }
+  var front = "";
+  var back  = "";
+  for (var key in myVariable) {
+      if (myVariable.hasOwnProperty(key)) {
+          front = key + ": ";
+          back = myVariable[key];
+          break;
+      }
+  } 
+if (back > 1400000000 && back < 1700000000) {
+      var theDate = new Date(back*1000)
+      var myDateString = ('0' + theDate.getDate()).slice(-2) + '-'
+                  + ('0' + (theDate.getMonth()+1)).slice(-2) + '-'
+                  + theDate.getFullYear() + " " + ('0' + theDate.getHours()).slice(-2) + ":" + ('0' + theDate.getMinutes()).slice(-2);
+      console.log(front + myDateString + " (unix)"); 
+  return;
+  }
+if (typeof back.getMonth === 'function') {
+      var myDateString = ('0' + back.getDate()).slice(-2) + '-'
+                  + ('0' + (back.getMonth()+1)).slice(-2) + '-'
+                  + back.getFullYear() + " " + ('0' + back.getHours()).slice(-2) + ":" + ('0' + back.getMinutes()).slice(-2);
+  return;
+}
+if (back instanceof Object) {
+  console.log(front + JSON.stringify(back, null, 4) + " (obj)");
+  return;
+  }
+  if (typeof(back) == "string") {
+    console.log(myVariable + " (str)");
+  return;
+  }
+  if (typeof(back) == "number") {
+    console.log(front + back + " (num)");
+  return;
+  }
+  if (typeof(back) == "boolean") {
+    console.log(front + back + " (bool)");
+  return;
+  }
+console.log(front + back);
+} 
