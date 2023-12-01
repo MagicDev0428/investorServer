@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import boundedRoute from './bounded-route';
-import { Factories, Middlewares, Errors } from '../utils';
+import { Factories, Middlewares, Errors, Lib } from '../utils';
 import { TemplateEngine } from '../templates';
 
 export const router = express.Router();
@@ -33,7 +33,7 @@ router.post('/', Middlewares.RouteMiddlewares.createInvestor, boundedRoute(async
 
   // create the folders for the investor
   const client = Factories.getGoogleDriveInstance();
-  const folderName = name.split(' ').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+  const folderName = Lib.transformNameToPath(name);
   const { folderId, documentsFolderId } = await client.createFolders(folderName);
 
   const investor = await Factories.InvestorFactory.createInvestor({ name, email, nickname, phone, address, zipcode, city, country, status: 'active', folderId, documentsFolderId });
@@ -74,7 +74,7 @@ router.post('/:investorId/email', Middlewares.RouteMiddlewares.sendDocument, bou
 
   const investor = await Factories.InvestorFactory.getInvestor(investorId);
   const document = await Factories.DocumentFactory.getDocument(documentId);
-  
+
   if (document.investorId !== investor.id) {
     throw new Errors.ValidationError('Provided document doesnot belong to the investor');
   }
