@@ -1,2 +1,2 @@
-export * from './factories/google';
-export * from './factories/invoice';
+export * as Factories from './factories';
+export * as Middlewares from './middlewares';

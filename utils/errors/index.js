@@ -10,8 +10,8 @@ class BaseError extends Error {
 };
 
 export class FailServerError extends BaseError {
-  constructor() {
-    super('FailServerError', 'Something went wrong');
+  constructor(message = 'Something went wrong') {
+    super('FailServerError', message);
   }  
 };
 
@@ -36,5 +36,14 @@ export class ResourceExistsError extends BaseError {
 export class ValidationError extends BaseError {
   constructor(message = 'ValidationError') {
     super('ValidationError', message);
+  }
+};
+
+export const boundedAsyncHandler = ({ type, message }) => fn => async (...args) => {
+  try {
+    return await fn(...args);
+  } catch (error) {
+    console.error(`Error ${type} Factory:`, error);
+    throw new FailServerError(message);
   }
 };

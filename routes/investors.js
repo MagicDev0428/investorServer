@@ -1,10 +1,11 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import { body, validationResult, param } from 'express-validator';
-import { Investor, InvestorFactory } from '../utils/factories/db';
+import { InvestorFactory } from '../utils/factories/db';
 import { ResourceExistsError, ValidationError } from '../utils/errors';
 import getGoogleDriveInstance from '../utils/factories/google';
-import { InvoiceFactory } from '../utils';
+import { InvoiceFactory, InvoiceEmail } from '../utils';
+import { TemplateEngine } from '../templates';
 
 export const router = express.Router();
 
@@ -148,4 +149,23 @@ router.post('/:investorId/invoice', async (req, res, next) => {
     next(error);
   }
   
+});
+
+router.post('/:investorId/email', async (req, res, next) => {
+  const investorId = req.params.investorId;
+  if (mongoose.isValidObjectId(investorId) === false) {
+    return next(new ValidationError(`Provided investorId is not a valid id`));
+  }
+
+  try {
+    const investor = await InvestorFactory.getInvestor(investorId);
+    const emailHTML = await TemplateEngine({ data: { name: investor.name }, save: false, folder: 'emails/invoice', template: 'invoice' }).create();
+    const pdfStream = await getGoogleDriveInstance().getFileStream("14j98LgwKEBsGyV3KUtP2GLkzTsSYsg4S");
+    const invoiceEmail = new InvoiceEmail('jsanbutt@gmail.com', emailHTML, 'invoice.pdf', pdfStream);
+    const messageId = await invoiceEmail.send();
+    console.log({ messageId });
+  } catch (error) {
+    console.log(error);
+  }
+
 });

@@ -72,6 +72,18 @@ const GoogleDriveFactory = config => {
         throw new FailServerError('Google Drive invoice upload failed');
       }
     },
+    getFileStream: async fileId => {
+      const auth = await authorize();
+      const drive = google.drive({ version: 'v3', auth });
+      const fileMetadata = { fileId, alt: 'media' };
+      try {
+        const response = await drive.files.get(fileMetadata, { responseType: 'stream' });
+        return response.data;
+      } catch (error) {
+        console.log(error);
+        throw new FailServerError('Google Drive invoice export failed');
+      }
+    },
   };
 };
 

@@ -10,7 +10,7 @@ import cors from 'cors';
 import responseHelper from 'express-response-helper';
 import { auth } from 'express-oauth2-jwt-bearer';
 import dotenv from 'dotenv';
-import { investorRoutes } from './routes';
+import { investorRoutes, documentRoutes } from './routes';
 import { errorMiddleware } from './utils/middlewares';
 
 
@@ -142,6 +142,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/investors', investorRoutes.router);
+app.use('/documents', documentRoutes.router);
 
 // Default Set
 app.get('/', (req, res) => {
