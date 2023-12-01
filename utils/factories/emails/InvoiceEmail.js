@@ -1,5 +1,4 @@
 import { Email } from "./Email";
-import fs from 'fs';
 
 export class InvoiceEmail extends Email {
   constructor(email, html, filename, content) {

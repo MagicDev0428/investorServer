@@ -87,11 +87,9 @@ const GoogleDriveFactory = config => {
   };
 };
 
-function getGoogleDriveInstance () {
+export function getGoogleDriveInstance () {
   if (!instance) {
     instance = GoogleDriveFactory(googleDriveConfig);
   }
   return instance;
 };
-
-export default getGoogleDriveInstance;

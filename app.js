@@ -146,7 +146,7 @@ app.use('/documents', documentRoutes.router);
 
 // Default Set
 app.get('/', (req, res) => {
-  res.ok({
+  res.respond({
     message: 'Pattaya live server running, mongodb set'
   });
 });
@@ -156,7 +156,7 @@ app.set('port', process.env.PORT || 3007);
 
 // This route needs authentication
 app.get('/private', checkJwt, (req, res) => {
-  res.ok({
+  res.respond({
     message: 'Hello from a private endpoint! You need to be authenticated to see this.'
   });
 });

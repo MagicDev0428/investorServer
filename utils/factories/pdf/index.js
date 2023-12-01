@@ -38,20 +38,19 @@ const htmlToPdf = async html =>  {
   return pdfPath;
 };
 
-export const InvoiceFactory = {
-  create: async params => {
-    const htmlPath = await createInvoice(params);
-
-    if (!htmlPath) {
-      throw new FailServerError('Inovice template could not be renderd');
-    }
-
+export const PDFFactory = {
+  create: async html => {
     try {
-      const pdfPath = await htmlToPdf(htmlPath);
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.goto(`file://${html}`);
+      const pdf = await page.pdf({ format: 'A4' });
+      await browser.close();
+      const pdfPath = html.replace('html', 'pdf');
+      await fs.writeFile(pdfPath, pdf);
       return pdfPath;
     } catch (error) {
-      console.log(error);
-      throw new FailServerError('Inovice PDF could not be created');
+      throw new FailServerError('Unable to create pdf of the document');
     }
   },
   delete: async path => {

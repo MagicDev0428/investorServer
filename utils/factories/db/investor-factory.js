@@ -15,7 +15,7 @@ export const InvestorFactory = {
   getInvestors: asyncHandler(async () => {
     const investorsData = await Investor.find();
     const investors = investorsData.map(investor => ({
-      id: investor._id,
+      id: investor._id.toString(),
       name: investor.name,
       nickname: investor.nickname,
       email: investor.email,
@@ -32,7 +32,7 @@ export const InvestorFactory = {
     const investorData = await Investor.findById(investorId);
     if (investorData) {
       const investor = {
-        id: investorData._id,
+        id: investorData._id.toString(),
         name: investorData.name,
         nickname: investorData.nickname,
         email: investorData.email,
@@ -47,6 +47,6 @@ export const InvestorFactory = {
       };
       return investor;
     }
-    return {};
+    return undefined;
   }),
 };

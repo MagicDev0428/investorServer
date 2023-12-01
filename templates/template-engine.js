@@ -1,6 +1,7 @@
 import { Liquid } from 'liquidjs';
 import path from 'path';
 import fs from 'fs/promises';
+import { FailServerError } from '../utils/errors';
 
 /**
  * 
@@ -12,7 +13,7 @@ import fs from 'fs/promises';
  * @returns {string | undefined} Path to the rendered file or html
  */
 export const TemplateEngine = ({ data, save = true, folder, template }) => {
-  const create = () => {
+  const create = fileName => {
     const _path = path.join(__dirname, `${folder}`);
     
     const engine = new Liquid({
@@ -20,11 +21,11 @@ export const TemplateEngine = ({ data, save = true, folder, template }) => {
       extname: '.liquid' // Specify the extension of your templates
     });
   
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       engine.renderFile(template, data)
         .then(async html => {
           if (save) {
-            const fileName = `${Date.now()}.html`;
+            fileName = (fileName === undefined || fileName.length === 0) ? `${Date.now()}.html` : `${fileName}.html`;
             const _renderPath = path.join(__dirname, `../render/${fileName}`);
             await fs.writeFile(_renderPath, html);
             return resolve(_renderPath);
@@ -33,7 +34,7 @@ export const TemplateEngine = ({ data, save = true, folder, template }) => {
         })
         .catch(err => {
           console.log(err);
-          reject(undefined);
+          throw new FailServerError('Unable to create html template of the document');
         });  
     });
   };
