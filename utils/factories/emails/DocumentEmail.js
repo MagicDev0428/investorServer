@@ -1,6 +1,6 @@
 import { Email } from "./Email";
 
-export class InvoiceEmail extends Email {
+export class DocumentEmail extends Email {
   constructor(email, html, filename, content) {
     super();
     this.email = email;
@@ -13,7 +13,7 @@ export class InvoiceEmail extends Email {
     return {
       from: process.env.GOOGLE_EMAIL_ADDRESS,
       to: this.email,
-      subject: 'Invoice Email',
+      subject: 'Document Email',
       html: this.html,
       attachments: [
         { filename: this.filename, content: this.content }

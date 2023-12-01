@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import boundedRoute from './bounded-route';
-import { InvoiceEmail, Factories, Middlewares, Errors } from '../utils';
+import { Factories, Middlewares, Errors } from '../utils';
 import { TemplateEngine } from '../templates';
 
 export const router = express.Router();
@@ -74,15 +74,15 @@ router.post('/:investorId/email', Middlewares.RouteMiddlewares.sendDocument, bou
 
   const investor = await Factories.InvestorFactory.getInvestor(investorId);
   const document = await Factories.DocumentFactory.getDocument(documentId);
-  console.log({ 'document.investorId': document.investorId, 'investor.id': investor.id })
+  
   if (document.investorId !== investor.id) {
     throw new Errors.ValidationError('Provided document doesnot belong to the investor');
   }
 
   const emailHTML = await TemplateEngine({ data: { name: investor.name }, save: false, folder: 'emails/invoice', template: 'invoice' }).create();
   const pdfStream = await Factories.getGoogleDriveInstance().getFileStream(document.fileId);
-  const invoiceEmail = new Factories.InvoiceEmail(investor.email, emailHTML, document.title, pdfStream);
-  const messageId = await invoiceEmail.send();
+  const email = new Factories.DocumentEmail(investor.email, emailHTML, document.title, pdfStream);
+  const messageId = await email.send();
   
   res.respond({ messageId });
 }));
