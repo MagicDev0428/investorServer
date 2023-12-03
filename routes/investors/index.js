@@ -1,23 +1,16 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import boundedRoute from './bounded-route';
-import { Factories, Middlewares, Errors, Lib } from '../utils';
-import { TemplateEngine } from '../templates';
+import boundedRoute from '../bounded-route';
+import { Factories, Middlewares, Errors, Lib } from '../../utils';
+import { TemplateEngine } from '../../templates';
 
 export const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-  
-  try {
-    const investors = await InvestorFactory.getInvestors();
-    res.respond({
-      investors
-    });
-  } catch (error) {
-    next(error);
-  }
-  
-});
+router.get('/', boundedRoute(async (req, res) => {
+  const investors = await Factories.InvestorFactory.getInvestors();
+  res.respond({
+    investors
+  });  
+}));
 
 /**
  * create a new investor
@@ -45,28 +38,21 @@ router.post('/', Middlewares.RouteMiddlewares.createInvestor, boundedRoute(async
 
 }));
 
-router.get('/:investorId', async (req, res, next) => {
+router.get('/:investorId', Middlewares.RouteMiddlewares.getInvestor, boundedRoute(async (req, res) => {
   const investorId = req.params.investorId;
-  if (mongoose.isValidObjectId(investorId) === false) {
-    return next(new Errors.ValidationError(`Provided investorId is not a valid id`));
-  }
-
-  try {
-    const investorData = await InvestorFactory.getInvestor(investorId);
-    // remove folder ids
-    const investor = {
-      id: investorData.id, name: investorData.name, nickname: investorData.nickname, email: investorData.email, phone: investorData.phone, 
-      address: investorData.address, zipcode: investorData.zipcode, city: investorData.zipcode, country: investorData.country, 
-      status: investorData.status
-    };
-    res.respond({
-      investor
-    });
-  } catch (error) {
-    next(error);
-  }
+  const investorData = await Factories.InvestorFactory.getInvestor(investorId);
   
-});
+  // remove folder ids
+  const investor = {
+    id: investorData.id, name: investorData.name, nickname: investorData.nickname, email: investorData.email, phone: investorData.phone, 
+    address: investorData.address, zipcode: investorData.zipcode, city: investorData.zipcode, country: investorData.country, 
+    status: investorData.status
+  };
+  res.respond({
+    investor
+  });
+  
+}));
 
 router.post('/:investorId/email', Middlewares.RouteMiddlewares.sendDocument, boundedRoute(async (req, res) => {
   const { investorId } = req.params;

@@ -18,3 +18,4 @@ export const createInvestor = [
 ];
 export const createDocument = [validateInvestorId(), validateDocumentType(), validate];
 export const sendDocument = [validateInvestorIdParameter(), validateDocumentId(), validate];
+export const getInvestor = [validateInvestorIdParameter(), validate];
