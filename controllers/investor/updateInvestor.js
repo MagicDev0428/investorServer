@@ -30,8 +30,19 @@ exports.updateInvestor = (req) => {
       });
     }
 
+    // Removing admin if it exists in the body
+    if (received.admin) delete received.admin;
+
     // checking old id and new id are same
     if (received._id === received._oldId) {
+
+
+// Insram
+// no - if they are the same or oldId is null or ""...
+// then update the record normally with everything you get from recieve
+
+
+
       return reject({
         err: true,
         message: "Old id and new id should be changed to update!",
@@ -49,9 +60,6 @@ exports.updateInvestor = (req) => {
         message: "Invalid Email or beneficiaryEmail address!",
       });
     }
-
-    // Removing admin if it exists in the body
-    if (received.admin) delete received.admin;
 
     // Check if the new "_id" already exists
     const existingInvestor = await investorModel.findById(received._id);
