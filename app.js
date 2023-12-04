@@ -3,10 +3,6 @@ import express from 'express'; // The Nodejs framework
 import mongoose from 'mongoose';        // The mongodb framework
 import path from 'path';            // Set absolute path to files 
 import bodyParser from 'body-parser';     // Parse data from POST requests
-import favicon from 'serve-favicon';   // Serve a favicon to all who request it
-import cron from 'node-cron';       // Run timed Cron jobs
-import request from 'request';         // Request data from API's.
-import cors from 'cors';
 import responseHelper from 'express-response-helper';
 import { auth } from 'express-oauth2-jwt-bearer';
 import dotenv from 'dotenv';
