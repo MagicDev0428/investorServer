@@ -22,19 +22,13 @@ exports.updateInvestor = (req) => {
   if (received) global.show({ received });
 
   return new Promise(async (resolve, reject) => {
-    // checking _id, _oldId and nickName because they are required fileds
-    if (!received._id || !received._oldId || !received.nickName) {
-      return reject({
-        err: true,
-        message: "_oldId, _id and nickname are required!",
-      });
-    }
+    // const oldId = received._oldId ? : null;
 
-    // checking old id and new id are same
-    if (received._id === received._oldId) {
+    // checking _id, _oldId and nickName because they are required fileds
+    if (!received._id || !received.nickName) {
       return reject({
         err: true,
-        message: "Old id and new id should be changed to update!",
+        message: "_id and nickname are required!",
       });
     }
 
@@ -53,41 +47,49 @@ exports.updateInvestor = (req) => {
     // Removing admin if it exists in the body
     if (received.admin) delete received.admin;
 
-    // Check if the new "_id" already exists
-    const existingInvestor = await investorModel.findById(received._id);
-    if (existingInvestor) {
-      return reject({
-        err: true,
-        message: "Your new Investor Id already exist! ",
-      });
-    }
+    if (received._oldId) {
+      // Check if the new "_id" already exists
+      const existingInvestor = await investorModel.findById(received._id);
+      if (existingInvestor) {
+        return reject({
+          err: true,
+          message: "Your new Investor Id already exist! ",
+        });
+      }
 
-    //  DELETE the investor with _oldId
-    await investorModel.findOneAndDelete({
-      _id: received._oldId,
-    });
+      // //  DELETE the investor with _oldId
+      // await investorModel.findOneAndDelete({
+      //   _id: received._oldId,
+      // });
+
+      // updating myInvestment collection against new id
+      await myInvestmentsModel.updateMany(
+        { investorName: received._oldId },
+        { $set: { investorName: received._id } }
+      );
+
+      // updating balance collection against new id
+      await balanceModel.updateMany(
+        { investorName: received._oldId },
+        { $set: { investorName: received._id } }
+      );
+    }
 
     // Adding pin to the received object
     received.pincode = pingenerator();
 
-    // Creating a new investor instance with new id
-    const newInvestor = new investorModel(received);
+    // // Creating a new investor instance with new id
+    // const newInvestor = new investorModel(received);
 
-    // Saving investor updated data in the collection
+    // // Saving investor updated data in the collection
     investorTable = null;
-    investorTable = await newInvestor.save();
-
-    // updating myInvestment collection against new id
-    await myInvestmentsModel.updateMany(
-      { investorName: received._oldId },
-      { $set: { investorName: received._id } }
+    investorTable = investorModel.findOneAndUpdate(
+      {
+        _id: received._oldId ? received._oldId : received._id,
+      },
+      received
     );
-
-    // updating balance collection against new id
-    await balanceModel.updateMany(
-      { investorName: received._oldId },
-      { $set: { investorName: received._id } }
-    );
+    // investorTable = await newInvestor.save();
 
     // return investor update data
     return resolve({ err: false, investors: investorTable });
