@@ -1,0 +1,66 @@
+
+
+Required fields: 
+ - Name
+ - Nickname
+
+Validated fields: 
+ - Email and Beneficiary email (use our standard email validator function from e.g. nightlife - none of these are required)
+
+ - Country (only use this dataset, and use the currency to fill out currency field)
+{
+	[
+		["Australia", "AUD"],
+		["Denmark", "DKK"],
+		["Germany", "EUR"],
+		["Greece", "EUR"],
+		["India", "INR"],
+		["Philippines", "PHP"],
+		["Spain", "EUR"],
+		["Thailand", "THB"],
+		["USA", "USD"]
+	]
+}
+		
+ - Investor Status ["INVESTOR", "PENDING", "DISABLED"]  (INVESTOR is default)
+ 
+ - Money Transfer ["Envelope", "Thai Bank", "Foreign Bank", "Crypto", "Other"]
+
+ - Currency ["THB", "DKK", "EUR", "INR", "PHP", "USD"]  ("THB" is default)
+
+
+This is the structure/schema/model I use for investors 
+
+var investorSchema = new Schema({
+    _id:                String,     // Investor Name
+    nickName:           String,     // The investors Nick Name 
+    status:             String,     // INVESTOR, PENDING, DISABLED 
+
+    address:            String,     // Address 
+    postcode:           Number,     // Postcode
+    city:               String,     // City 
+    country:            String,     // Country
+    email:              String,     // Email address
+    phone:              String,     // Mobile Phone
+    facebook:           String,     // Facebook Link
+    passport:           String,     // Passport Number
+
+    beneficiaryName:    String,     // Beneficiary Name
+    beneficiaryEmail:   String,     // Beneficiary Email
+    beneficiaryPhone:   String,     // Beneficiary Mobile Phone
+
+    transferType:       String,     // Money Transfer Type
+    transferInfo:       String,     // Money Transfer Information (bank etc.)
+    currency:           String,     // Prefered currency of the investor
+
+    passportImages:     Array,      // Array of Images of the passports / IDs ("filename","filename")
+
+    createdDate:        Number,     // When was this investor created
+    createdBy:          String,     // Who created the investor
+    modifiedDate:       Number,     // When was this investor modified
+    modifiedBy:         String      // Who modified the investor
+}
+
+
+		
+	
