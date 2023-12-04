@@ -35,6 +35,7 @@ const schema = new Schema({
 
     folderId: String, // Root folder belonging to the investor
     documentsFolderId: String,
+    passportsFolderId: String,
 
     passportImages:     Array,      // Array of Images of the passports / IDs ("filename","filename")
 

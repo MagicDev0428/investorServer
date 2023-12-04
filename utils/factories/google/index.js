@@ -44,9 +44,10 @@ const GoogleDriveFactory = config => {
         const investorFolderId = await createFolder(drive, rootFolderName, process.env.GOOGLE_DRIVE_ROOT);
         if (investorFolderId) {
           const documentsFolder = await createFolder(drive, 'Documents', investorFolderId);
-          if (documentsFolder) {
+          const passportsFolder = await createFolder(drive, 'Passports', investorFolderId);
+          if (documentsFolder && passportsFolder) {
             // All folders has been created
-            return { folderId: investorFolderId, documentsFolderId: documentsFolder };
+            return { folderId: investorFolderId, documentsFolderId: documentsFolder, passportsFolderId: passportsFolder };
           }
         }      
         

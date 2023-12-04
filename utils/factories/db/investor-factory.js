@@ -7,12 +7,12 @@ export const InvestorFactory = {
   createInvestor: asyncHandler(async _investor => {
     const { 
       name, nickname, pincode, address, postcode, city, country, email, phone, facebook, passport, beneficiaryName, beneficiaryEmail, beneficiaryPhone,
-      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, 
+      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, passportsFolderId
     } = _investor;
 
     const investor = await Models.Investor.create({ 
       name, nickname, pincode, address, postcode, city, country, email, phone, facebook, passport, beneficiaryName, beneficiaryEmail, beneficiaryPhone,
-      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, passportImages: []
+      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, passportImages: [], passportsFolderId
     });
 
     return investor;

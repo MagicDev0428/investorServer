@@ -27,9 +27,12 @@ router.post('/', Middlewares.RouteMiddlewares.createInvestor, boundedRoute(async
   // create the folders for the investor
   const client = Factories.getGoogleDriveInstance();
   const folderName = Lib.transformNameToPath(name);
-  const { folderId, documentsFolderId } = await client.createFolders(folderName);
+  const { folderId, documentsFolderId, passportsFolderId } = await client.createFolders(folderName);
 
-  const investor = await Factories.InvestorFactory.createInvestor({ name, email, nickname, phone, address, zipcode, city, country, status: 'active', folderId, documentsFolderId });
+  const investor = await Factories.InvestorFactory.createInvestor({ 
+    name, email, nickname, phone, address, zipcode, city, country, status: 'active', folderId, documentsFolderId, passportsFolderId
+  });
+
   if (investor) {
     res.respondCreated({ investorId: investor._id.toString() });
   } else {

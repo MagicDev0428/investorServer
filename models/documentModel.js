@@ -1,22 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const investorSchema = new Schema({
-  name: String,
-  nickname: String,
-  email: String,
-  country: String,
-  phone: String,
-  zipcode: String,
-  address: String,
-  city: String,
-  status: String,
-  folderId: String, // Root folder belonging to the investor
-  documentsFolderId: String, // Documents folder id for the investor
-});
-
-// export const Investor = model('Investor', investorSchema);
-
-const documentSchema = new Schema({
+const schema = new Schema({
   investor: {
     type: Schema.Types.ObjectId,
     ref: 'Investor',
@@ -50,4 +34,4 @@ const documentSchema = new Schema({
   notes: String
 });
 
-export const Document = model('Document', documentSchema);
+export const Document = model('Document', schema, 'documents');
