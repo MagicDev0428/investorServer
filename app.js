@@ -60,7 +60,6 @@ if (process.env.SERVER_NAME === "LIVE") {
   console.log("##                                    ##");
   console.log("########################################");
   global.db = "mongodb://localhost:27017/InvestorSystem";
-
   global.state = "TEST";
   global.server = "http://localhost:3007";
   global.isLOCAL = true;
@@ -148,12 +147,12 @@ app.get("/", (req, res) => {
 app.set("port", process.env.PORT || 3007);
 
 // This route needs authentication
-app.get("/private", checkJwt, (req, res) => {
-  res.json({
-    message:
-      "Hello from a private endpoint! You need to be authenticated to see this.",
-  });
-});
+// app.get("/private", checkJwt, (req, res) => {
+//   res.json({
+//     message:
+//       "Hello from a private endpoint! You need to be authenticated to see this.",
+//   });
+// });
 
 // investor route calling in app.js
 app.use("/investor", investorRoute);

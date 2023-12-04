@@ -8,6 +8,13 @@ let investorTable = mongoose.model("investor", investorSchema);
 //
 // List all the investors with their balance and investment amounts
 //
+//
+// You just need to call
+// http://localhost:3007/investor/investorlist
+// to get all data of investors
+//
+//
+
 exports.investorList = () => {
   global.show("###### investorList ######");
 

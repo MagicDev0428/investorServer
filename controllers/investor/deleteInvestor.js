@@ -8,6 +8,11 @@ let investorTable = mongoose.model("investor", investorSchema);
 //
 // Delete investor with id
 //
+
+//
+// url => http://localhost:3007/investor/deleteinvestor/id
+// in URL params at id replace with your id
+//
 exports.deleteInvestor = async (_id) => {
   global.show("###### deleteInvestor ######");
 

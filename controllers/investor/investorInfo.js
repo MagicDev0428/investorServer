@@ -8,6 +8,13 @@ let investorTable = mongoose.model("investor", investorSchema);
 //
 // List all the investors with their balance and investment amounts
 //
+
+//
+// URL +> http://localhost:3007/investor/investorinfo/id
+//
+// replace id with investor id to get his/her information
+//
+
 exports.investorInfo = (id) => {
   global.show("###### investorInfo ######");
 
