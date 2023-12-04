@@ -50,4 +50,4 @@ const schema = new Schema({
     modifiedBy:         String      // Who modified the investor
 
 }, { versionKey: false });      // Don't want to insert _v in document
-const Investor = mongoose.model('Investor', schema,'investors');
+export const Investor = mongoose.model('Investor', schema,'investors');

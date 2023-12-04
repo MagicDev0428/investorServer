@@ -3,18 +3,16 @@ import express from 'express'; // The Nodejs framework
 import mongoose from 'mongoose';        // The mongodb framework
 import path from 'path';            // Set absolute path to files 
 import bodyParser from 'body-parser';     // Parse data from POST requests
-import responseHelper from 'express-response-helper';
-import { auth } from 'express-oauth2-jwt-bearer';
 import dotenv from 'dotenv';
+import responseHelper from 'express-response-helper';
+import cors from 'cors';
+import { auth } from 'express-oauth2-jwt-bearer';
 import { investorRoutes, documentRoutes } from './routes';
-import { errorMiddleware } from './utils/middlewares';
+import { Middlewares } from './utils';
 const investorRoute = require("./routes/investor/investorRoute");
 require("./logger/simpleLogger"); // global.show is imported from simpleLogger
 
-
-dotenv.config({
-  path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.local'
-});
+dotenv.config({ path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.local' });
 
 let newDate = new Date();
 let tmpDate = newDate.toString().substring(0, 21);
@@ -68,6 +66,11 @@ if (process.env.SERVER_NAME === "LIVE") {
   global.isLOCAL = true;
   global.serverName = "LOCAL";
 }
+
+export const checkJwt = auth({
+  audience: global.server,
+  issuerBaseURL: process.env.AUTH0_DOMAIN,
+});
 
 // Connect to mongodb
 mongoose.connect(global.db, {
@@ -148,7 +151,7 @@ app.get('/private', checkJwt, (req, res) => {
 });
 
 // investor route calling in app.js
-app.use("/investor", investorRoute);
+// app.use("/investor", investorRoute);
 
 // Setup server to listen
 const server = app.listen(app.get('port'), function () {
@@ -162,7 +165,7 @@ const server = app.listen(app.get('port'), function () {
 // 	console.trace();
 // 	res.json({ "err": true, "error": err.message });
 // });
-app.use(errorMiddleware);
+app.use(Middlewares.errorMiddleware);
 
 //
 // Show instead of console.log cause its much easier to debug!

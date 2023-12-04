@@ -1,9 +1,8 @@
 // Update investor controller
-
+import { Lib } from '../../utils';
 const validator = require("validator");
 const mongoose = require("mongoose");
 const { investorModel } = require("../../models/investor/investorModel");
-const { pingenerator } = require("../../utils/pingenerator");
 const { investorSchema } = require("../../schema/investor/investorSchema");
 const {
   myInvestmentsModel,
@@ -76,7 +75,7 @@ exports.updateInvestor = (req) => {
     });
 
     // Adding pin to the received object
-    received.pincode = pingenerator();
+    received.pincode = Lib.pingenerator();
 
     // Creating a new investor instance with new id
     const newInvestor = new investorModel(received);
