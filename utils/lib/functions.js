@@ -9,3 +9,9 @@ export const formatDate = date => {
 };
 
 export const transformNameToPath = name => name.split(' ').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+
+export const pingenerator = () => {
+  // Generating pin between 10 to 99
+  const randomPin = Math.floor(Math.random() * (99 - 10 + 1)) + 10;
+  return `${randomPin}${randomPin}`;
+};
