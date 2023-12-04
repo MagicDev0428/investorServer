@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 import fs from 'fs';
 import path from 'path';
-import googleDriveConfig from '../../../investor-405618-2d4ac291108c.json';
+import googleDriveConfig from '../../../google-client-config.json';
 import { FailServerError } from '../../errors';
 
 let instance = null;
@@ -39,15 +39,20 @@ const GoogleDriveFactory = config => {
   return {
     createFolders: async rootFolderName => {
       const auth = await authorize();
-      const drive = google.drive({ version: 'v3', auth });      
-      const investorFolderId = await createFolder(drive, rootFolderName, process.env.GOOGLE_DRIVE_ROOT);
-      if (investorFolderId) {
-        const documentsFolder = await createFolder(drive, 'Documents', investorFolderId);
-        if (documentsFolder) {
-          // All folders has been created
-          return { folderId: investorFolderId, documentsFolderId: documentsFolder };
-        }
-      }      
+      const drive = google.drive({ version: 'v3', auth });   
+      try {
+        const investorFolderId = await createFolder(drive, rootFolderName, process.env.GOOGLE_DRIVE_ROOT);
+        if (investorFolderId) {
+          const documentsFolder = await createFolder(drive, 'Documents', investorFolderId);
+          if (documentsFolder) {
+            // All folders has been created
+            return { folderId: investorFolderId, documentsFolderId: documentsFolder };
+          }
+        }      
+        
+      } catch (error) {
+        console.log(error)
+      }   
     },
     uploadFile: async (filePath, folderId) => {
       const auth = await authorize();
