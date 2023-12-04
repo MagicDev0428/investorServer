@@ -1,19 +1,28 @@
-import { Investor } from './models';
+import { Models } from '../../../models';
 import { boundedAsyncHandler } from '../../errors';
 
 const asyncHandler = boundedAsyncHandler({ type: 'Investor', message: 'Could not perform desired investor operation!' });
 
 export const InvestorFactory = {
-  createInvestor: asyncHandler(async ({ name, email, nickname, phone, address, zipcode, city, country, status, folderId, documentsFolderId }) => {  
-    const investor = await Investor.create({ name, email, nickname, phone, address, zipcode, city, country, status, folderId, documentsFolderId });
+  createInvestor: asyncHandler(async _investor => {
+    const { 
+      name, nickname, pincode, address, postcode, city, country, email, phone, facebook, passport, beneficiaryName, beneficiaryEmail, beneficiaryPhone,
+      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, 
+    } = _investor;
+
+    const investor = await Models.Investor.create({ 
+      name, nickname, pincode, address, postcode, city, country, email, phone, facebook, passport, beneficiaryName, beneficiaryEmail, beneficiaryPhone,
+      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, passportImages: []
+    });
+
     return investor;
   }),
   findByEmail: asyncHandler(async email => {
-    const investor = await Investor.findOne({ email });
+    const investor = await Models.Investor.findOne({ email });
     return investor;
   }),
   getInvestors: asyncHandler(async () => {
-    const investorsData = await Investor.find();
+    const investorsData = await Models.Investor.find();
     const investors = investorsData.map(investor => ({
       id: investor._id.toString(),
       name: investor.name,
@@ -29,7 +38,7 @@ export const InvestorFactory = {
     return investors;
   }),
   getInvestor: asyncHandler(async investorId => {    
-    const investorData = await Investor.findById(investorId);
+    const investorData = await Models.Investor.findById(investorId);
     if (investorData) {
       const investor = {
         id: investorData._id.toString(),

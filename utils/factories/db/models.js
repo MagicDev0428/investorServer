@@ -14,7 +14,7 @@ const investorSchema = new Schema({
   documentsFolderId: String, // Documents folder id for the investor
 });
 
-export const Investor = model('Investor', investorSchema);
+// export const Investor = model('Investor', investorSchema);
 
 const documentSchema = new Schema({
   investor: {
