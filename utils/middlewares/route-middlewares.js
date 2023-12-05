@@ -1,7 +1,8 @@
 const { validationResult } = require('express-validator')
-import { 
-  validateAddress, validateCity, validateCountry, validateDocumentId, validateDocumentType, validateEmail, validateInvestorId, 
-  validateInvestorIdParameter, validateName, validateNickname, validatePhone, validateZipcode 
+import {
+  validateDocumentId, validateDocumentType, validateEmail, validateInvestorId, 
+  validateInvestorIdParameter, validateName, validateNickname, validatePhone, validateBeneficiaryEmail,
+  validateBeneficiaryName, validateBeneficiaryPhone
 } from './validation-middlewares';
 
 export const validate = (req, res, next) => {
@@ -13,8 +14,8 @@ export const validate = (req, res, next) => {
 };
 
 export const createInvestor = [
-  validateName(), validateNickname(), validatePhone(), validateEmail(), validateAddress(), validateZipcode(), validateCity(), 
-  validateCountry(), validate
+  validateName(), validatePhone(), validateEmail(), validateBeneficiaryEmail(), validateBeneficiaryName(), validateBeneficiaryPhone(),
+  validate
 ];
 export const createDocument = [validateInvestorId(), validateDocumentType(), validate];
 export const sendDocument = [validateInvestorIdParameter(), validateDocumentId(), validate];

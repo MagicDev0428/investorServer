@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import responseHelper from 'express-response-helper';
 import cors from 'cors';
 import { auth } from 'express-oauth2-jwt-bearer';
+import jwksClient from 'jwks-rsa';
+import { expressjwt as jwt } from 'express-jwt';
 import { investorRoutes, documentRoutes } from './routes';
 import { Middlewares } from './utils';
 const investorRoute = require("./routes/investor/investorRoute");
@@ -67,9 +69,17 @@ if (process.env.SERVER_NAME === "LIVE") {
   global.serverName = "LOCAL";
 }
 
-export const checkJwt = auth({
+export const checkJwt = jwt({
   audience: global.server,
   issuerBaseURL: process.env.AUTH0_DOMAIN,
+  secret: process.env.AUTH0_SECRET,
+  algorithms: ['RS256'],
+  secret: jwksClient.expressJwtSecret({
+    cache: true,
+    reateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
+  })
 });
 
 // Connect to mongodb
@@ -130,25 +140,30 @@ app.use(function (req, res, next) {
   return next();
 });
 
-app.use('/investors', investorRoutes.router);
-app.use('/documents', documentRoutes.router);
+// use auth for all endpoints
+app.use(checkJwt);
 
-// Default Set
+/**
+ * ROUTES
+ */
 app.get('/', (req, res) => {
   res.respond({
     message: 'Pattaya live server running, mongodb set'
   });
 });
 
-// Helper port
-app.set("port", process.env.PORT || 3007);
-
-// This route needs authentication
-app.get('/private', checkJwt, (req, res) => {
+app.get('/private', (req, res) => {
   res.respond({
     message: 'Hello from a private endpoint! You need to be authenticated to see this.'
   });
 });
+
+app.use('/investors', investorRoutes.router);
+app.use('/documents', documentRoutes.router);
+
+// Helper port
+app.set("port", process.env.PORT || 3007);
+
 
 // investor route calling in app.js
 // app.use("/investor", investorRoute);

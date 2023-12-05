@@ -1,3 +1,5 @@
+import { AUTH0_NAMESPACE, ROLES } from '../../constants';
+
 export const formatDate = date => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -15,3 +17,15 @@ export const pingenerator = () => {
   const randomPin = Math.floor(Math.random() * (99 - 10 + 1)) + 10;
   return `${randomPin}${randomPin}`;
 };
+
+export const isAdminOrLoggedInInvestor = (auth, email) => {
+  if (auth) {
+    const namespace = auth[AUTH0_NAMESPACE];
+    if (namespace.roles && (namespace.roles.includes(ROLES.admin) || namespace.email === email)) {
+      return true    
+    }
+  }
+  return false;
+};
+
+export const getAdminName = auth => auth[AUTH0_NAMESPACE].name;

@@ -5,14 +5,14 @@ const asyncHandler = boundedAsyncHandler({ type: 'Investor', message: 'Could not
 
 export const InvestorFactory = {
   createInvestor: asyncHandler(async _investor => {
-    const { 
+    const {
       name, nickname, pincode, address, postcode, city, country, email, phone, facebook, passport, beneficiaryName, beneficiaryEmail, beneficiaryPhone,
-      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, passportsFolderId, passportImages
+      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, passportsFolderId, passportImages, status
     } = _investor;
 
     const investor = await Models.Investor.create({ 
       name, nickname, pincode, address, postcode, city, country, email, phone, facebook, passport, beneficiaryName, beneficiaryEmail, beneficiaryPhone,
-      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, passportImages, passportsFolderId
+      transferType, transferInfo, currency, createdBy, modifiedBy, folderId, documentsFolderId, passportImages, passportsFolderId, status
     });
 
     return investor;

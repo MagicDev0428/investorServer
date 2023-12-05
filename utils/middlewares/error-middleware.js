@@ -17,8 +17,9 @@ export const errorMiddleware = (err, req, res, next) => {
     if (err.code === 'LIMIT_UNEXPECTED_FILE') {
       return res.failValidationError('Exceeded maximum file count', 'ValidationError');
     }
-  }
-  else {
+  } else if (err.name === 'UnauthorizedError') {
+    return res.failForbidden('You are not authorized to access this endpoint', 'ForbiddenError');
+  } else {
     next(err);
   }
 

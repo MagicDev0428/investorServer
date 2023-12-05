@@ -17,68 +17,85 @@ router.get('/', boundedRoute(async (req, res) => {
 /**
  * create a new investor
  */
-router.post('/', 
-Middlewares.StorageMiddlewares.upload.array('passportImages', MAX_FILES_PER_REQUEST), 
+router.post('/',
+  Middlewares.checkAdminPrivileges,
+  Middlewares.StorageMiddlewares.upload.array('passportImages', MAX_FILES_PER_REQUEST), 
   Middlewares.RouteMiddlewares.createInvestor, 
   boundedRoute(async (req, res) => {    
-  const { name, nickname, phone, email, address, zipcode, city, country } = req.body;
-  const passportImages = req.files;
-  
-  // make sure email address doesnot exist in the db
-  const investorByEmail = await Factories.InvestorFactory.findByEmail(email);
-  if (investorByEmail) {
-    throw new Errors.ResourceExistsError(`Email address: ${email} already exists.`);
+    const { 
+      name, nickname, phone, email, address, postcode, city, country, status, facebook, passport, beneficiaryName, beneficiaryEmail, beneficiaryPhone,
+      transferType, transferInfo, currency
+    } = req.body;
+    const passportImages = req.files;
+
+    const adminName = Lib.getAdminName(req.auth);
+    
+    // make sure email address doesnot exist in the db
+    const investorByEmail = await Factories.InvestorFactory.findByEmail(email);
+    if (investorByEmail) {
+      throw new Errors.ResourceExistsError(`Email address: ${email} already exists.`);
+    }
+
+    // create the folders for the investor
+    const client = Factories.getGoogleDriveInstance();
+    const folderName = Lib.transformNameToPath(name);
+    const { folderId, documentsFolderId, passportsFolderId } = await client.createFolders(folderName);
+
+    // upload images if any
+    const uploadPromises = passportImages.map(({ path, mimetype }) => client.uploadFile(path, passportsFolderId, mimetype));
+    const passportImagesIds = await Promise.all(uploadPromises);
+    
+    // delete images from upload dir
+    const deleteImagesPromises = passportImages.map(({ path }) => Factories.PDFFactory.delete(path));
+    await Promise.all(deleteImagesPromises);
+
+    const investor = await Factories.InvestorFactory.createInvestor({
+      name, email, nickname, phone, address, postcode, city, country, status, folderId, documentsFolderId, passportsFolderId,
+      passportImages: passportImagesIds, facebook, passport, beneficiaryName, beneficiaryEmail, beneficiaryPhone, transferType, transferInfo,
+      currency, createdBy: adminName, modifiedBy: adminName
+    });
+
+    if (!investor) {
+      throw new FailServerError('Investor creation failed');
+    }
+
+    const investorId = investor._id; 
+
+    // create documents of type passport
+    const documetPromises = passportImages.map(({ filename: title }, index) => {
+      const fileId = passportImagesIds[index];
+      return Factories.DocumentFactory.createDocument({ investorId, title, documentType: DocumentTypes.passport, fileId })
+    });
+
+    await Promise.all(documetPromises);
+    res.respondCreated({ investorId: investorId.toString() });
   }
+));
 
-  // create the folders for the investor
-  const client = Factories.getGoogleDriveInstance();
-  const folderName = Lib.transformNameToPath(name);
-  const { folderId, documentsFolderId, passportsFolderId } = await client.createFolders(folderName);
+// admins or an investor whoes auth0 email matches with the email in db with regards to investorId can call this endpoint
+router.get('/:investorId',
+  Middlewares.checkInvestorPrivileges,
+  Middlewares.RouteMiddlewares.getInvestor, boundedRoute(async (req, res) => {
+    const investorId = req.params.investorId;
+    const investorData = await Factories.InvestorFactory.getInvestor(investorId);
+    
+    if (Lib.isAdminOrLoggedInInvestor(req.auth, investorData.email) === false) {  
+      throw new Errors.ForbiddenError('You are not authorized to access this endpoint');
+    }
+    
+    // remove folder ids
+    const investor = {
+      id: investorData.id, name: investorData.name, nickname: investorData.nickname, email: investorData.email, phone: investorData.phone, 
+      address: investorData.address, zipcode: investorData.zipcode, city: investorData.zipcode, country: investorData.country, 
+      status: investorData.status
+    };
+    
+    return res.respond({
+      investor
+    });
 
-  // upload images if any
-  const uploadPromises = passportImages.map(({ path, mimetype }) => client.uploadFile(path, passportsFolderId, mimetype));
-  const passportImagesIds = await Promise.all(uploadPromises);
-  
-  // delete images from upload dir
-  const deleteImagesPromises = passportImages.map(({ path }) => Factories.PDFFactory.delete(path));
-  await Promise.all(deleteImagesPromises);
-
-  const investor = await Factories.InvestorFactory.createInvestor({ 
-    name, email, nickname, phone, address, zipcode, city, country, status: 'active', folderId, documentsFolderId, passportsFolderId,
-    passportImages: passportImagesIds
-  });
-
-  if (!investor) {
-    throw new FailServerError('Investor creation failed');
   }
-
-  const investorId = investor._id; 
-
-  // create documents of type passport
-  const documetPromises = passportImages.map(({ filename: title }, index) => {
-    const fileId = passportImagesIds[index];
-    return Factories.DocumentFactory.createDocument({ investorId, title, documentType: DocumentTypes.passport, fileId })
-  });
-
-  await Promise.all(documetPromises);
-  res.respondCreated({ investorId: investorId.toString() });
-}));
-
-router.get('/:investorId', Middlewares.RouteMiddlewares.getInvestor, boundedRoute(async (req, res) => {
-  const investorId = req.params.investorId;
-  const investorData = await Factories.InvestorFactory.getInvestor(investorId);
-  
-  // remove folder ids
-  const investor = {
-    id: investorData.id, name: investorData.name, nickname: investorData.nickname, email: investorData.email, phone: investorData.phone, 
-    address: investorData.address, zipcode: investorData.zipcode, city: investorData.zipcode, country: investorData.country, 
-    status: investorData.status
-  };
-  res.respond({
-    investor
-  });
-  
-}));
+));
 
 router.post('/:investorId/email', Middlewares.RouteMiddlewares.sendDocument, boundedRoute(async (req, res) => {
   const { investorId } = req.params;
