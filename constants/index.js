@@ -1,8 +1,12 @@
 export const DocumentTypes = {
   report: 'report',
   invoice: 'invoice',
-  balanceSheet: 'balance-sheet'
+  balanceSheet: 'balance-sheet',
+  passport: 'passport'
 };
+
+export const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10MB
+export const MAX_FILES_PER_REQUEST = 5;
 
 export const SampleInvoice = {
   logo_url: 'https://sparksuite.github.io/simple-html-invoice-template/images/logo.png',
