@@ -6,11 +6,12 @@ import bodyParser from 'body-parser';     // Parse data from POST requests
 import dotenv from 'dotenv';
 import responseHelper from 'express-response-helper';
 import cors from 'cors';
-import { auth } from 'express-oauth2-jwt-bearer';
+import swaggerUI from 'swagger-ui-express';
 import jwksClient from 'jwks-rsa';
 import { expressjwt as jwt } from 'express-jwt';
+import jsondocs from './docs/index.json';
 import { investorRoutes, documentRoutes } from './routes';
-import { Middlewares } from './utils';
+import { Middlewares, Docs } from './utils';
 const investorRoute = require("./routes/investor/investorRoute");
 require("./logger/simpleLogger"); // global.show is imported from simpleLogger
 
@@ -140,6 +141,11 @@ app.use(function (req, res, next) {
   return next();
 });
 
+/**
+ * Docs
+ */
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(jsondocs));
+
 // use auth for all endpoints
 app.use(checkJwt);
 
@@ -171,6 +177,7 @@ app.set("port", process.env.PORT || 3007);
 // Setup server to listen
 const server = app.listen(app.get('port'), function () {
   console.log("Server running at " + server.address().port);
+  console.log(`Docs are available at http://localhost:${server.address().port}/docs`);
 });
 
 // // Catch all normal errors

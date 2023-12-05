@@ -1,0 +1,49 @@
+
+summary: Create a new investor.
+tags: 
+  - Investors
+produces:
+  - application/json
+consumes:
+  - multipart/form-data
+parameters:
+  - in: formData
+    name: passportImages
+    type: file
+    description: Upto 5 images can be attached and each file has a limit of 5MB.
+  - in: body
+    # name: body
+    # description: Required parameters for Investor object.
+    schema:
+      type: object
+      required:
+        - name
+        - email
+        - phone
+        - beneficiaryName
+        - beneficiaryEmail
+        - beneficiaryPhone
+      $ref: ../../definitions/Investor.yaml
+
+responses:
+  201:
+    description: A new investor has been created.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            investorId:
+              type: string
+  409:
+    description: Conflict, resource already exists
+    content:
+      application/json:
+        schema:
+          $ref: ../../definitions/Error.yaml
+  500:
+    description: Server Error, some service faild or internal server error
+    content:
+      application/json:
+        schema:
+          $ref: ../../definitions/Error.yaml

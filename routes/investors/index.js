@@ -6,7 +6,23 @@ import { MAX_FILES_PER_REQUEST, DocumentTypes } from '../../constants';
 import { FailServerError } from '../../utils/errors';
 
 export const router = express.Router();
-
+/**
+ * @swagger
+ *
+ * /login:
+ *   post:
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: username
+ *         in: formData
+ *         required: true
+ *         type: string
+ *       - name: password
+ *         in: formData
+ *         required: true
+ *         type: string
+ */
 router.get('/', boundedRoute(async (req, res) => {
   const investors = await Factories.InvestorFactory.getInvestors();
   res.respond({
@@ -14,9 +30,6 @@ router.get('/', boundedRoute(async (req, res) => {
   });  
 }));
 
-/**
- * create a new investor
- */
 router.post('/',
   Middlewares.checkAdminPrivileges,
   Middlewares.StorageMiddlewares.upload.array('passportImages', MAX_FILES_PER_REQUEST), 
