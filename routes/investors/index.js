@@ -2,6 +2,8 @@ import express from 'express';
 import boundedRoute from '../bounded-route';
 import { Factories, Middlewares, Errors, Lib } from '../../utils';
 import { TemplateEngine } from '../../templates';
+import { MAX_FILES_PER_REQUEST, DocumentTypes } from '../../constants';
+import { FailServerError } from '../../utils/errors';
 
 export const router = express.Router();
 
@@ -15,8 +17,12 @@ router.get('/', boundedRoute(async (req, res) => {
 /**
  * create a new investor
  */
-router.post('/', Middlewares.RouteMiddlewares.createInvestor, boundedRoute(async (req, res) => {
+router.post('/', 
+Middlewares.StorageMiddlewares.upload.array('passportImages', MAX_FILES_PER_REQUEST), 
+  Middlewares.RouteMiddlewares.createInvestor, 
+  boundedRoute(async (req, res) => {    
   const { name, nickname, phone, email, address, zipcode, city, country } = req.body;
+  const passportImages = req.files;
   
   // make sure email address doesnot exist in the db
   const investorByEmail = await Factories.InvestorFactory.findByEmail(email);
@@ -29,16 +35,33 @@ router.post('/', Middlewares.RouteMiddlewares.createInvestor, boundedRoute(async
   const folderName = Lib.transformNameToPath(name);
   const { folderId, documentsFolderId, passportsFolderId } = await client.createFolders(folderName);
 
+  // upload images if any
+  const uploadPromises = passportImages.map(({ path, mimetype }) => client.uploadFile(path, passportsFolderId, mimetype));
+  const passportImagesIds = await Promise.all(uploadPromises);
+  
+  // delete images from upload dir
+  const deleteImagesPromises = passportImages.map(({ path }) => Factories.PDFFactory.delete(path));
+  await Promise.all(deleteImagesPromises);
+
   const investor = await Factories.InvestorFactory.createInvestor({ 
-    name, email, nickname, phone, address, zipcode, city, country, status: 'active', folderId, documentsFolderId, passportsFolderId
+    name, email, nickname, phone, address, zipcode, city, country, status: 'active', folderId, documentsFolderId, passportsFolderId,
+    passportImages: passportImagesIds
   });
 
-  if (investor) {
-    res.respondCreated({ investorId: investor._id.toString() });
-  } else {
-    res.fail('Investor creation failed');
+  if (!investor) {
+    throw new FailServerError('Investor creation failed');
   }
 
+  const investorId = investor._id; 
+
+  // create documents of type passport
+  const documetPromises = passportImages.map(({ filename: title }, index) => {
+    const fileId = passportImagesIds[index];
+    return Factories.DocumentFactory.createDocument({ investorId, title, documentType: DocumentTypes.passport, fileId })
+  });
+
+  await Promise.all(documetPromises);
+  res.respondCreated({ investorId: investorId.toString() });
 }));
 
 router.get('/:investorId', Middlewares.RouteMiddlewares.getInvestor, boundedRoute(async (req, res) => {

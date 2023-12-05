@@ -55,7 +55,7 @@ const GoogleDriveFactory = config => {
         console.log(error)
       }   
     },
-    uploadFile: async (filePath, folderId) => {
+    uploadFile: async (filePath, folderId, mimeType = 'application/pdf') => {
       const auth = await authorize();
       const drive = google.drive({ version: 'v3', auth });
       
@@ -65,7 +65,7 @@ const GoogleDriveFactory = config => {
           name: path.basename(filePath),
         },
         media: {
-          mimeType: 'application/pdf',
+          mimeType,
           body: fs.createReadStream(filePath)
         },
         fields: 'id',        
