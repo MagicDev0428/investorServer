@@ -1,4 +1,25 @@
 "use strict";
+import express from 'express'; // The Nodejs framework
+import mongoose from 'mongoose';        // The mongodb framework
+import path from 'path';            // Set absolute path to files 
+import bodyParser from 'body-parser';     // Parse data from POST requests
+import dotenv from 'dotenv';
+import responseHelper from 'express-response-helper';
+import cors from 'cors';
+import swaggerUI from 'swagger-ui-express';
+import jwksClient from 'jwks-rsa';
+import { expressjwt as jwt } from 'express-jwt';
+import jsondocs from './docs/index.json';
+import { investorRoutes, documentRoutes } from './routes';
+import { Middlewares, Docs } from './utils';
+const investorRoute = require("./routes/investor/investorRoute");
+require("./logger/simpleLogger"); // global.show is imported from simpleLogger
+
+dotenv.config({ path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.local' });
+
+let newDate = new Date();
+let tmpDate = newDate.toString().substring(0, 21);
+
 
 // Server(Environment) variables
 global.isLIVE = false;
@@ -6,32 +27,12 @@ global.isINFO = false;
 global.isLOCAL = false;
 global.isLIVE   = false;
 global.isLOCAL  = false;
-
-// Standard libs
-var express = require("express"); // The Nodejs framework
-var mongoose = require("mongoose"); // The mongodb framework
-var path = require("path"); // Set absolute path to files
-var bodyParser = require("body-parser"); // Parse data from POST requests
-var favicon = require("serve-favicon"); // Serve a favicon to all who request it
-var cron = require("node-cron"); // Run timed Cron jobs
-var request = require("request"); // Request data from API's.
-const cors = require("cors");
-const { auth } = require("express-oauth2-jwt-bearer");
-let newDate = new Date();
-let tmpDate = newDate.toString().substring(0, 21);
-const { User } = require("./models/user");
-const investorRoute = require("./routes/investor/investorRoute");
-require("./logger/simpleLogger"); // global.show is imported from simpleLogger
-
-require("dotenv").config({
-  path: process.env.NODE_ENV === "production" ? ".env.prod" : ".env.local",
-});
-
 mongoose.Promise = Promise;
 
-var app = express();
-app.use(express.static(path.join(__dirname, "")));
+const app = express();
+app.use(express.static(path.join(__dirname, '')));
 app.use(cors());
+app.use(responseHelper.helper());
 
 console.log("ENVIRONMENT--", process.env.SERVER_NAME);
 
@@ -69,37 +70,18 @@ if (process.env.SERVER_NAME === "LIVE") {
   global.serverName = "LOCAL";
 }
 
-
-if (process.env.SERVER_NAME === 'LIVE') {
-    
-    console.log("########################################");
-    console.log("##                                    ##");
-    console.log("##       SERVER RUNNING ON LIVE       ##");
-    console.log("##                                    ##");
-    console.log("##        " + tmpDate  + "            ##");
-    console.log("##                                    ##");
-    console.log("########################################");
-    global.db         = process.env.mongodbUri  // For ECS deployment from github desktop
-
-
- } else {
-
-    console.log("########################################");
-    console.log("##                                    ##");
-    console.log("##      SERVER RUNNING ON LOCAL       ##");
-    console.log("##                                    ##");
-    console.log("##        " + tmpDate + "        ##");
-    console.log("##                                    ##");
-    console.log("########################################");
-    global.db         = "mongodb://localhost:27017/InvestorSystem";  
-    global.state      = "TEST";
-    global.server    = "http://localhost:3007";  
-    global.isLOCAL    = true;
-    global.serverName = 'LOCAL';
-
-  }
-
-
+export const checkJwt = jwt({
+  audience: global.server,
+  issuerBaseURL: process.env.AUTH0_DOMAIN,
+  secret: process.env.AUTH0_SECRET,
+  algorithms: ['RS256'],
+  secret: jwksClient.expressJwtSecret({
+    cache: true,
+    reateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
+  })
+});
 
 // Connect to mongodb
 mongoose.connect(global.db, {
@@ -159,39 +141,53 @@ app.use(function (req, res, next) {
   return next();
 });
 
-// Default Set
-app.get("/", (req, res) => {
-  res.json({
-    message: "Pattaya live server running, mongodb set",
+/**
+ * Docs
+ */
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(jsondocs));
+
+// use auth for all endpoints
+app.use(checkJwt);
+
+/**
+ * ROUTES
+ */
+app.get('/', (req, res) => {
+  res.respond({
+    message: 'Pattaya live server running, mongodb set'
   });
 });
+
+app.get('/private', (req, res) => {
+  res.respond({
+    message: 'Hello from a private endpoint! You need to be authenticated to see this.'
+  });
+});
+
+app.use('/investors', investorRoutes.router);
+app.use('/documents', documentRoutes.router);
 
 // Helper port
 app.set("port", process.env.PORT || 3007);
 
-// This route needs authentication
-app.get("/private", (req, res) => {
-  res.json({
-    message:
-      "Hello from a private endpoint! You need to be authenticated to see this.",
-  });
-});
 
 // investor route calling in app.js
-app.use("/investor", investorRoute);
+// app.use("/investor", investorRoute);
 
 // Setup server to listen
-var server = app.listen(app.get("port"), function () {
+const server = app.listen(app.get('port'), function () {
   console.log("Server running at " + server.address().port);
+  console.log(`Docs are available at http://localhost:${server.address().port}/docs`);
 });
 
-// Catch all normal errors
-app.use(function (err, req, res, next) {
+// // Catch all normal errors
+// app.use(function (err, req, res, next) {
 	
-	console.log(err);
-	console.trace();
-	res.json({ "err": true, "error": err.message });
-});
+// 	console.log(err);
+// 	console.trace();
+// 	res.json({ "err": true, "error": err.message });
+// });
+app.use(Middlewares.errorMiddleware);
 
 //
 // Show instead of console.log cause its much easier to debug!

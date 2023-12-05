@@ -1,0 +1,186 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Investor System API Docs",
+    "description": "This is the documentation of the API for Investor System."
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "host": "localhost:3007",
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/investors": {
+      "post": {
+        "summary": "Create a new investor.",
+        "tags": [
+          "Investors"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "passportImages",
+            "type": "file",
+            "description": "Upto 5 images can be attached and each file has a limit of 5MB."
+          },
+          {
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "email",
+                "phone",
+                "beneficiaryName",
+                "beneficiaryEmail",
+                "beneficiaryPhone"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the investor."
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "Phone of the investor."
+                },
+                "email": {
+                  "type": "string",
+                  "description": "Email of the investor."
+                },
+                "nickname": {
+                  "type": "string",
+                  "description": "Nickname of the investor."
+                },
+                "address": {
+                  "type": "string",
+                  "description": "Address of the investor."
+                },
+                "postcode": {
+                  "type": "string",
+                  "description": "Postal code of the investor."
+                },
+                "city": {
+                  "type": "string",
+                  "description": "City of the investor."
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Country of the investor."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Status of the investor."
+                },
+                "facebook": {
+                  "type": "string",
+                  "description": "Facebook id of the investor."
+                },
+                "passport": {
+                  "type": "string",
+                  "description": "Passport number of the investor."
+                },
+                "transferType": {
+                  "type": "string",
+                  "description": "Transfer type."
+                },
+                "transferInfo": {
+                  "type": "string",
+                  "description": "Transfer information."
+                },
+                "currency": {
+                  "type": "string",
+                  "description": "Currency of the account."
+                },
+                "beneficiaryName": {
+                  "type": "string",
+                  "description": "Name of the Beneficiary."
+                },
+                "beneficiaryEmail": {
+                  "type": "string",
+                  "description": "Email of the Beneficiary."
+                },
+                "beneficiaryPhone": {
+                  "type": "string",
+                  "description": "Phone of the Beneficiary."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A new investor has been created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "investorId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict, resource already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "HTTP status code"
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error code"
+                    },
+                    "messages": {
+                      "type": "string",
+                      "description": "Description of the error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error, some service faild or internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1investors/post/responses/409/content/application~1json/schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

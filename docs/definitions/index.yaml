@@ -1,0 +1,4 @@
+Investor:
+  $ref: ./Investor.yaml
+Error:
+  $ref: ./Error.yaml
