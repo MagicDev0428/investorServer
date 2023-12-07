@@ -55,6 +55,8 @@ exports.updateInvestor = (req) => {
           message: "Your new Investor Id already exists!",
         });
       }
+      // Adding pin to the received object
+      received.pincode = pingenerator();
 
       // Create a new document with the desired _id
       const newInvestor = new investorModel(received);
@@ -78,8 +80,8 @@ exports.updateInvestor = (req) => {
         { $set: { investorName: received._id } }
       );
     } else {
-      // Adding pin to the received object
-      received.pincode = pingenerator();
+      // checking if pincode exist then delete it
+      if (received.pincode) delete received.pincode;
 
       // Update the existing document
       investorTable = await investorModel.findOneAndUpdate(
