@@ -39,6 +39,12 @@ export class ValidationError extends BaseError {
   }
 };
 
+export class ServiceError extends BaseError {
+  constructor(message = 'ServiceError') {
+    super('ServiceError', message);
+  }
+}
+
 export const boundedAsyncHandler = ({ type, message }) => fn => async (...args) => {
   try {
     return await fn(...args);
