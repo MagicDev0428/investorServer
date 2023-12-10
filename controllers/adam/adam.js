@@ -163,30 +163,67 @@ exports.adamList = (req) => {
 //
 // Update EXISTING adam with the data from the form
 //
-exports.adamSave = (req) => {
+exports.adamUpdate = (req) => {
   global.show("###### adamSave ######");
   let received = req ? req.body : null;
   if (received) global.show({ received });
 
-  // Input from recieved:
-  // - recieved.*   (you get ALL fields in the adams collection)
-  //
-  // - recieved._id is required
-  //
-  // with the rest of the fields, just fill them out as in adam collection (see the adamModel.js)
   return new Promise(async (resolve, reject) => {
-    // Update the adam in "adam" collection
-    global.saveLog(
-      global.adminNick,
-      "ADAM",
-      adamTable.investorName,
-      adamTable.investmentNo,
-      "Updated transaction: " +
-        formatDateTime(adamTable._id) +
-        " " +
-        adamTable.desctiption
-    );
+    // check recieved._id exists
+    const adamExists = await adamModel.exists({ _id: received?._id });
 
-    return resolve({ err: false, adams: adamTable });
+    if (!adamExists)
+      return reject({
+        err: true,
+        message: `Adam id ${received._id} is not exist!`,
+      });
+
+    // payload has investor name and investment no
+    if (!received.investorName || !received.investmentNo) {
+      return reject({
+        err: true,
+        message:
+          "In adam investor name and investment number both are required.",
+      });
+    }
+
+    //  investorName and Investment number exists
+
+    const investorExists = await investorModel.exists({
+      _id: received?.investorName,
+    });
+
+    const myInvestmentExists = await myInvestmentsModel.exists({
+      investmentNo: received.investmentNo,
+    });
+
+    if (!investorExists || !myInvestmentExists) {
+      return reject({
+        err: true,
+        message: "Referenced investor name and investment no. do not exist!",
+      });
+    }
+
+    adamTable = null;
+
+    adamTable = await adamModel.findOneAndUpdate(
+      { _id: received._id },
+      received,
+      { new: true }
+    );
+    // Update the adam in "adam" collection
+    // global.saveLog(
+    //   global.adminNick,
+    //   "ADAM",
+    //   adamTable.investorName,
+    //   adamTable.investmentNo,
+    //   "Updated transaction: " +
+    //     formatDateTime(adamTable._id) +
+    //     " " +
+    //     adamTable.desctiption
+    // );
+
+    if (adamTable) return resolve({ err: false, adams: adamTable });
+    return reject({ err: true, message: "Unable to update Adam!" });
   });
 };

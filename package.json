@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development node app",
+    "start": "NODE_ENV=development nodemon app",
     "start:live": "NODE_ENV=production node app",
     "lint": "eslint . --ext .js",
     "lint-fix": "eslint . --ext .js --fix",

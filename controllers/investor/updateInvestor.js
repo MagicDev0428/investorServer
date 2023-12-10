@@ -62,6 +62,7 @@ exports.updateInvestor = (req) => {
       const newInvestor = new investorModel(received);
 
       // Save the new document
+      investorTable = null;
       investorTable = await newInvestor.save();
 
       //  DELETE the investor with _oldId
@@ -83,24 +84,17 @@ exports.updateInvestor = (req) => {
       // checking if pincode exist then delete it
       if (received.pincode) delete received.pincode;
 
-      const investorExists = await investorModel.exists({
-        _id: received._id,
-      });
-      if (!investorExists) {
-        return reject({
-          err: true,
-          message: " investor does not  exist!",
-        });
-      }
       // Update the existing document
+      investorTable = null;
       investorTable = await investorModel.findOneAndUpdate(
         { _id: received._id },
         received,
-        { new: true, upsert: true }
+        { new: true }
       );
     }
 
     // Return investor update data
-    resolve({ err: false, investors: investorTable });
+    if (investorTable) return resolve({ err: false, investors: investorTable });
+    return reject({ err: true, message: "Unable to update investor!" });
   });
 };
