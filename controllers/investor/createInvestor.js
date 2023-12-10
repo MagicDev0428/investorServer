@@ -78,7 +78,7 @@ exports.investorCreate = async (req) => {
     // Saving investor data in the collection
     investorTable = null;
     investorTable = await newInvestor.save();
-
-    return resolve({ err: false, investors: investorTable });
+    if (investorTable) return resolve({ err: false, investors: investorTable });
+    return reject({ err: true, message: "Error in investor creation!" });
   });
 };

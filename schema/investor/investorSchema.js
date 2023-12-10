@@ -30,7 +30,7 @@ module.exports.investorSchema = new mongoose.Schema(
 
     createdDate: Date, // When was this investor created
     createdBy: String, // Who created the investor
-    modifiedDate: Number, // When was this investor modified
+    modifiedDate: Date, // When was this investor modified
     modifiedBy: String, // Who modified the investor
   },
   { versionKey: false }

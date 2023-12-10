@@ -17,15 +17,8 @@ const aggregateInvestorData = async (pipeline) => {
 // Common stages for the aggregation pipeline
 const commonStages = [
   {
-    $group: {
-      _id: "$_id",
-      Status: { $first: "$status" },
-      Country: { $first: "$country" },
-    },
-  },
-  {
     $lookup: {
-      from: "balances", // balances collection
+      from: "balances",
       let: { investor: "$_id" },
       pipeline: [
         {
@@ -38,6 +31,11 @@ const commonStages = [
             _id: null,
             totalDeposit: { $sum: "$deposit" },
             totalWithdraw: { $sum: "$withdraw" },
+            total_balance: {
+              $sum: {
+                $subtract: [{ $sum: "$deposit" }, { $sum: "$withdraw" }],
+              },
+            },
           },
         },
       ],
@@ -46,7 +44,7 @@ const commonStages = [
   },
   {
     $unwind: {
-      path: "$accountBalances", // account Balances collection
+      path: "$accountBalances",
       preserveNullAndEmptyArrays: true,
     },
   },
@@ -79,27 +77,10 @@ const commonStages = [
   },
   {
     $project: {
-      _id: 1,
-      Status: 1,
-      Country: 1,
-      Total_Deposit: { $ifNull: ["$accountBalances.totalDeposit", null] },
-      Total_Withdraw: { $ifNull: ["$accountBalances.totalWithdraw", null] },
-      Total_Balance: {
-        $subtract: [
-          { $ifNull: ["$accountBalances.totalDeposit", 0] },
-          { $ifNull: ["$accountBalances.totalWithdraw", 0] },
-        ],
-      },
-      Amount_Invested: {
-        $ifNull: ["$accountInvestments.totalInvested", null],
-      },
-      Profit_PrMonth: {
-        $ifNull: ["$accountInvestments.totalProfitPrMonth", null],
-      },
+      investor: "$$ROOT",
     },
   },
 ];
-
 exports.investorInfo = async (id) => {
   global.show("###### investorInfo ######");
 

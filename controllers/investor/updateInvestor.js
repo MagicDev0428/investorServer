@@ -83,6 +83,15 @@ exports.updateInvestor = (req) => {
       // checking if pincode exist then delete it
       if (received.pincode) delete received.pincode;
 
+      const investorExists = await investorModel.exists({
+        _id: received._id,
+      });
+      if (!investorExists) {
+        return reject({
+          err: true,
+          message: " investor does not  exist!",
+        });
+      }
       // Update the existing document
       investorTable = await investorModel.findOneAndUpdate(
         { _id: received._id },
