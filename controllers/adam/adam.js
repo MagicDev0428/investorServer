@@ -225,7 +225,7 @@ exports.adamUpdate = (req) => {
 };
 
 exports.adamInvestors = async () => {
-  global.show("###### adamInvestors ######");
+  global.show("###### adamInvestors  ######");
 
   return new Promise(async (resolve, reject) => {
     const investorsNames = await investorModel.find({}, "_id");
