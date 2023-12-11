@@ -1,7 +1,7 @@
 // Adam Model
 // This model is the structure containing all information about money to and from Adam
 //
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 module.exports.adamSchema = new mongoose.Schema(
   {
     _id: Number, // Transaction Date and Time:
