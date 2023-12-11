@@ -1,8 +1,6 @@
 const express = require("express");
 const { investorGet } = require("../../controllers/investor/getInvestor");
 const { updateInvestor } = require("../../controllers/investor/updateInvestor");
-// const { investorList } = require("../../controllers/investor/investorList");
-// const { investorInfo } = require("../../controllers/investor/investorInfo");
 const { deleteInvestor } = require("../../controllers/investor/deleteInvestor");
 const { investorCreate } = require("../../controllers/investor/createInvestor");
 const {

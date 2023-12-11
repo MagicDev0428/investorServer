@@ -18,9 +18,9 @@ module.exports.adamSchema = new mongoose.Schema(
     description: String, // Description of what happened
     attachments: Array, // Array of Images and files ("filename","filename") containing transfer reciepts
 
-    createdDate: Number, // When was this transaction created
+    createdDate: Date, // When was this transaction created
     createdBy: String, // Who created the transaction
-    modifiedDate: Number, // When was this transaction modified
+    modifiedDate: Date, // When was this transaction modified
     modifiedBy: String, // Who modified the transaction
   },
   { versionKey: false }

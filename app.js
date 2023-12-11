@@ -19,6 +19,7 @@ let newDate = new Date();
 let tmpDate = newDate.toString().substring(0, 21);
 const { User } = require("./models/user");
 const investorRoute = require("./routes/investor/investorRoute");
+const adamRoute = require("./routes/adam/adamRoute");
 require("./logger/simpleLogger"); // global.show is imported from simpleLogger
 
 require("dotenv").config({
@@ -158,6 +159,9 @@ app.set("port", process.env.PORT || 3007);
 
 // investor route calling in app.js
 app.use("/investor", investorRoute);
+
+// adam route
+app.use("/adam", adamRoute);
 
 // Setup server to listen
 var server = app.listen(app.get("port"), function () {
