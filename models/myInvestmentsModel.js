@@ -18,18 +18,24 @@ var myInvestmentsSchema  = new Schema({
     transactionNo:      String,     // Transaction number from bank 
     documents:           Array,      // Array of Images and reciepts ("filename","filename")
 
-    profitMonthly:      Number,     // Monthly Profit Procentage
-    profitYearly:       Number,     // Yearly Profit Procentage
-    profitEnd:          Number,     // When investment ends Profit Procentage
+    profitMonthlyPct:   Number,     // Investors Monthly Profit Procentage
+    profitMonthly:      Number,     // Investors Monthly Profit Amount
+    profitAnnualPct:    Number,     // Investors Yearly Profit Procentage
+    profitAnnual:       Number,     // Investors Yearly Profit Amount
+    profitEndPct:       Number,     // Investors When investment ends Profit Procentage
+    profitEnd:          Number,     // Investors When investment ends Profit Amount
 
     investType:         String,     // InvestmentType: Monthly Profit, Annual Profit, One-time Profit, Mixed 
     firstProfitDate:    Number,     // When will we PAY the first PROFIT to the investor
     lastProfitDate:     Number,     // When will we PAY the last PROFIT to the investor
     payBackDate:        Number,     // When do we have to pay the investor the money back
 
-    torbenMonthly:      Number,     // Torbens Monthly Profit Procentage
-    torbenYearly:       Number,     // Torbens Yearly Profit Procentage
-    torbenEnd:          Number,     // Torbens When investment ends Profit Procentage
+    torbenMonthlyPct:   Number,     // Torbens Monthly Profit Procentage
+    torbenMonthly:      Number,     // Torbens Monthly Profit Amount
+    torbenAnnualPct:    Number,     // Torbens Yearly Profit Procentage
+    torbenAnnual:       Number,     // Torbens Yearly Profit Amount
+    torbenEndPct:       Number,     // Torbens When investment ends Profit Procentage
+    torbenEnd:          Number,     // Torbens When investment ends Profit Amount
 
     description:        String,     // Any comments or special deals
 

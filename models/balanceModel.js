@@ -9,18 +9,18 @@ var balanceSchema  = new Schema({
     investorName:       String,     // Name from Investors Table 
 
     profitMonth:        Number,     // Which month/year did investor get this profit
+    profitMonthPaid:    Boolean,    // Has profit been paid this month?  (If we set this to true, then set emailDate to 0)
+    emailDate:          Number,     // Date and Time the email was sent (ALWAYS set this to 0 when create new record)
+
     deposit:            Number,     // Amount deposited into investors account (profit)
     withdraw:           Number,     // Amount withdraw from investors account (payment)
-    transferDate:       Number,     // Transaction Date and Time
+    transferDate:       Number,     // Transaction transfer Date and Time
 
     transactionFrom:    String,     // Transfer transaction FROM bank / account 
     transactionTo:      String,     // Transfer transaction TO bank / account 
     transactionNo:      String,     // Transaction number from bank 
 
     transferMethod:     String,     // Envelope/Thai Bank/Forign Bank/Crypto 
-    transferCurrency:   String,     // THB, DKK, USD, BTC, ETH.... fdsf
-
-    emailDate:          Number,     // Date and Time the email was sent
 
     description:        String,     // Description of what happened 
     hiddenRemark:       String,     // Hidden Description that only we can see
