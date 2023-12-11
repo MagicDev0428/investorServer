@@ -72,6 +72,9 @@ exports.investorCreate = async (req) => {
     // Adding pin to the received object
     received.pincode = Lib.pingenerator();
 
+    const folderName = Lib.transformNameToPath(received.name);
+    const isFolderNameTaken = await Lib.isInvestorFolderNameTaken(received.name);
+
     // Creating a new investor instance
     const newInvestor = new investorModel(received);
 
