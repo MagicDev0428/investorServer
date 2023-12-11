@@ -9,7 +9,7 @@ const { investorModel } = require("../../models/investor/investorModel");
 const {
   myInvestmentsModel,
 } = require("../../models/investor/myInvestmentsModel");
-const { balanceModel } = require("../../models/investor/balanceModel");
+const { investmentModel } = require("../../models/investmentModel");
 
 // creating adam table model
 let adamTable = mongoose.model("adam", adamSchema);
@@ -47,16 +47,17 @@ exports.adamCreate = (req) => {
       _id: received?.investorName,
     });
 
-    const myInvestmentExists = await myInvestmentsModel.exists({
-      investmentNo: received.investmentNo,
+    const investmentExists = await investmentModel.exists({
+      _id: received.investmentNo,
     });
 
-    if (!investorExists || !myInvestmentExists) {
+    if (!investorExists || !investmentExists) {
       return reject({
         err: true,
         message: "Referenced investor and investment do not exist!",
       });
     }
+
     // Unixx date as an id
     received._id = new Date().getTime();
 
@@ -85,29 +86,23 @@ exports.adamCreate = (req) => {
 //
 // Get all data used on the adam form
 //
-exports.adamGet = (req) => {
+exports.adamGet = (adamId) => {
   global.show("###### adamGet ######");
-  let received = req ? req.body : null;
-  if (received) global.show({ received });
+  if (adamId) global.show(adamId);
 
   // Input from recieved:
   // - recieved._id (the adams unique key of adams collection)
 
   return new Promise(async (resolve, reject) => {
     // Check for received data
-    if (!received) {
-      return reject("Nothing received from caller");
-    }
-
-    // adam ID missing (_id)
-    if (!received._id) {
-      return reject("adam._id missing");
+    if (!adamId) {
+      return reject("Id is not recieved.");
     }
 
     adamTable = null;
-    adamTable = await adamModel.findOne({ _id: received._id });
+    adamTable = await adamModel.findOne({ _id: adamId });
     if (!adamTable) {
-      return reject("adam " + received._id + "Not Found!");
+      return reject("adam " + adamId + "Not Found!");
     }
 
     return resolve({ err: false, adams: adamTable });
@@ -124,7 +119,7 @@ exports.adamDelete = (adamId) => {
 
   return new Promise(async (resolve, reject) => {
     adamTable = null;
-    adamTable = await adamModel.findOneAndDelete(adamId);
+    adamTable = await adamModel.findOneAndDelete({ _id: adamId });
     // Check that adam allready exist based _id
 
     // IF he exist then DELETE the adam
@@ -139,17 +134,18 @@ exports.adamDelete = (adamId) => {
     //     adamTable.desctiption
     // );
     if (adamTable) return resolve({ err: false, adams: adamTable });
-    return reject({ err: true, message: "Error in adam deletion!" });
+    return reject({
+      err: true,
+      message: "Error in adam deletion,please check your id!",
+    });
   });
 };
 
 //
 // List all from adam collection
 //
-exports.adamList = (req) => {
+exports.adamList = () => {
   global.show("###### adamList ######");
-  let received = req ? req.body : null;
-  if (received) global.show({ received });
 
   return new Promise(async (resolve, reject) => {
     adamTable = null;
@@ -193,14 +189,14 @@ exports.adamUpdate = (req) => {
       _id: received?.investorName,
     });
 
-    const myInvestmentExists = await myInvestmentsModel.exists({
-      investmentNo: received.investmentNo,
+    const investmentExists = await investmentModel.exists({
+      _id: received.investmentNo,
     });
 
-    if (!investorExists || !myInvestmentExists) {
+    if (!investorExists || !investmentExists) {
       return reject({
         err: true,
-        message: "Referenced investor name and investment no. do not exist!",
+        message: "Referenced investor and investment do not exist!",
       });
     }
 
@@ -228,4 +224,18 @@ exports.adamUpdate = (req) => {
   });
 };
 
-exports.adamInvestorList;
+exports.adamInvestors = async () => {
+  global.show("###### adamInvestors ######");
+
+  return new Promise(async (resolve, reject) => {
+    const investorsNames = await investorModel.find({}, "_id");
+
+    const investmentValues = await investmentModel.find({}, "_id Explanation");
+    const investments = investmentValues.map(
+      (item) => `${item._id} - ${item.Explanation}`
+    );
+    adamTable = null;
+    adamTable = { investorsNames, investments };
+    return resolve({ err: false, adams: adamTable });
+  });
+};

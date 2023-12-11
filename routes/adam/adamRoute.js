@@ -5,6 +5,7 @@ const {
   adamGet,
   adamList,
   adamUpdate,
+  adamInvestors,
 } = require("../../controllers/adam/adam");
 
 const router = express.Router();
@@ -33,6 +34,7 @@ router.get("/getadam/:adamId", async (req, res) => {
 router.delete("/deleteadam/:adamId", async (req, res) => {
   try {
     const result = await adamDelete(req.params.adamId);
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -53,6 +55,15 @@ router.put("/updateadam", async (req, res) => {
 router.get("/listadam", async (req, res) => {
   try {
     const result = await adamList();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/adaminvestors", async (req, res) => {
+  try {
+    const result = await adamInvestors();
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });

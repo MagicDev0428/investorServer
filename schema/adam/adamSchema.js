@@ -21,7 +21,7 @@ module.exports.adamSchema = new mongoose.Schema(
     createdDate: Date, // When was this transaction created
     createdBy: String, // Who created the transaction
     modifiedDate: Date, // When was this transaction modified
-    modifiedBy: String, // Who modified the transaction
+    modifiedBy: String,
   },
   { versionKey: false }
 ); // Don't want to insert _v in document
