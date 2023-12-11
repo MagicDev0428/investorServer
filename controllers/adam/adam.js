@@ -232,7 +232,7 @@ exports.adamInvestors = async () => {
 
     const investmentValues = await investmentModel.find({}, "_id Explanation");
     const investments = investmentValues.map(
-      (item) => `${item._id} - ${item.Explanation}`
+      (item) => `${item._id}  ${item.Explanation}`
     );
     adamTable = null;
     adamTable = { investorsNames, investments };
