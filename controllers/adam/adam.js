@@ -227,3 +227,5 @@ exports.adamUpdate = (req) => {
     return reject({ err: true, message: "Unable to update Adam!" });
   });
 };
+
+exports.adamInvestorList;
