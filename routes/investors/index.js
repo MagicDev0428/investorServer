@@ -23,14 +23,14 @@ export const router = express.Router();
  *         required: true
  *         type: string
  */
-router.get('/', boundedRoute(async (req, res) => {
+router.get('/', userLoggedIn,  boundedRoute(async (req, res) => {
   const investors = await Factories.InvestorFactory.getInvestors();
   res.respond({
     investors
   });  
 }));
 
-router.post('/',
+router.post('/save',
   Middlewares.checkAdminPrivileges,
   Middlewares.StorageMiddlewares.upload.array('passportImages', MAX_FILES_PER_REQUEST), 
   Middlewares.RouteMiddlewares.createInvestor, 

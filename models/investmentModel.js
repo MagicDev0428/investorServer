@@ -16,12 +16,18 @@ var investmentSchema = new Schema({
     profitYearly:       Number,     // Yearly Profit Procentage
     profitEnd:          Number,     // When investment ends Profit Procentage
 
-    Explanation:        String,     // Desscription/Explanation 
+    explanation:        String,     // Desscription/Explanation 
     attachments:        Array,      // Array of Images and documents ("filename","filename")
 
-    createdDate:        Number,     // When was this investor created
+    createdDate: {                  // When was this investor created
+        type: Date, 
+        default: Date.now
+    },                            
     createdBy:          String,     // Who created the investor
-    modifiedDate:       Number,     // When was this investor modified
+    modifiedDate: {                 // When was this investor modified
+        type: Date, 
+        default: Date.now
+    },     
     modifiedBy:         String      // Who modified the investor
 
 }, { versionKey: false });          // Don't want to insert _v in document

@@ -4,7 +4,7 @@
 var mongoose  = require('mongoose');
 var Schema    = mongoose.Schema;
 var logSchema = new Schema({
-    _id:                Number,     // Log Date and Time
+    _id:                Date,       // Log Date and Time
     logBy:              String,     // Users Name (Bee/Torben) 
     logType:            String,     // EMAIL, ADAM, WITHDRAW, REINVEST, INVEST, PROFIT, CUSTOMER.... 
     investorName:       String,     // Name from Investors Table 

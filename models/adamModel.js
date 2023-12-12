@@ -18,9 +18,16 @@ var adamSchema = new Schema({
     description:        String,     // Description of what happened 
     attachments:        Array,      // Array of Images and files ("filename","filename") containing transfer reciepts
 
-    createdDate:        Number,     // When was this transaction created
-    createdBy:          String,     // Who created the transaction
-    modifiedDate:       Number,     // When was this transaction modified
-    modifiedBy:         String      // Who modified the transaction
+    createdDate: {                  // When was this investor created
+        type: Date, 
+        default: Date.now
+    },                            
+    createdBy:          String,     // Who created the investor
+    modifiedDate: {                 // When was this investor modified
+        type: Date, 
+        default: Date.now
+    },     
+    modifiedBy:         String      // Who modified the investor
+    
 }, { versionKey: false });          // Don't want to insert _v in document
 module.exports = mongoose.model('adamModel', adamSchema,'adam');

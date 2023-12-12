@@ -11,7 +11,7 @@ var myInvestmentsSchema  = new Schema({
     investorName:       String,     // Name from Investors Table 
 
     amountInvested:     Number,     // The amount of money invested
-    transferDate:       Number,     // Date of the transfer
+    transferDate:       Date,       // Date of the transfer
 
     transactionFrom:    String,     // Transfer transaction FROM bank / account 
     transactionTo:      String,     // Transfer transaction TO bank / account 
@@ -26,9 +26,9 @@ var myInvestmentsSchema  = new Schema({
     profitEnd:          Number,     // Investors When investment ends Profit Amount
 
     investType:         String,     // InvestmentType: Monthly Profit, Annual Profit, One-time Profit, Mixed 
-    firstProfitDate:    Number,     // When will we PAY the first PROFIT to the investor
-    lastProfitDate:     Number,     // When will we PAY the last PROFIT to the investor
-    payBackDate:        Number,     // When do we have to pay the investor the money back
+    firstProfitDate:    Date,       // When will we PAY the first PROFIT to the investor
+    lastProfitDate:     Date,       // When will we PAY the last PROFIT to the investor
+    payBackDate:        Date,       // When do we have to pay the investor the money back
 
     torbenMonthlyPct:   Number,     // Torbens Monthly Profit Procentage
     torbenMonthly:      Number,     // Torbens Monthly Profit Amount
@@ -39,9 +39,15 @@ var myInvestmentsSchema  = new Schema({
 
     description:        String,     // Any comments or special deals
 
-    createdDate:        Number,     // When was this investor created
+    createdDate: {                  // When was this investor created
+        type: Date, 
+        default: Date.now
+    },                            
     createdBy:          String,     // Who created the investor
-    modifiedDate:       Number,     // When was this investor modified
+    modifiedDate: {                 // When was this investor modified
+        type: Date, 
+        default: Date.now
+    },     
     modifiedBy:         String      // Who modified the investor
 
 }, { versionKey: false });          // Don't want to insert _v in document
