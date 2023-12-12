@@ -230,10 +230,8 @@ exports.adamInvestors = async () => {
   return new Promise(async (resolve, reject) => {
     const investorsNames = await investorModel.find({}, "_id");
 
-    const investmentValues = await investmentModel.find({}, "_id Explanation");
-    const investments = investmentValues.map(
-      (item) => `${item._id}  ${item.Explanation}`
-    );
+    const investments = await investmentModel.find({}, "_id Explanation");
+
     adamTable = null;
     adamTable = { investorsNames, investments };
     return resolve({ err: false, adams: adamTable });
