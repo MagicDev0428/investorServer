@@ -1,6 +1,7 @@
 // Investment Model
 // This model is the structure containing all information about the INVESTMENT
 //
+
 var mongoose         = require('mongoose');
 var Schema           = mongoose.Schema;
 var investmentSchema = new Schema({
@@ -32,3 +33,4 @@ var investmentSchema = new Schema({
 
 }, { versionKey: false });          // Don't want to insert _v in document
 module.exports = mongoose.model('investmentModel', investmentSchema,'investment');
+

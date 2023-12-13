@@ -15,88 +15,89 @@ let investorTable = mongoose.model("investor", investorSchema);
 //
 // Update EXISTING investor with the data from the form
 //
+
+//minmum request body data
+//'{
+//     "_id":"tiHold new",
+//     "_oldId":"tiHold",
+//     "nickName":"tiHold reuo",
+//
+// }
+//   * no need to add admin, it will automtically become false even you will add it in request body
+//   * you can exclude the _oldId if you do not want to update user id and for other values of investor
+//   go to investor schema
+
 exports.updateInvestor = (req) => {
-  global.show("###### investorSave ######");
+  global.show("###### investor Update  ######");
   const received = req ? req.body : null;
   if (received) global.show({ received });
 
   return new Promise(async (resolve, reject) => {
-    // checking _id, _oldId and nickName because they are required fileds
-    if (!received._id || !received._oldId || !received.nickName) {
+    // validating id and nickname are exist or not
+
+
+    if (!received._id || !received.nickName) {
+
       return reject({
         err: true,
-        message: "_oldId, _id and nickname are required!",
+        message: "_id and nickname are required!",
       });
     }
+
 
     // Removing admin if it exists in the body
     if (received.admin) delete received.admin;
 
-    // checking old id and new id are same
-    if (received._id === received._oldId) {
+    if (received?._oldId) {
+      // Check if the new "_id" already exists
+      const existingInvestor = await investorModel.findById(received._id);
+      if (existingInvestor) {
+        return reject({
+          err: true,
+          message: "Your new Investor Id already exists!",
+        });
+      }
+      // Adding pin to the received object
+      received.pincode = pingenerator();
+
+      // Create a new document with the desired _id
+      const newInvestor = new investorModel(received);
 
 
-// Insram
-// no - if they are the same or oldId is null or ""...
-// then update the record normally with everything you get from recieve
+      // Save the new document
+      investorTable = null;
+      investorTable = await newInvestor.save();
 
-
-
-      return reject({
-        err: true,
-        message: "Old id and new id should be changed to update!",
+      //  DELETE the investor with _oldId
+      await investorModel.findOneAndDelete({
+        _id: received._oldId,
       });
+      // Update myInvestment collection against new id
+      await myInvestmentsModel.updateMany(
+        { investorName: received._oldId },
+        { $set: { investorName: received._id } }
+      );
+
+      // Update balance collection against new id
+      await balanceModel.updateMany(
+        { investorName: received._oldId },
+        { $set: { investorName: received._id } }
+      );
+    } else {
+      // checking if pincode exist then delete it
+      if (received.pincode) delete received.pincode;
+
+      // Update the existing document
+      investorTable = null;
+      investorTable = await investorModel.findOneAndUpdate(
+        { _id: received._id },
+        received,
+        { new: true }
+      );
     }
 
-    // Validating email
-    if (
-      (received?.email && !validator.isEmail(received?.email)) ||
-      (received?.beneficiaryEmail &&
-        !validator.isEmail(received?.beneficiaryEmail))
-    ) {
-      return reject({
-        err: true,
-        message: "Invalid Email or beneficiaryEmail address!",
-      });
-    }
-
-    // Check if the new "_id" already exists
-    const existingInvestor = await investorModel.findById(received._id);
-    if (existingInvestor) {
-      return reject({
-        err: true,
-        message: "Your new Investor Id already exist! ",
-      });
-    }
-
-    //  DELETE the investor with _oldId
-    await investorModel.findOneAndDelete({
-      _id: received._oldId,
-    });
-
-    // Adding pin to the received object
-    received.pincode = Lib.pingenerator();
-
-    // Creating a new investor instance with new id
-    const newInvestor = new investorModel(received);
-
-    // Saving investor updated data in the collection
-    investorTable = null;
-    investorTable = await newInvestor.save();
-
-    // updating myInvestment collection against new id
-    await myInvestmentsModel.updateMany(
-      { investorName: received._oldId },
-      { $set: { investorName: received._id } }
-    );
-
-    // updating balance collection against new id
-    await balanceModel.updateMany(
-      { investorName: received._oldId },
-      { $set: { investorName: received._id } }
-    );
-
-    // return investor update data
-    return resolve({ err: false, investors: investorTable });
+    // Return investor update data
+    if (investorTable) return resolve({ err: false, investors: investorTable });
+    return reject({ err: true, message: "Unable to update investor!" });
   });
 };

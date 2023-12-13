@@ -14,6 +14,16 @@ let investorTable = mongoose.model("investor", investorSchema);
 //
 // Create NEW investor with the data from the form
 //
+// url => http://localhost:3007/investor/createinvestor
+
+// minmum body data
+// {
+//     "_id":"TimHold",
+//     "nickName":"Tim"
+// }
+// to add other data first check the investor schema
+//
+//
 exports.investorCreate = async (req) => {
   global.show("###### investorCreate ######");
   const received = req ? req.body : null;
@@ -68,7 +78,7 @@ exports.investorCreate = async (req) => {
     // Saving investor data in the collection
     investorTable = null;
     investorTable = await newInvestor.save();
-
-    return resolve({ err: false, investors: investorTable });
+    if (investorTable) return resolve({ err: false, investors: investorTable });
+    return reject({ err: true, message: "Error in investor creation!" });
   });
 };
