@@ -6,9 +6,6 @@ const mongoose = require("mongoose");
 const { adamModel } = require("../../models/adam/adamModel");
 const { adamSchema } = require("../../schema/adam/adamSchema");
 const { investorModel } = require("../../models/investor/investorModel");
-const {
-  myInvestmentsModel,
-} = require("../../models/investor/myInvestmentsModel");
 const { investmentModel } = require("../../models/investmentModel");
 
 // creating adam table model
