@@ -1,0 +1,4 @@
+# Investor Endpoint
+/investors:
+  post:
+    $ref: ./investors/investor-list.yaml

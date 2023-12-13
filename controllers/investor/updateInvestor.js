@@ -1,9 +1,8 @@
 // Update investor controller
-
+import { Lib } from '../../utils';
 const validator = require("validator");
 const mongoose = require("mongoose");
 const { investorModel } = require("../../models/investor/investorModel");
-const { pingenerator } = require("../../utils/pingenerator");
 const { investorSchema } = require("../../schema/investor/investorSchema");
 const {
   myInvestmentsModel,
@@ -36,12 +35,15 @@ exports.updateInvestor = (req) => {
   return new Promise(async (resolve, reject) => {
     // validating id and nickname are exist or not
 
+
     if (!received._id || !received.nickName) {
+
       return reject({
         err: true,
         message: "_id and nickname are required!",
       });
     }
+
 
     // Removing admin if it exists in the body
     if (received.admin) delete received.admin;
@@ -60,6 +62,7 @@ exports.updateInvestor = (req) => {
 
       // Create a new document with the desired _id
       const newInvestor = new investorModel(received);
+
 
       // Save the new document
       investorTable = null;

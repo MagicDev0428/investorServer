@@ -1,11 +1,11 @@
 //
 // Create Investor
 //
-
+import { Lib } from '../../utils';
 const validator = require("validator");
 const mongoose = require("mongoose");
 let { investorModel } = require("../../models/investor/investorModel");
-const { pingenerator } = require("../../utils/pingenerator");
+// const { pingenerator } = require("../../utils/pingenerator");
 const { investorSchema } = require("../../schema/investor/investorSchema");
 
 // creating investor table model
@@ -70,7 +70,7 @@ exports.investorCreate = async (req) => {
     }
 
     // Adding pin to the received object
-    received.pincode = pingenerator();
+    received.pincode = Lib.pingenerator();
 
     // Creating a new investor instance
     const newInvestor = new investorModel(received);

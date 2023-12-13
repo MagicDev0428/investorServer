@@ -1,0 +1,579 @@
+
+
+-----------------------------------------------------
+So we have these investors:
+-----------------------------------------------------
+
+Red One Man
+Red Two Man
+Red Three Man
+
+Yellow One Man
+Yellow Two Man
+Yellow Three Man
+
+Green One Man
+Green Two Man
+Green Three Man
+
+Purple One Man
+Purple Two Man
+Purple Three Man
+
+-----------------------------------------------------
+
+use InvestorSystem
+
+db.investor.drop()
+
+db.createCollection("investor")
+
+
+db.investor.insert(
+	{
+		_id : "Red One Man",
+        status : "INVESTOR",         
+        nickname : "Red1",
+        country : "Denmark",
+		transferType : "Envelope"
+    }
+)
+db.investor.insert(
+	{
+		_id : "Red Two Man",
+        status : "INVESTOR",         
+        nickname : "Red2",
+        country : "Sweden",
+		transferType : "Thai Bank"
+    }
+)
+db.investor.insert(
+	{
+		_id : "Red Three Man",
+        status : "INVESTOR",         
+        nickname : "Red3",
+        country : "Ukraine",
+		transferType : "Transfer"
+    }
+)
+db.investor.insert(
+	{
+		_id : "Yellow One Man",
+        status : "INVESTOR",         
+        nickname : "Yellow1",
+        country : "Denmark",
+		transferType : "Envelope"
+    }
+)
+db.investor.insert(
+	{
+		_id : "Yellow Two Man",
+        status : "INVESTOR",         
+        nickname : "Yellow2",
+        country : "Sweden",
+		transferType : "Thai Bank"
+    }
+)
+db.investor.insert(
+	{
+		_id : "Yellow Three Man",
+        status : "INVESTOR",         
+        nickname : "Yellow3",
+        country : "Ukraine",
+		transferType : "Transfer"
+    }
+)
+
+db.investor.insert(
+	{
+		_id : "Green One Man",
+        status : "INVESTOR",         
+        nickname : "Green1",
+        country : "Denmark",
+		transferType : "Envelope"
+    }
+)
+db.investor.insert(
+	{
+		_id : "Green Two Man",
+        status : "INVESTOR",         
+        nickname : "Green2",
+        country : "Sweden",
+ 		transferType : "Thai Bank"
+   }
+)
+db.investor.insert(
+	{
+		_id : "Green Three Man",
+        status : "INVESTOR",         
+        nickname : "Green3",
+        country : "Ukraine",
+		transferType : "Transfer"
+    }
+)
+
+db.investor.insert(
+	{
+		_id : "Purple One Man",
+        status : "INVESTOR",         
+        nickname : "Purple1",
+        country : "Denmark",
+		transferType : "Envelope"
+    }
+)
+db.investor.insert(
+	{
+		_id : "Purple Two Man",
+        status : "INVESTOR",         
+        nickname : "Purple2",
+        country : "Sweden",
+		transferType : "Thai Bank"
+    }
+)
+db.investor.insert(
+	{
+		_id : "Purple Three Man",
+        status : "INVESTOR",         
+        nickname : "Purple3",
+        country : "Ukraine",
+		transferType : "Transfer"
+    }
+)
+
+
+
+-----------------------------------------------------
+They have the following investments (in myInvestments)
+
+Red One Man		 3 investments		5500 monthly profit
+Red Two Man		 2 investments		2500 monthly profit
+Red Three Man	 1 investments		1000 monthly profit
+
+Yellow One Man	 3 investments		5500 monthly profit
+Yellow Two Man   2 investments		2500 monthly profit
+Yellow Three Man 1 investments		1000 monthly profit
+
+Green One Man	 3 investments		5500 monthly profit
+Green Two Man    2 investments		2500 monthly profit
+Green Three Man  1 investments		1000 monthly profit
+
+Purple One Man	 1 investments		50,000 annual profit (not yet)
+Purple Two Man   1 investments		100,000 annual profit (now)
+Purple Three Man 1 investments		250,000 one-time profit (now)
+
+_id: sequenceNextValue("_id")
+
+-----------------------------------------------------
+
+use InvestorSystem
+
+db.myInvestments.drop()
+
+db.createCollection("myInvestments")
+
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Red One Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "002",
+        investorName : "Red One Man",         
+        profitMonthly : 1500,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "003",
+        investorName : "Red One Man",         
+        profitMonthly : 3000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Red Two Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "002",
+        investorName : "Red Two Man",         
+        profitMonthly : 1500,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Red Three Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Yellow One Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "002",
+        investorName : "Yellow One Man",         
+        profitMonthly : 1500,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "003",
+        investorName : "Yellow One Man",         
+        profitMonthly : 3000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Yellow Two Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "002",
+        investorName : "Yellow Two Man",         
+        profitMonthly : 1500,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Yellow Three Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+
+
+
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Green One Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "002",
+        investorName : "Green One Man",         
+        profitMonthly : 1500,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "003",
+        investorName : "Green One Man",         
+        profitMonthly : 3000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Green Two Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "002",
+        investorName : "Green Two Man",         
+        profitMonthly : 1500,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Green Three Man",         
+        profitMonthly : 1000,
+        investType : "Monthly Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Normal Monthly investment"
+    }
+)
+
+
+db.myInvestments.insert(
+	{
+		investmentNo : "001",
+        investorName : "Purple One Man",         
+        profitAnnual : 50000,
+        investType : "Annual Profit",
+		firstProfitDate	: new ISODate("2023-01-01"),
+		lastProfitDate : new ISODate("2025-01-01"),
+		description : "Only profit once a year (BEFORE 16th December 2023)"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "002",
+        investorName : "Purple Two Man",         
+        profitAnnual : 100000,
+        investType : "Annual Profit",
+		firstProfitDate	: new ISODate("2023-12-16"),
+		lastProfitDate : new ISODate("2025-12-16"),
+		description : "Only profit once a year (16th December 2023)"
+    }
+)
+db.myInvestments.insert(
+	{
+		investmentNo : "003",
+        investorName : "Purple Three Man",         
+        profitEnd : 250000,
+        investType : "One-Time Profit",
+		firstProfitDate	: null,
+		lastProfitDate : new ISODate("2023-12-14"),
+		description : "Only profit at END of the investment (14th December 2023)"
+    }
+)
+
+
+
+-----------------------------------------------------
+They ALREADY have the following in their balance
+
+Red One Man		 profit from last month, deposit this month
+Red Two Man		 withdraw this month
+Red Three Man	 did not get ENOUGH profit in december
+
+Yellow One Man	 got profit but no email 
+Yellow Two Man   got profit but no email
+Yellow Three Man got profit but no email
+
+Green One Man	 got profit and mail
+Green Two Man    got profit and mail
+Green Three Man  got profit and mail
+
+Purple One Man	 should not get anything cause profit was last month or so
+Purple Two Man   should be shown because profit is THIS month
+Purple Three Man should be shown because profit is THIS month
+
+-----------------------------------------------------
+
+
+use InvestorSystem
+
+db.balance.drop()
+
+db.createCollection("balance")
+
+db.balance.insert(
+	{
+        investorName : "Red One Man",         
+        profitMonth : new ISODate("2023-11-15"),
+        profitMonthPaid : true,
+        deposit: 6000,
+		emailDate : new ISODate("2023-11-15"),
+		description : "get profit in November"
+    }
+)
+db.balance.insert(
+	{
+        investorName : "Red One Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : false,
+        deposit: 500,
+		emailDate : 0,
+		description : "Did NOT get profit in December (but got deposit)"
+    }
+)
+db.balance.insert(
+	{
+        investorName : "Red Two Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : false,
+        withdraw: 250,
+		emailDate : 1702173667,
+		description : "Did NOT get profit in December (but did a withdrawal)"
+    }
+)
+db.balance.insert(
+	{
+        investorName : "Red Three Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : true,
+        deposit: 100,
+		emailDate : 1702173667,
+		description : "Did NOT get ENOUGH profit in December"
+    }
+)
+
+
+db.balance.insert(
+	{
+        investorName : "Yellow One Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : true,
+        deposit: 5500,
+		emailDate : 0,
+		description : "Already get profit but NO email in December"
+    }
+)
+db.balance.insert(
+	{
+        investorName : "Yellow Two Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : true,
+        deposit: 2500,
+		emailDate : 0,
+		description : "Already get profit but NO email in December"
+    }
+)
+db.balance.insert(
+	{
+        investorName : "Yellow three Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : true,
+        deposit: 1000,
+		emailDate : 0,
+		description : "Already get profit but NO email in December"
+    }
+)
+
+
+
+
+db.balance.insert(
+	{
+        investorName : "Green One Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : true,
+        deposit: 5500,
+		emailDate : new ISODate("2023-12-15"),
+		description : "Already get profit AND email in December"
+    }
+)
+
+db.balance.insert(
+	{
+        investorName : "Green Two Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : true,
+        deposit: 6000,
+		emailDate : new ISODate("2023-12-15"),
+		description : "Already get profit AND email in December"
+    }
+)
+
+db.balance.insert(
+	{
+        investorName : "Green Three Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : true,
+        deposit: 6000,
+		emailDate : new ISODate("2023-12-15"),
+		description : "Already get profit AND email in December"
+    }
+)
+
+
+db.balance.insert(
+	{
+        investorName : "Purple One Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : false,
+        deposit: 500,
+		emailDate : 0,
+		description : "Did NOT get profit in December (but got deposit)"
+    }
+)
+db.balance.insert(
+	{
+        investorName : "Purple Two Man",         
+        profitMonth : new ISODate("2023-12-15"),
+        profitMonthPaid : false,
+        withdraw: 250,
+		emailDate : new ISODate("2023-12-15"),
+		description : "Did NOT get profit in December (but did a withdrawal)"
+    }
+)
+
+
+
+

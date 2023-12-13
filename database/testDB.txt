@@ -1,0 +1,171 @@
+
+
+
+
+
+
+
+db.customer.insert(
+	{
+		_id : "Torben Rudgaard",
+        status : "INVESTOR",         
+        country : "Denmark"
+    }
+}
+db.customer.insert(
+	{
+		_id : "Kent Hanson",
+        status : "INVESTOR",         
+        country : "Sweden"
+    }
+}
+
+
+
+
+
+db.investments.insert(
+	{
+		customer : "Torben Rudgaard",
+        amountInvested : 200000,         
+        profitPrMonth : 1000
+    }
+}
+db.investments.insert(
+	{
+		customer : "Torben Rudgaard",
+        amountInvested : 300000,         
+        profitPrMonth : 1500
+    }
+}
+db.investments.insert(
+	{
+		customer : "Torben Rudgaard",
+        amountInvested : 500000,         
+        profitPrMonth : 2500
+    }
+}
+
+db.investments.insert(
+	{
+		customer : "Kent Hanson",
+        amountInvested : 600000,         
+        profitPrMonth : 4000
+    }
+}
+db.investments.insert(
+	{
+		customer : "Kent Hanson",
+        amountInvested : 500000,         
+        profitPrMonth : 3500
+    }
+}
+db.investments.insert(
+	{
+		customer : "Kent Hanson",
+        amountInvested : 750000,         
+        profitPrMonth : 4500
+    }
+}
+db.investments.insert(
+	{
+		customer : "Kent Hanson",
+        amountInvested : 250000,         
+        profitPrMonth : 1500
+    }
+}
+
+
+
+
+
+
+db.accountBalance.insert(
+	{
+		customer : "Torben Rudgaard",
+        deposit : 2000,         
+        withdraw : 300
+    }
+}
+db.accountBalance.insert(
+	{
+		customer : "Torben Rudgaard",
+        deposit : 4000,         
+        withdraw : 100
+    }
+}
+db.accountBalance.insert(
+	{
+		customer : "Torben Rudgaard",
+        deposit : 1000,         
+        withdraw : 0
+    }
+}
+db.accountBalance.insert(
+	{
+		customer : "Torben Rudgaard",
+        deposit : 3000,         
+        withdraw : 500
+    }
+}
+db.accountBalance.insert(
+	{
+		customer : "Torben Rudgaard",
+        deposit : 500,         
+        withdraw : 1500
+    }
+}
+db.accountBalance.insert(
+	{
+		customer : "Torben Rudgaard",
+        deposit : 1000,         
+        withdraw : 100
+    }
+}
+
+
+db.accountBalance.insert(
+	{
+		customer : "Kent Hanson",
+        deposit : 0,         
+        withdraw : 8000
+    }
+}
+db.accountBalance.insert(
+	{
+		customer : "Kent Hanson",
+        deposit : 9000,         
+        withdraw : 3500
+    }
+}
+db.accountBalance.insert(
+	{
+		customer : "Kent Hanson",
+        deposit : 1500,         
+        withdraw : 6500
+    }
+}
+db.accountBalance.insert(
+	{
+		customer : "Kent Hanson",
+        deposit : 7000,         
+        withdraw : 500
+    }
+}
+
+
+
+I need a mongoDB aggregate that can list all customer with their total amountInvested, profitPrMonth, deposit, withdraw and balance. 
+(Balance = Deposit - Withdraw)
+
+
+
+                        Amount       Profit       Total       Total      Total
+Name                  Invested      PrMonth     Deposit    Withdraw    Balance
+------------------- ----------- ----------- ----------- ----------- -----------
+Torben Rudgaard         123,123      12,345     12,345        1,234      11,111
+Kent Hanson             123,123      12,345     12,345        1,234      11,111
+
+(Balance = Deposit - Withdraw)
+
+

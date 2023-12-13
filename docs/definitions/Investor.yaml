@@ -1,0 +1,53 @@
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the investor.
+  phone:
+    type: string
+    description: Phone of the investor.
+  email:
+    type: string
+    description: Email of the investor.
+  nickname:
+    type: string
+    description: Nickname of the investor.
+  address:
+    type: string
+    description: Address of the investor.
+  postcode:
+    type: string
+    description: Postal code of the investor.
+  city:
+    type: string
+    description: City of the investor.
+  country:
+    type: string
+    description: Country of the investor.
+  status:
+    type: string
+    description: Status of the investor.
+  facebook:
+    type: string
+    description: Facebook id of the investor.
+  passport:
+    type: string
+    description: Passport number of the investor.
+  transferType:
+    type: string
+    description: Transfer type.
+  transferInfo:
+    type: string
+    description: Transfer information.
+  currency:
+    type: string
+    description: Currency of the account.
+  beneficiaryName:
+    type: string
+    description: Name of the Beneficiary.
+  beneficiaryEmail:
+    type: string
+    description: Email of the Beneficiary.
+  beneficiaryPhone:
+    type: string
+    description: Phone of the Beneficiary.
