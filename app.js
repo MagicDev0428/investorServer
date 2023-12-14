@@ -64,25 +64,27 @@ if (process.env.SERVER_NAME === "LIVE") {
   console.log("##        " + tmpDate + "        ##");
   console.log("##                                    ##");
   console.log("########################################");
-  global.db = "mongodb://localhost:27017/InvestorSystem";
+  // global.db = "mongodb://localhost:27017/InvestorSystem";
+  global.db =
+    "mongodb+srv://insram:insram@cluster0.u1nadii.mongodb.net/InvestorSystem";
   global.state = "TEST";
   global.server = "http://localhost:3007";
   global.isLOCAL = true;
   global.serverName = "LOCAL";
 }
 
-export const checkJwt = jwt({
-  audience: global.server,
-  issuerBaseURL: process.env.AUTH0_DOMAIN,
-  secret: process.env.AUTH0_SECRET,
-  algorithms: ["RS256"],
-  secret: jwksClient.expressJwtSecret({
-    cache: true,
-    reateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
-  }),
-});
+// export const checkJwt = jwt({
+//   audience: global.server,
+//   issuerBaseURL: process.env.AUTH0_DOMAIN,
+//   secret: process.env.AUTH0_SECRET,
+//   algorithms: ["RS256"],
+//   secret: jwksClient.expressJwtSecret({
+//     cache: true,
+//     reateLimit: true,
+//     jwksRequestsPerMinute: 5,
+//     jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+//   }),
+// });
 
 // Connect to mongodb
 mongoose.connect(global.db, {
@@ -148,7 +150,7 @@ app.use(function (req, res, next) {
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(jsondocs));
 
 // use auth for all endpoints
-app.use(checkJwt);
+// app.use(checkJwt);
 
 /**
  * ROUTES

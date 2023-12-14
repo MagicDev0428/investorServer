@@ -1,7 +1,7 @@
 import { google } from "googleapis";
 import fs from "fs";
 import path from "path";
-import googleDriveConfig from "../../../google-client-config.json";
+// import googleDriveConfig from "../../../google-client-config.json";
 import { FailServerError } from "../../errors";
 
 let instance = null;
@@ -116,8 +116,8 @@ const GoogleDriveFactory = (config) => {
 };
 
 export function getGoogleDriveInstance() {
-  if (!instance) {
-    instance = GoogleDriveFactory(googleDriveConfig);
-  }
+  // if (!instance) {
+  //   instance = GoogleDriveFactory(googleDriveConfig);
+  // }
   return instance;
 }
