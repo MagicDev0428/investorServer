@@ -64,11 +64,10 @@ if (process.env.SERVER_NAME === "LIVE") {
   console.log("##        " + tmpDate + "        ##");
   console.log("##                                    ##");
   console.log("########################################");
-  // global.db = "mongodb://localhost:27017/InvestorSystem";
   global.db =
     "mongodb+srv://torben:0yemRa61w7FbnqDm@cluster0.zfsf0vx.mongodb.net/InvestorSystem";
-  // "mongodb+srv://torben:0yemRa61w7FbnqDm@cluster0.zfsf0vx.mongodb.net/?retryWrites=true&w=majority/InvestorSystem";
-
+  //global.db = "mongodb+srv://insram:insram@cluster0.u1nadii.mongodb.net/InvestorSystem"
+  //global.db = "mongodb://localhost:27017/InvestorSystem";
   global.state = "TEST";
   global.server = "http://localhost:3007";
   global.isLOCAL = true;
