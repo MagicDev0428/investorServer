@@ -36,4 +36,3 @@ const adamSchema = new Schema(
 ); // Don't want to insert _v in document
 
 module.exports.adamModel = mongoose.model("adamModel", adamSchema, "adams");
-module.exports.adamSchema = adamSchema;
