@@ -120,9 +120,9 @@ The `Email` class is exported as part of the `Factories` and can be imported fro
   client.setHtml('<html><p>This is html body</p></html>');
 
   /* attach function attaches the pdf files which are at the google drive */
-  /* you need to provide the fileId, which should be saved in the investor model. */
+  /* you need to provide the fileId, which should've been saved in the investor model. */
   /* you can attach multiple documents like that. The attachment must be a pdf,  */
-  /* otherwise you the client will throw an error. */
+  /* otherwise your the client will throw an error. */
   await client.attach(fileIdA);
   await client.attach(fileIdB);
 
