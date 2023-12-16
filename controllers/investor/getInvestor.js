@@ -3,7 +3,7 @@
 //
 
 const mongoose = require("mongoose");
-let { investorModel } = require("../../models/investor/investorModel");
+let { Investor } = require("../../models/investorModel");
 const { investorSchema } = require("../../schema/investor/investorSchema");
 
 // creating investor table model
@@ -29,7 +29,7 @@ exports.investorGet = (id) => {
     }
 
     investorTable = null; // intializing table values null
-    investorTable = await investorModel.findOne({ _id: id }); // storing values in table
+    investorTable = await Investor.findOne({ _id: id }); // storing values in table
 
     // checking that investor exist or not
     if (!investorTable) {
