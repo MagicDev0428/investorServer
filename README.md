@@ -1,6 +1,6 @@
 # ServerInvestorSystem
 
-### Create a document
+## Create a document
 `Document` class is exported as part of `Factories` and can be imported from in `/utils` now takes care of creating documents from now on. To create a document whether it be an invoice or business document or email, you will need this class.
 
 First you need to have a template of the document. To do that you need to create a `.liquid` file in the `templates` folder. `templates` folder has different subfolders. Email templates will go in `emails` folder and any other document template should go in `documents` folder. Name the folder which represents the document and create a `.liquid` file with the same name in the newly created folder. For example, `invoice` is a document, so there is an `invoice` folder in `documents` folder and there is one template file `invoice.liquid` inside the `invoice` folder. 
@@ -68,7 +68,7 @@ After creating the template file, you can now use `Document` class to make `html
   const fileId = await document.savePDF(folderId);
 ```
 
-#### Example
+### Example
 A complete example for creating an invoice. 
 ```js
   import { Factories } from './utils';
@@ -99,7 +99,7 @@ A complete example for creating an invoice.
   const fileId = await document.savePDF(folderId);
 ```
 
-### Send an Email
+## Send an Email
 There is an `Email` class which can be used to send the emails. Email body can be of text or html. If both are provided, html will take precedence. If none is provided, the client will throw an error.
 
 The `Email` class is exported as part of the `Factories` and can be imported from `utils`. The `emails` folder in `templates` folder will hold all different kinds of emails. The structure follows the same pattern as documents.
@@ -130,7 +130,7 @@ The `Email` class is exported as part of the `Factories` and can be imported fro
   await emailClient.send();
 ```
 
-#### Example
+### Example
 A complete example for sending an email using html as body.
 ```js
   import { Factories } from './utils';
@@ -165,4 +165,59 @@ A complete example for sending an email using html as body.
 
   /* and send */
   await emailClient.send();
+```
+
+## Create folders for the investor
+When you create an investor, you need to create folders for the investor on google drive where documents will be uploaded. There is one root folder of the project which is provided by the application. It can be found in the `.env.local` file. The variable name is `GOOGLE_DRIVE_ROOT`. This holds all the investor system folders which are created using the library.
+
+### Create the folders for investor
+`getGoogleDriveInstance()` is exported as part of the `Factories` and can be imported from `utils`. The returns an instance of google drive which is authenticated to access the google drive folder.
+
+```js
+  /* create the google drive client */
+  const client = Factories.getGoogleDriveInstance();
+
+  /**
+   * @param (name): name of the investor which was sent with the request.
+   * 
+   * santize the name and remove spaces */
+   */
+  const folderName = Lib.transformNameToPath(name);
+  
+  /* create the folders and get the ids in return */
+  /* folderId: this is the root folder of the investor where everything will reside */
+  /* documentsFolderId: this is the document where pdfs will be uploaded */
+  /* passportsFolderId: this folder can be used to upload passport images of the investor */
+  const { 
+    folderId, documentsFolderId, passportsFolderId 
+  } = await client.createFolders(folderName);
+
+  /* returns an array of all the folders already present on the google drive. It can be used to verify */
+  /* if a folder name already exists or not */
+  const list = await client.listFolders();
+```
+
+### Example
+A complete example for creating folders when creating a new investor.
+
+```js
+  import { Factories } from './utils';
+
+  const client = Factories.getGoogleDriveInstance();
+
+  const folderName = Lib.transformNameToPath(name);
+
+  const list = await client.listFolders();
+
+  if (list.includes(folderName)) {
+    throw new Error('Folder name already exists.');
+  }
+
+  /* if all good, create the folders */
+  const { 
+    folderId, documentsFolderId, passportsFolderId 
+  } = await client.createFolders(folderName);
+
+  // here you can save them along with your investor
+
 ```
