@@ -25,6 +25,12 @@ Let say you want to create a new template for `balance-sheet`. You will first cr
 
 Same goes for any email templates you want to create. The only difference here is that email folders will go in `emails` folder.
 
+> [!WARNING]  
+> The `documents` collection in db is not valid anymore. It has been removed. Now when you create a document and upload to google drive,
+> you need to save the `fileId` returned in the investor object. If you don't, then you won't be able to access that document later and 
+> won't be able to add as an attachment.
+
+
 After creating the template file, you can now use `Document` class to make `html` or `pdf` documents.
 ```js
   /**
