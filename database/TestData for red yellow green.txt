@@ -573,7 +573,3 @@ db.balance.insert(
 		description : "Did NOT get profit in December (but did a withdrawal)"
     }
 )
-
-
-
-

@@ -5,10 +5,8 @@ var mongoose             = require('mongoose');
 var Schema               = mongoose.Schema;
 var myInvestmentsSchema  = new Schema({
 
-    _id:                Number,     // MyInvestment unique number
-
-    investmentNo:       Number,     // Investment Number from Investment Table
-    investorName:       String,     // Name from Investors Table 
+    investmentNo:       Number,     // REQUIRED Investment Number from Investment Table
+    investorName:       String,     // REQUIRED Name/_id from Investors Table 
 
     amountInvested:     Number,     // The amount of money invested
     transferDate:       Date,       // Date of the transfer
@@ -16,14 +14,14 @@ var myInvestmentsSchema  = new Schema({
     transactionFrom:    String,     // Transfer transaction FROM bank / account 
     transactionTo:      String,     // Transfer transaction TO bank / account 
     transactionNo:      String,     // Transaction number from bank 
-    documents:           Array,      // Array of Images and reciepts ("filename","filename")
+    documents:          Array,      // Array of Images and reciepts ("filename","filename")
 
     profitMonthlyPct:   Number,     // Investors Monthly Profit Procentage
     profitMonthly:      Number,     // Investors Monthly Profit Amount
     profitAnnualPct:    Number,     // Investors Yearly Profit Procentage
     profitAnnual:       Number,     // Investors Yearly Profit Amount
     profitEndPct:       Number,     // Investors When investment ends Profit Procentage
-    profitEnd:          Number,     // Investors When investment ends Profit Amount
+    profitEnd:          Number,     // Investors When investment ends Profit Amount 
 
     investType:         String,     // InvestmentType: Monthly Profit, Annual Profit, One-time Profit, Mixed 
     firstProfitDate:    Date,       // When will we PAY the first PROFIT to the investor
@@ -44,6 +42,7 @@ var myInvestmentsSchema  = new Schema({
         default: Date.now
     },                            
     createdBy:          String,     // Who created the investor
+
     modifiedDate: {                 // When was this investor modified
         type: Date, 
         default: Date.now
@@ -51,4 +50,5 @@ var myInvestmentsSchema  = new Schema({
     modifiedBy:         String      // Who modified the investor
 
 }, { versionKey: false });          // Don't want to insert _v in document
+
 module.exports = mongoose.model('myInvestmentsModel', myInvestmentsSchema,'myInvestments');

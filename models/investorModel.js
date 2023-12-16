@@ -5,13 +5,15 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
-    name:               String,     // Investor Name
-    nickname:           String,     // The investors Nick Name 
-    status: {                       // INVESTOR, PENDING, DISABLED 
+    _id:                String,     // REQUIRED Investor Name
+    nickname:           String,     // REQUIRED The investors Nick Name 
+
+    status: {                       // REQUIRED [ INVESTOR, PENDING, DISABLED ]
         type: String,
         default: 'INVESTOR'
     },     
-    pincode:            String,     // Pincode for logging in "0202" 
+
+    pincode:            String,     // REQUIRED Pincode for logging in "0202" 
 
     address:            String,     // Address 
     postcode:           Number,     // Postcode
@@ -36,16 +38,18 @@ const schema = new Schema({
 
     passportImages:     Array,      // Array of Images of the passports / IDs ("filename","filename")
 
-    createdDate: {                  // When was this investor created
+    createdDate: {                  // When was this investment created
         type: Date, 
         default: Date.now
     },                            
-    createdBy:          String,     // Who created the investor
-    modifiedDate: {                 // When was this investor modified
+    createdBy:            String,   // Who created the investment
+
+    modifiedDate: {                 // When was this investment modified
         type: Date, 
         default: Date.now
     },     
-    modifiedBy:         String      // Who modified the investor
+    modifiedBy:         String      // Who modified the investment
 
 }, { versionKey: false });          // Don't want to insert _v in document
-export const Investor = mongoose.model('Investor', schema,'investors');
+
+export const Investor = mongoose.model('Investor', schema,'investor');

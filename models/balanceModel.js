@@ -4,13 +4,16 @@
 var mongoose       = require('mongoose');
 var Schema         = mongoose.Schema;
 var balanceSchema  = new Schema({
-    _id:                Number,     // Transaction Number
 
-    investorName:       String,     // Name from Investors Table 
+    investorName:       String,     // REQUIRED Name/_id from Investors Table 
+    profitMonth:        Date,       // REQUIRED Which month/year did investor get this profit 
 
-    profitMonth:        Number,     // Which month/year did investor get this profit
-    profitMonthPaid:    Boolean,    // Has profit been paid this month?  (If we set this to true, then set emailDate to 0)
-    emailDate:          Number,     // Date and Time the email was sent (ALWAYS set this to 0 when create new record)
+    profitMonthPaid: {              // Is false, unless true is sent to the form/controller - once true its set to true, set emailDate to null or zero)
+        type: Boolean, 
+        default: false
+    }, 
+
+    emailDate:          Date,       // Date and Time the email was sent (ALWAYS set this to null or 0 when create new record)
 
     deposit:            Number,     // Amount deposited into investors account (profit)
     withdraw:           Number,     // Amount withdraw from investors account (payment)
@@ -20,23 +23,27 @@ var balanceSchema  = new Schema({
     transactionTo:      String,     // Transfer transaction TO bank / account 
     transactionNo:      String,     // Transaction number from bank 
 
-    transferMethod:     String,     // Envelope/Thai Bank/Forign Bank/Crypto 
+    transferMethod: {              // "Envelope", "Thai Bank", "Foreign Bank", "Crypto Wallet", "Western Union", "WISE", "Other Transfer" 
+        type: String, 
+        default: "Envelope"
+    }, 
 
     description:        String,     // Description of what happened 
     hiddenRemark:       String,     // Hidden Description that only we can see
     attachments:        Array,      // Array of Images and files ("filename","filename") containing transfer reciepts
 
-    createdDate: {                  // When was this investor created
+    createdDate: {                  // When was this balance created
         type: Date, 
         default: Date.now
     },                            
-    createdBy:          String,     // Who created the investor
-    modifiedDate: {                 // When was this investor modified
+    createdBy:          String,     // Who created the balance
+
+    modifiedDate: {                 // When was this balance modified
         type: Date, 
         default: Date.now
     },     
-    modifiedBy:         String      // Who modified the investor
-    
+    modifiedBy:         String      // Who modified the balance
+
 }, { versionKey: false });          // Don't want to insert _v in document
 
 module.exports = mongoose.model('balanceModel', balanceSchema,'balance');
