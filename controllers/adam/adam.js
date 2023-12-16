@@ -3,13 +3,12 @@
 //
 
 const mongoose = require("mongoose");
-const { adamModel } = require("../../models/adam/adamModel");
-const { adamSchema } = require("../../schema/adam/adamSchema");
+const { adamModel } = require("../../models/adamModel");
 const { investorModel } = require("../../models/investor/investorModel");
 const { investmentModel } = require("../../models/investmentModel");
 
 // creating adam table model
-let adamTable = mongoose.model("adam", adamSchema);
+let adamTable = adamModel;
 
 //
 // Create NEW adam with the data from the form
@@ -26,32 +25,6 @@ exports.adamCreate = (req) => {
       return reject({
         err: true,
         message: "Adam form is empty!",
-      });
-    }
-
-    // payload has investor name and investment no
-    if (!received.investorName || !received.investmentNo) {
-      return reject({
-        err: true,
-        message:
-          "In adam investor name and investment number both are required.",
-      });
-    }
-
-    //  investorName and Investment number exists
-
-    const investorExists = await investorModel.exists({
-      _id: received?.investorName,
-    });
-
-    const investmentExists = await investmentModel.exists({
-      _id: received.investmentNo,
-    });
-
-    if (!investorExists || !investmentExists) {
-      return reject({
-        err: true,
-        message: "Referenced investor and investment do not exist!",
       });
     }
 
@@ -99,7 +72,7 @@ exports.adamGet = (adamId) => {
     adamTable = null;
     adamTable = await adamModel.findOne({ _id: adamId });
     if (!adamTable) {
-      return reject("adam " + adamId + "Not Found!");
+      return reject({ err: true, message: "adam " + adamId + "Not Found!" });
     }
 
     return resolve({ err: false, adams: adamTable });
@@ -170,32 +143,6 @@ exports.adamUpdate = (req) => {
         err: true,
         message: `Adam id ${received._id} is not exist!`,
       });
-
-    // payload has investor name and investment no
-    if (!received.investorName || !received.investmentNo) {
-      return reject({
-        err: true,
-        message:
-          "In adam investor name and investment number both are required.",
-      });
-    }
-
-    //  investorName and Investment number exists
-
-    const investorExists = await investorModel.exists({
-      _id: received?.investorName,
-    });
-
-    const investmentExists = await investmentModel.exists({
-      _id: received.investmentNo,
-    });
-
-    if (!investorExists || !investmentExists) {
-      return reject({
-        err: true,
-        message: "Referenced investor and investment do not exist!",
-      });
-    }
 
     adamTable = null;
 
