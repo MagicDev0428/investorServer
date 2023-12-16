@@ -32,10 +32,6 @@ const schema = new Schema({
     transferInfo:       String,     // Money Transfer Information (bank etc.)
     currency:           String,     // Prefered currency of the investor
 
-    folderId:           String,     // Root folder belonging to the investor
-    documentsFolderId:  String,     // Documents folder belonging to the investor
-    passportsFolderId:  String,     // Passport folder belonging to the investor
-
     passportImages:     Array,      // Array of Images of the passports / IDs ("filename","filename")
 
     createdDate: {                  // When was this investment created
