@@ -13,7 +13,7 @@ The structure should look like this:
 │   │   │   ├── invoice.liquid
 ```
 
-Let say you want to create a new template for `balance-sheet`. You will first create a new folder `balance-sheet` in `documents` and create a `balance-sheet,liquid` file in the `balance-sheet` folder. The structure will look like this:
+Let say you want to create a new template for `balance-sheet`. You will first create a new folder `balance-sheet` in `documents` and create a `balance-sheet.liquid` file in the `balance-sheet` folder. The structure will look like this:
 ```bash
 ├── templates
 │   ├── documents
@@ -127,7 +127,7 @@ The `Email` class is exported as part of the `Factories` and can be imported fro
   await client.attach(fileIdB);
 
   /* when you have set everything, call send function to send the email. */
-  await emailClient.send();
+  await client.send();
 ```
 
 ### Example
@@ -164,14 +164,14 @@ A complete example for sending an email using html as body.
   await client.attach(fileIdA);
 
   /* and send */
-  await emailClient.send();
+  await client.send();
 ```
 
 ## Create folders for the investor
 When you create an investor, you need to create folders for the investor on google drive where documents will be uploaded. There is one root folder of the project which is provided by the application. It can be found in the `.env.local` file. The variable name is `GOOGLE_DRIVE_ROOT`. This holds all the investor system folders which are created using the library.
 
 ### Create the folders for investor
-`getGoogleDriveInstance()` is exported as part of the `Factories` and can be imported from `utils`. The returns an instance of google drive which is authenticated to access the google drive folder.
+`getGoogleDriveInstance()` is exported as part of the `Factories` and can be imported from `utils`. This returns an instance of google drive which is authenticated to access the google drive folder.
 
 ```js
   /* create the google drive client */
@@ -180,7 +180,7 @@ When you create an investor, you need to create folders for the investor on goog
   /**
    * @param (name): name of the investor which was sent with the request.
    * 
-   * santize the name and remove spaces */
+   * santize the name and remove spaces
    */
   const folderName = Lib.transformNameToPath(name);
   
@@ -192,7 +192,7 @@ When you create an investor, you need to create folders for the investor on goog
     folderId, documentsFolderId, passportsFolderId 
   } = await client.createFolders(folderName);
 
-  /* returns an array of all the folders already present on the google drive. It can be used 
+  /* returns an array of all the folders already present on the google drive. It can be used */
   /* to verify if a folder name already exists or not */
   const list = await client.listFolders();
 ```
