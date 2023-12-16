@@ -28,22 +28,26 @@ Same goes for any email templates you want to create. The only difference here i
 After creating the template file, you can now use `Document` class to make `html` or `pdf` documents.
 ```js
   /**
-   * @param (name):     A string value which will be part of the name of the file. It can be 
-   *                    the name of the investor.
    * @param (data):     Object which has the key values which are used in the liquid file for 
    *                    variables.
    * @param (type):     documents | emails. Here it can be either documents or emails. It 
    *                    refers to the 
    *                    parent folder where template folder resides.
    * @param (template): Name of the template e.g invoice, balance-sheet etc.
+   * @param (save):     Boolean, if true, the create function will return the path to the
+   *                    saved file which will be then used to create pdf. If false, the 
+   *                    create function will return the html.
+   * @param (name):     A string value which will be part of the name of the file. It can be 
+   *                    the name of the investor. It is better to provde the name when you
+   *                    set save to true. Otherwise a random timestamp will be the name of 
+   *                    the file.
    */
-  const document = new Document(name, data, type, template);
+  const document = new Document(data, type, template, save, name);
 
   /**
-   * create() function will render the template and then returns the absoulute path of the 
-   * rendered document. 
-   * All the rendered documents will temporarily reside in the render folder. The path can 
-   * be provided to the email function to send html emails.
+   * create() function will render the template and then returns the absoulute path or html of 
+   * the rendered document. 
+   * All the rendered documents will temporarily reside in the render folder if save is true.
    */
   const path = await document.create();
 
@@ -79,12 +83,10 @@ A complete example for creating an invoice.
   const folderId = '1xyz...';
 
   /* create the template file */
-  const document = new Document(name, data, type, template);
+  const document = new Document(data, type, template, true, name);
   const path = await document.create();
   
   /* fileId is the id of the file on google drive. You need to save it to the */
   /* investor object in db. */
   const fileId = await document.savePDF(folderId);
-
-  
 ```

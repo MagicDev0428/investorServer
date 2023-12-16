@@ -4,19 +4,30 @@ import { formatDate, transformNameToPath } from '../../lib';
 import { getGoogleDriveInstance } from '../google';
 
 export class Document {
-  constructor(investorName, data, type = 'documents', template) {
-    this.name = `${formatDate(new Date(Date.now()))}-${transformNameToPath(investorName)}`;
+  constructor(data, type = 'documents', template, save = true, investorName = '') {
+    this.name = investorName;
     this.data = data;
     this.template = template;
     this.type = type;
+    this.save = save;
     this.path = undefined;
     this.fileId = undefined;
   }
 
   /* create a document by using the liquid template and render the html and store it at the path */
   async create() {
-    this.path = await TemplateEngine({ data: this.data, folder: `${this.type}/${this.template}`, template: this.template }).create(this.name);
-    return this.path;
+
+    const name = this.name && this.name.length > 0 ? `${formatDate(new Date(Date.now()))}-${transformNameToPath(this.name)}` : this.name;
+    const result = 
+    this.path = await TemplateEngine({ 
+      data: this.data, folder: `${this.type}/${this.template}`, template: this.template, save: this.save 
+    }).create(name);
+
+    if (this.save) {
+      this.path = result;
+    }
+
+    return result;
   }
 
   async savePDF(folderId) {
