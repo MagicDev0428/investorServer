@@ -73,7 +73,24 @@ exports.investorCreate = async (req) => {
     received.pincode = Lib.pingenerator();
 
     const folderName = Lib.transformNameToPath(received.name);
-    const isFolderNameTaken = await Lib.isInvestorFolderNameTaken(received.name);
+    try {
+      /* checking if a folder with name of the investor already exists */
+      const isFolderNameTaken = await Lib.isInvestorFolderNameTaken(folderName);
+      if (isFolderNameTaken === true) {
+        return reject({
+          err: true,
+          message: "Folder with investor name already exists!",
+        });
+      }
+      
+    } catch (error) {
+      console.log(error);
+      return reject({
+        err: true,
+        message: "Can't ",
+      });
+    }
+
 
     // Creating a new investor instance
     const newInvestor = new investorModel(received);
