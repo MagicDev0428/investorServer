@@ -112,6 +112,33 @@ const GoogleDriveFactory = (config) => {
         throw new FailServerError("Google Drive invoice export failed");
       }
     },
+    listFolders: async () => {
+      try {
+        const auth = await authorize();
+        const drive = google.drive({ version: 'v3', auth });
+        const response = await drive.files.list({
+          q: `'${process.env.GOOGLE_DRIVE_ROOT}' in parents`, // query for the root folder
+          fields: 'files(id, name)', // get id and name for the folders
+        });
+    
+        const folders = response.data.files;
+        const folderNames = [];
+        if (folders.length) {
+          folders.forEach((folder) => {
+            // add the folder name to array
+            folderNames.push(folder.name);
+          });
+        } else {
+          // return an empty array
+          return [];
+        }
+
+        return folderNames;
+      } catch (error) {
+        console.error('The API returned an error:', error);
+        return undefined; // for error handling on the caller side, undefined means api was unsuccessful
+      }
+    }
   };
 };
 
