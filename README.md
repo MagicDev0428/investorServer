@@ -28,26 +28,32 @@ Same goes for any email templates you want to create. The only difference here i
 After creating the template file, you can now use `Document` class to make `html` or `pdf` documents.
 ```js
   /**
-   * @param (name):     A string value which will be part of the name of the file. It can name of the investor.
-   * @param (data):     Object which has the key values which are used in the liquid file for variables.
-   * @param (type):     documents | emails. Here it can be either documents or emails. It refers to the 
+   * @param (name):     A string value which will be part of the name of the file. It can be 
+   *                    the name of the investor.
+   * @param (data):     Object which has the key values which are used in the liquid file for 
+   *                    variables.
+   * @param (type):     documents | emails. Here it can be either documents or emails. It 
+   *                    refers to the 
    *                    parent folder where template folder resides.
    * @param (template): Name of the template e.g invoice, balance-sheet etc.
    */
   const document = new Document(name, data, type, template);
 
   /**
-   * create() function will render the template and then returns the absoulute path of the rendered document. 
-   * All the rendered documents will temporarily reside in the render folder. The path can be provided to the 
-   * email function to send html emails.
+   * create() function will render the template and then returns the absoulute path of the 
+   * rendered document. 
+   * All the rendered documents will temporarily reside in the render folder. The path can 
+   * be provided to the email function to send html emails.
    */
   const path = await document.create();
 
   /**
-   * @param (folderId): Google drive folder Id where you want to upload the rendered pdf document.
+   * @param (folderId): Google drive folder Id where you want to upload the rendered pdf 
+   *                    document.
    * 
-   * This function will use the template generated in create() function, converts it to pdf and then 
-   * uploads to the google drive. After that, it will remove the the temporary files in the render folder.
+   * This function will use the template generated in create() function, converts it to
+   * pdf and then uploads to the google drive. After that, it will remove the the 
+   * temporary files in the render folder.
    */
   const fileId = await document.savePDF(folderId);
 ```
@@ -62,15 +68,22 @@ A complete example for creating an invoice.
     company_name: 'XYZ LLC'
     // more data as needed by the liquid file of the invoice template
   };
-  const type = 'documents';   // the template is in the documents folder
-  const template = 'invoice'; // the acutual template folder name where liquid file is placed.
-  const folderId = '1xyz...'; // the id of the documents folder which belongs the the investor Ahsan Butt
+  
+  /* the template is in the documents folder */
+  const type = 'documents';
+
+  /* the acutual template folder name where liquid file is placed. */
+  const template = 'invoice';
+  
+  /* the id of the documents folder which belongs the the investor Ahsan Butt */
+  const folderId = '1xyz...';
 
   /* create the template file */
   const document = new Document(name, data, type, template);
   const path = await document.create();
   
-  /* fileId is the id of the file on google drive. You need to save it to the investor object in db. */
+  /* fileId is the id of the file on google drive. You need to save it to the */
+  /* investor object in db. */
   const fileId = await document.savePDF(folderId);
 
   
