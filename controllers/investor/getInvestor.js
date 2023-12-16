@@ -3,7 +3,7 @@
 //
 
 const mongoose = require("mongoose");
-let { investorModel } = require("../../models/investor/investorModel");
+let { investorModel } = require("../../models/investorModel");
 const { investorSchema } = require("../../schema/investor/investorSchema");
 
 // creating investor table model

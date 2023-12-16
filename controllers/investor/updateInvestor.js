@@ -2,12 +2,12 @@
 import { Lib } from '../../utils';
 const validator = require("validator");
 const mongoose = require("mongoose");
-const { investorModel } = require("../../models/investor/investorModel");
+const { investorModel } = require("../../models/investorModel");
 const { investorSchema } = require("../../schema/investor/investorSchema");
 const {
   myInvestmentsModel,
-} = require("../../models/investor/myInvestmentsModel");
-const { balanceModel } = require("../../models/investor/balanceModel");
+} = require("../../models/myInvestmentsModel");
+const { balanceModel } = require("../../models/balanceModel");
 
 // creating investor table model
 let investorTable = mongoose.model("investor", investorSchema);

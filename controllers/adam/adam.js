@@ -4,7 +4,7 @@
 
 const mongoose = require("mongoose");
 const { adamModel } = require("../../models/adamModel");
-const { investorModel } = require("../../models/investor/investorModel");
+const { investorModel } = require("../../models/investorModel");
 const { investmentModel } = require("../../models/investmentModel");
 
 // creating adam table model

@@ -4,7 +4,7 @@
 import { Lib } from '../../utils';
 const validator = require("validator");
 const mongoose = require("mongoose");
-let { investorModel } = require("../../models/investor/investorModel");
+let { investorModel } = require("../../models/investorModel");
 // const { pingenerator } = require("../../utils/pingenerator");
 const { investorSchema } = require("../../schema/investor/investorSchema");
 

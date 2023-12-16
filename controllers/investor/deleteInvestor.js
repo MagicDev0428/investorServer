@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { investorModel } = require("../../models/investor/investorModel");
+const { investorModel } = require("../../models/investorModel");
 const { investorSchema } = require("../../schema/investor/investorSchema");
 
 // creating investor table model
