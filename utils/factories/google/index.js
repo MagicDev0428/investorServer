@@ -138,6 +138,21 @@ const GoogleDriveFactory = (config) => {
         console.error('The API returned an error:', error);
         return undefined; // for error handling on the caller side, undefined means api was unsuccessful
       }
+    },
+    get: async fileId => {
+      const auth = await authorize();
+      const drive = google.drive({ version: 'v3', auth });
+      try {
+        const response = await drive.files.get({
+          fileId: fileId,
+          fields: 'id, name, mimeType'
+        });
+
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching file:', error.message);
+        throw new Error('Error fetching file');
+      }
     }
   };
 };
