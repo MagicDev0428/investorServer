@@ -192,8 +192,8 @@ When you create an investor, you need to create folders for the investor on goog
     folderId, documentsFolderId, passportsFolderId 
   } = await client.createFolders(folderName);
 
-  /* returns an array of all the folders already present on the google drive. It can be used to verify */
-  /* if a folder name already exists or not */
+  /* returns an array of all the folders already present on the google drive. It can be used 
+  /* to verify if a folder name already exists or not */
   const list = await client.listFolders();
 ```
 
