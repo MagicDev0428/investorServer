@@ -16,7 +16,7 @@ let investorTable = Models.Investor;
 //
 
 exports.investorGet = (id) => {
-  global.show("###### investorGet ######");
+  global.show("###### investorGet ###### ");
 
   if (id) global.show(id);
 

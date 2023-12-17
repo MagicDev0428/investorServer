@@ -2,7 +2,7 @@ import { Models } from "../../models";
 // creating investor table model
 let investorTable = Models.Investor;
 
-
+ 
 exports.deleteInvestor = async (_id) => {
   global.show("###### deleteInvestor ######");
 

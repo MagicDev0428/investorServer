@@ -4,7 +4,7 @@
 
 import { Models } from '../../models';
 import { Lib } from '../../utils';
-const validator = require("validator");
+const validator = require("validator"); 
 
 
 // creating investor table model
