@@ -1,31 +1,12 @@
 // Update investor controller
+
+
+import { Models } from '../../models';
 import { Lib } from '../../utils';
 const validator = require("validator");
-const mongoose = require("mongoose");
-const { investorModel } = require("../../models/investorModel");
-const { investorSchema } = require("../../schema/investor/investorSchema");
-const {
-  myInvestmentsModel,
-} = require("../../models/myInvestmentsModel");
-const { balanceModel } = require("../../models/balanceModel");
 
 // creating investor table model
-let investorTable = mongoose.model("investor", investorSchema);
-
-//
-// Update EXISTING investor with the data from the form
-//
-
-//minmum request body data
-//'{
-//     "_id":"tiHold new",
-//     "_oldId":"tiHold",
-//     "nickName":"tiHold reuo",
-//
-// }
-//   * no need to add admin, it will automtically become false even you will add it in request body
-//   * you can exclude the _oldId if you do not want to update user id and for other values of investor
-//   go to investor schema
+let investorTable = Models.Investor;
 
 exports.updateInvestor = (req) => {
   global.show("###### investor Update  ######");
@@ -33,10 +14,10 @@ exports.updateInvestor = (req) => {
   if (received) global.show({ received });
 
   return new Promise(async (resolve, reject) => {
+
+    try{
     // validating id and nickname are exist or not
-
-
-    if (!received._id || !received.nickName) {
+    if (!received._id || !received.nickname) {
 
       return reject({
         err: true,
@@ -45,12 +26,23 @@ exports.updateInvestor = (req) => {
     }
 
 
+        // Validating email
+    if (
+      (received?.email && !validator.isEmail(received?.email)) ||
+      (received?.beneficiaryEmail &&
+        !validator.isEmail(received?.beneficiaryEmail))
+    ) {
+      return reject({
+        err: true,
+        message: "Invalid Email or beneficiaryEmail address!",
+      });
+    }
     // Removing admin if it exists in the body
     if (received.admin) delete received.admin;
 
     if (received?._oldId) {
       // Check if the new "_id" already exists
-      const existingInvestor = await investorModel.findById(received._id);
+      const existingInvestor = await Models.Investor.findById(received._id);
       if (existingInvestor) {
         return reject({
           err: true,
@@ -58,10 +50,10 @@ exports.updateInvestor = (req) => {
         });
       }
       // Adding pin to the received object
-      received.pincode = pingenerator();
+      received.pincode = Lib.pingenerator();
 
       // Create a new document with the desired _id
-      const newInvestor = new investorModel(received);
+      const newInvestor = new Models.Investor(received);
 
 
       // Save the new document
@@ -69,17 +61,17 @@ exports.updateInvestor = (req) => {
       investorTable = await newInvestor.save();
 
       //  DELETE the investor with _oldId
-      await investorModel.findOneAndDelete({
+      await Models.Investor.findOneAndDelete({
         _id: received._oldId,
       });
       // Update myInvestment collection against new id
-      await myInvestmentsModel.updateMany(
+      await Models.myInvestmentsModel.updateMany(
         { investorName: received._oldId },
         { $set: { investorName: received._id } }
       );
 
       // Update balance collection against new id
-      await balanceModel.updateMany(
+      await Models.balanceModel.updateMany(
         { investorName: received._oldId },
         { $set: { investorName: received._id } }
       );
@@ -89,7 +81,7 @@ exports.updateInvestor = (req) => {
 
       // Update the existing document
       investorTable = null;
-      investorTable = await investorModel.findOneAndUpdate(
+      investorTable = await Models.Investor.findOneAndUpdate(
         { _id: received._id },
         received,
         { new: true }
@@ -99,5 +91,8 @@ exports.updateInvestor = (req) => {
     // Return investor update data
     if (investorTable) return resolve({ err: false, investors: investorTable });
     return reject({ err: true, message: "Unable to update investor!" });
+    } catch (error) {
+       return reject({err:true,message:error.message})
+    }
   });
 };

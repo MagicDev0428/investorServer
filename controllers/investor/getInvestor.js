@@ -2,12 +2,10 @@
 // Get Investor
 //
 
-const mongoose = require("mongoose");
-let { investorModel } = require("../../models/investorModel");
-const { investorSchema } = require("../../schema/investor/investorSchema");
-
+import { Models } from "../../models"; 
 // creating investor table model
-let investorTable = mongoose.model("investor", investorSchema);
+let investorTable = Models.Investor;
+
 
 //
 // Getting back investor from id
@@ -23,13 +21,14 @@ exports.investorGet = (id) => {
   if (id) global.show(id);
 
   return new Promise(async (resolve, reject) => {
+    try{
     // Check for id
     if (!id) {
       return reject({ err: true, message: "Didn't get investor id" });
     }
 
     investorTable = null; // intializing table values null
-    investorTable = await investorModel.findOne({ _id: id }); // storing values in table
+    investorTable = await Models.Investor.findOne({ _id: id }); // storing values in table
 
     // checking that investor exist or not
     if (!investorTable) {
@@ -38,5 +37,8 @@ exports.investorGet = (id) => {
 
     // if investor exist then return all data
     return resolve({ err: false, investors: investorTable });
+    } catch (error) {
+       return reject({err:true,message:error.message})
+    }
   });
 };

@@ -1,24 +1,17 @@
-const mongoose = require("mongoose");
-const { investorModel } = require("../../models/investorModel");
-const { investorSchema } = require("../../schema/investor/investorSchema");
-
+import { Models } from "../../models"; 
 // creating investor table model
-let investorTable = mongoose.model("investor", investorSchema);
+let investorTable = Models.Investor;
 
-//
-// Delete investor with id
-//
 
-//
-// url => http://localhost:3007/investor/deleteinvestor/id
-// in URL params at id replace with your id
-//
 exports.deleteInvestor = async (_id) => {
   global.show("###### deleteInvestor ######");
 
   return new Promise(async (resolve, reject) => {
+
+    try{
+
     investorTable = null; // intializing table values null
-    investorTable = await investorModel.findByIdAndDelete(_id); // passing id in delete function and storing response in investor table
+    investorTable = await Models.Investor.findByIdAndDelete(_id); // passing id in delete function and storing response in investor table
 
     // checking that investor exist or not
     if (!investorTable) {
@@ -30,5 +23,8 @@ exports.deleteInvestor = async (_id) => {
 
     // if investor exist then return all data
     return resolve({ err: false, investors: investorTable });
+    } catch (error) {
+       return reject({err:true,message:error.message})
+    }
   });
 };
