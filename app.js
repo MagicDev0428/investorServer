@@ -12,6 +12,7 @@ import { expressjwt as jwt } from "express-jwt";
 import jsondocs from "./docs/index.json";
 import { investorRoutes, documentRoutes } from "./routes";
 import { Middlewares, Docs } from "./utils";
+import { router as myInvestmentRouter} from "./routes/myInvestment/myInvestmentRoute"
 const investorRoute = require("./routes/investor/investorRoute");
 const adamRoute = require("./routes/adam/adamRoute");
 const investmentRoute = require("./routes/investment/investmentRoute")
@@ -75,18 +76,18 @@ if (process.env.SERVER_NAME === "LIVE") {
   global.serverName = "LOCAL";
 }
 
-// export const checkJwt = jwt({
-//   audience: global.server,
-//   issuerBaseURL: process.env.AUTH0_DOMAIN,
-//   secret: process.env.AUTH0_SECRET,
-//   algorithms: ["RS256"],
-//   secret: jwksClient.expressJwtSecret({
-//     cache: true,
-//     reateLimit: true,
-//     jwksRequestsPerMinute: 5,
-//     jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
-//   }),
-// });
+export const checkJwt = jwt({
+  audience: global.server,
+  issuerBaseURL: process.env.AUTH0_DOMAIN,
+  secret: process.env.AUTH0_SECRET,
+  algorithms: ["RS256"],
+  secret: jwksClient.expressJwtSecret({
+    cache: true,
+    reateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+  }),
+});
 
 // Connect to mongodb
 mongoose.connect(global.db, {
@@ -152,7 +153,7 @@ app.use(function (req, res, next) {
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(jsondocs));
 
 // use auth for all endpoints
-// app.use(checkJwt);
+app.use(checkJwt);
 
 /**
  * ROUTES
@@ -174,7 +175,8 @@ app.use("/investors", investorRoutes.router);
 app.use("/documents", documentRoutes.router);
 app.use("/investor", investorRoute);
 app.use("/adam", adamRoute);
-app.use("/investments",investmentRoute)
+app.use("/investments",investmentRoute);
+app.use("/myinvestment",myInvestmentRouter)
 
 // Helper port
 app.set("port", process.env.PORT || 3007);
