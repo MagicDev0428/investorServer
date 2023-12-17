@@ -89,7 +89,10 @@ exports.updateInvestor = (req) => {
     }
 
     // Return investor update data
-    if (investorTable) return resolve({ err: false, investors: investorTable });
+    if (investorTable) {
+      return resolve({ err: false, investors: investorTable });
+    }
+    
     return reject({ err: true, message: "Unable to update investor!" });
     } catch (error) {
        return reject({err:true,message:error.message})

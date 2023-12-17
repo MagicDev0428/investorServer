@@ -46,7 +46,7 @@ exports.adamCreate = (req) => {
     //     adamTable.desctiption
     // );
 
-    if (adamTable) return resolve({ err: false, adams: adamTable });
+    if (adamTable) {return resolve({ err: false, adams: adamTable });}
     return reject({ err: true, message: "Error in adam creation!" });
     } catch (error) {
        return reject({err:true,message:error.message})
@@ -66,8 +66,6 @@ exports.adamGet = (adamId) => {
 
   return new Promise(async (resolve, reject) => {
     try {
-      
-    
     // Check for received data
     if (!adamId) {
       return reject("Id is not recieved.");
@@ -113,7 +111,7 @@ exports.adamDelete = (adamId) => {
     //     " " +
     //     adamTable.desctiption
     // );
-    if (adamTable) return resolve({ err: false, adams: adamTable });
+    if (adamTable) {return resolve({ err: false, adams: adamTable });}
     return reject({
       err: true,
       message: "Error in adam deletion,please check your id!",
@@ -135,7 +133,7 @@ exports.adamList = () => {
     adamTable = null;
     adamTable = await Models.adamModel.find().sort({ _id: 1 });
 
-    if (adamTable) return resolve({ err: false, adams: adamTable });
+    if (adamTable) {return resolve({ err: false, adams: adamTable });}
     return reject({ err: true, message: "Unable to receive Adam list!" });
     } catch (error) {
        return reject({err:true,message:error.message})
@@ -181,7 +179,7 @@ exports.adamUpdate = (req) => {
     //     adamTable.desctiption
     // );
 
-    if (adamTable) return resolve({ err: false, adams: adamTable });
+    if (adamTable) {return resolve({ err: false, adams: adamTable });}
     return reject({ err: true, message: "Unable to update Adam!" });
     } catch (error) {
        return reject({err:true,message:error.message})
@@ -199,13 +197,15 @@ exports.adamInvestors = async () => {
 
     const investments = await Models.investmentModel.find(
       {},
-      "_id Explanation"
+      "_id explanation"
     );
 
     adamTable = null;
     adamTable = { investorsNames, investments };
-    if (adamTable)return resolve({ err: false, adams: adamTable });
+
+    if (adamTable) {return resolve({ err: false, adams: adamTable });}
     return reject({err:true,message:"Unable to return your required data"})
+    
     } catch (error) {
        return reject({err:true,message:error.message})
     }

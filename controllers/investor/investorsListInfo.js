@@ -79,6 +79,9 @@ const commonStages = [
     },
   },
 ];
+
+
+
 exports.investorInfo = async (id) => {
   global.show("###### investorInfo ######");
 
@@ -108,7 +111,7 @@ exports.investorInfo = async (id) => {
     investorTable = await aggregateInvestorData(pipeline); // calling  aggregation function for investor info
 
     // checking if investor data exist then resolve the promise otherwise reject it
-    if (investorTable) return resolve({ err: false, investors: investorTable });
+    if (investorTable) {return resolve({ err: false, investors: investorTable });}
     return reject({ err: true, message: "Unable to get investor info!" });
     } catch (error) {
        return reject({err:true,message:error.message})
@@ -131,7 +134,7 @@ exports.investorList = async () => {
     investorTable = await aggregateInvestorData(pipeline); // calling aggregation function for investor list
 
     // checking if investor data exist then resolve the promise otherwise reject it
-    if (investorTable) return resolve({ err: false, investors: investorTable });
+    if (investorTable) {return resolve({ err: false, investors: investorTable });}
     return reject({ err: true, message: "Unable to get investor list!" });
     } catch (error) {
        return reject({err:true,message:error.message})
