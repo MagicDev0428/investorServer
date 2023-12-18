@@ -182,7 +182,7 @@ app.get('/private', async (req, res) => {
 });
 
 app.use("/investors", investorRoutes.router);
-app.use("/documents", documentRoutes.router);
+//app.use("/documents", documentRoutes);
 app.use("/investor", investorRoute);
 app.use("/adam", adamRoute);
 app.use("/investments",investmentRoute);
