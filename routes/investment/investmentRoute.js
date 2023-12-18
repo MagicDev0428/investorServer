@@ -1,5 +1,6 @@
 const express = require("express");
 
+import { investmentNo } from "../../controllers/investment/investmentNo";
 const {createInvestment} =  require("../../controllers/investment/createInvestment");
 const {deleteInvestment} = require("../../controllers/investment/deleteInvestment");
 const {getInvestment} = require("../../controllers/investment/getInvestment");
@@ -72,5 +73,16 @@ router.get("/investmentinfo/:investmentId", async (req, res) => {
   }
 });
 
+
+// get investment no
+
+router.get("/investmentno",async(req,res)=>{
+  try {
+    const result = await investmentNo();
+    res.json(result);
+  } catch (error) {
+     res.status(500).json({ error: error.message });
+  }
+})
 
 module.exports = router;
