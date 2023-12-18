@@ -6,6 +6,11 @@ import { Models } from '../../models';
 import { Lib } from '../../utils';
 const validator = require("validator"); 
 
+const validator = require("validator");
+const mongoose = require("mongoose");
+let { Investor: investorModel } = require("../../models/investorModel");
+// const { pingenerator } = require("../../utils/pingenerator");
+const { investorSchema } = require("../../schema/investor/investorSchema");
 
 // creating investor table model
 let investorTable = Models.Investor
@@ -59,6 +64,26 @@ exports.investorCreate = async (req) => {
 
     // Adding pin to the received object
     received.pincode = Lib.pingenerator();
+
+    const folderName = Lib.transformNameToPath(received.name);
+    try {
+      /* checking if a folder with name of the investor already exists */
+      const isFolderNameTaken = await Lib.isInvestorFolderNameTaken(folderName);
+      if (isFolderNameTaken === true) {
+        return reject({
+          err: true,
+          message: "Folder with investor name already exists!",
+        });
+      }
+      
+    } catch (error) {
+      console.log(error);
+      return reject({
+        err: true,
+        message: "Can't ",
+      });
+    }
+
 
     // Creating a new investor instance
     const newInvestor = new  Models.Investor(received);

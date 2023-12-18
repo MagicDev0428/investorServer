@@ -122,17 +122,17 @@ router.post(
     const investorId = investor._id;
 
     // create documents of type passport
-    const documetPromises = passportImages.map(({ filename: title }, index) => {
-      const fileId = passportImagesIds[index];
-      return Factories.DocumentFactory.createDocument({
-        investorId,
-        title,
-        documentType: DocumentTypes.passport,
-        fileId,
-      });
-    });
+    // const documetPromises = passportImages.map(({ filename: title }, index) => {
+    //   const fileId = passportImagesIds[index];
+    //   return Factories.DocumentFactory.createDocument({
+    //     investorId,
+    //     title,
+    //     documentType: DocumentTypes.passport,
+    //     fileId,
+    //   });
+    // });
 
-    await Promise.all(documetPromises);
+    // await Promise.all(documetPromises);
     res.respondCreated({ investorId: investorId.toString() });
   })
 );

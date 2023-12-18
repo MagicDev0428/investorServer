@@ -25,11 +25,13 @@ export const TemplateEngine = ({ data, save = true, folder, template }) => {
       engine.renderFile(template, data)
         .then(async html => {
           if (save) {
+            // when save is true, write the file to the disk
             fileName = (fileName === undefined || fileName.length === 0) ? `${Date.now()}.html` : `${fileName}.html`;
             const _renderPath = path.join(__dirname, `../render/${fileName}`);
             await fs.writeFile(_renderPath, html);
             return resolve(_renderPath);
           }
+          // otherwise just return the rendered html
           resolve(html);
         })
         .catch(err => {

@@ -1,4 +1,6 @@
+import { getGoogleDriveInstance } from '../factories/google';
 import { AUTH0_NAMESPACE, ROLES } from '../../constants';
+import { ServiceError } from '../errors';
 
 export const formatDate = date => {
   const year = date.getFullYear();
@@ -18,6 +20,9 @@ export const pingenerator = () => {
   return `${randomPin}${randomPin}`;
 };
 
+/* auth0 embeds auth object in the req object. */
+/* return true either the caller of the request is admin */
+/* or the caller is the user himself and accessing his own data */
 export const isAdminOrLoggedInInvestor = (auth, email) => {
   if (auth) {
     const namespace = auth[AUTH0_NAMESPACE];
@@ -28,4 +33,34 @@ export const isAdminOrLoggedInInvestor = (auth, email) => {
   return false;
 };
 
+/* get the name of the admin from the token */
 export const getAdminName = auth => auth[AUTH0_NAMESPACE].name;
+
+/* check whether the name of the folder is taken. */
+/* if taken, return true */
+export const isInvestorFolderNameTaken = async name => {
+  const client = getGoogleDriveInstance();
+  try {
+    const folderNames = await client.listFolders();
+    /* error occured. notify the controller that the request is not serviceable at this point */
+    if (folderNames === undefined) {
+      throw new ServiceError('Google Drive service is unreachable. Please try again');
+    }
+
+    /* no folders exists in the google drive folder */
+    if (folderNames.length === 0) {
+      return false;
+    }
+
+    /* folder name alreay exists in the google drive */
+    if (folderNames.includes(name)) {
+      return true;
+    }
+
+  } catch (error) {
+    console.log(error);
+    throw new ServiceError('Error in isInvestorFolderNameTaken. Request was unsuccessfull');
+  }
+
+  return false;
+};
