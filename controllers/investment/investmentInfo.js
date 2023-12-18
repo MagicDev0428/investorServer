@@ -1,0 +1,208 @@
+//
+// Get  Investment
+//
+
+import { Models } from '../../models';
+
+// creating Investment table model
+let investmentTable = Models.investmentModel
+
+const aggregateStages = [{
+		$lookup: {
+			from: "myInvestments",
+			let: {
+				investment: "$_id"
+			},
+			pipeline: [{
+					$match: {
+						$expr: {
+							$eq: ["$investmentNo", "$$investment"]
+						},
+					},
+				},
+				{
+					$group: {
+						_id: null,
+						sumOfTotalAmountInvested: {  
+							$sum: "$amountInvested"     // sum of all amount invested in myInvestments
+						},
+						myInvestments: {
+							$push: "$$ROOT"             
+						},
+					},
+				},
+			],
+			as: "myInvestments",
+		},
+	},
+	{
+		$unwind: {
+			path: "$myInvestments",
+			preserveNullAndEmptyArrays: true,
+		},
+	},
+	{
+		$lookup: {
+			from: "adam",
+			let: {
+				investment: "$_id"
+			},
+			pipeline: [{
+					$match: {
+						$expr: {
+							$eq: ["$investmentNo", "$$investment"]
+						},
+					},
+				},
+				{
+					$group: {
+						_id: null,
+						sumOfTotalAmountAdam: {
+							$sum: "$amount"           // sum of all amount of adam
+						},
+						adams: {
+							$push: "$$ROOT"
+						},
+					},
+				},
+			],
+			as: "adams",
+		},
+	},
+	{
+		$unwind: {
+			path: "$adams",
+			preserveNullAndEmptyArrays: true,
+		},
+	},
+	{
+		$lookup: {
+			from: "log",
+			let: {
+				investment: "$_id"
+			},
+			pipeline: [{
+					$match: {
+						$expr: {
+							$eq: ["$investmentNo", "$$investment"]
+						},
+					},
+				},
+				{
+					$group: {
+						_id: null,
+						logs: {
+							$push: "$$ROOT"
+						},
+					},
+				},
+			],
+			as: "logs",
+		},
+	},
+	{
+		$unwind: {
+			path: "$logs",
+			preserveNullAndEmptyArrays: true,
+		},
+	},
+	{
+
+		$project: {
+			investments: "$$ROOT",
+			investMinusMyInvest: {
+				$subtract: ["$investAmount", "$myInvestments.sumOfTotalAmountInvested"]
+			},
+			remainingDays: {          // counting remaining days of investment
+				$divide: [{
+						$subtract: [{
+								$toDate: "$endDate"
+							},
+							{
+								$toDate: "$startDate"
+							},
+						],
+					},
+					1000 * 60 * 60 * 24, // Convert milliseconds to days
+				],
+			},
+		},
+	},
+
+];
+
+
+
+//
+// Get all data used on the investment form
+//
+exports.investmentInfo = (investmentId) => {
+
+	global.show("###### investmentInfo ######")
+	if (investmentId) global.show(investmentId);
+
+	// Input from recieved:
+	// - recieved._id (the investments unique key of investments collection)
+
+	return new Promise(async (resolve, reject) => {
+
+		try {
+			// Check for investmentId data
+			if (!investmentId) {
+				return reject({
+					err: true,
+					message: "Nothing investmentId from caller"
+				})
+			}
+
+			// investment ID missing (_id)
+			if (!investmentId) {
+				return reject({
+					err: true,
+					message: `investment id ${investmentId} is not missing!`
+				})
+			}
+
+			// check recieved._id exists
+			const investmentExists = await Models.investmentModel.exists({
+				_id: investmentId,
+			});
+
+			if (!investmentExists) {
+				return reject({
+					err: true,
+					message: `investment id ${investmentId} is not exist!`,
+				});
+			}
+
+
+			// pipeline setup for aggregation
+			const pipeline = [{
+					$match: {
+						_id: Number(investmentId)
+					}
+				},
+
+				...aggregateStages, // Include aggregate stages
+			];
+
+
+
+			investmentTable = null;
+			// investmentTable = await aggregateInvestmentData(pipeline); 
+			investmentTable = await Models.investmentModel.aggregate(pipeline);
+
+			return resolve({
+				err: false,
+				investmentInfo: investmentTable
+			})
+
+    } catch (error) {
+			return reject({
+				err: true,
+				message: error.message
+			})
+		}
+	});
+
+}

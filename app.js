@@ -12,8 +12,10 @@ import { expressjwt as jwt } from "express-jwt";
 import jsondocs from "./docs/index.json";
 import { investorRoutes, documentRoutes } from "./routes";
 import { Middlewares, Docs } from "./utils";
+import { router as myInvestmentRouter} from "./routes/myInvestment/myInvestmentRoute"
 const investorRoute = require("./routes/investor/investorRoute");
 const adamRoute = require("./routes/adam/adamRoute");
+const investmentRoute = require("./routes/investment/investmentRoute")
 require("./logger/simpleLogger"); // global.show is imported from simpleLogger
 
 dotenv.config({
@@ -171,6 +173,10 @@ app.get("/private", (req, res) => {
 
 app.use("/investors", investorRoutes.router);
 app.use("/documents", documentRoutes.router);
+app.use("/investor", investorRoute);
+app.use("/adam", adamRoute);
+app.use("/investments",investmentRoute);
+app.use("/myinvestment",myInvestmentRouter)
 
 // Helper port
 app.set("port", process.env.PORT || 3007);
@@ -183,11 +189,7 @@ app.set("port", process.env.PORT || 3007);
 //   });
 // });
 
-// investor route calling in app.js
-app.use("/investor", investorRoute);
 
-// adam route
-app.use("/adam", adamRoute);
 
 // Setup server to listen
 const server = app.listen(app.get("port"), function () {
