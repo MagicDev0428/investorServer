@@ -6,11 +6,6 @@ import { Models } from '../../models';
 import { Lib } from '../../utils';
 const validator = require("validator"); 
 
-const validator = require("validator");
-const mongoose = require("mongoose");
-let { Investor: investorModel } = require("../../models/investorModel");
-// const { pingenerator } = require("../../utils/pingenerator");
-const { investorSchema } = require("../../schema/investor/investorSchema");
 
 // creating investor table model
 let investorTable = Models.Investor
