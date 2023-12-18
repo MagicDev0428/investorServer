@@ -32,7 +32,44 @@ const schema = new Schema({
     transferInfo:       String,     // Money Transfer Information (bank etc.)
     currency:           String,     // Prefered currency of the investor
 
-    passportImages:     Array,      // Array of Images of the passports / IDs ("filename","filename")
+    folders:            Array,      // Array of folders belonging to THIS investor {"contracts": "ksdhi9us9dtytyhw4ioytsliygi", "id": "kqwersdafsarrs222ioytsliygi", "reciepts/paid": "kqwersdafsarrs222ioytsliygi", "reciepts/invested": "234fsrafsarrs222ioytsliygi"}
+    attachments:        Array,      // Array of Images of the passports / IDs 
+    
+/* [
+    {
+        "folderName" : "contracts",
+        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
+    },
+    {
+        "folderName" : "id",
+        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
+    },
+    {
+        "folderName" : "reciepts",
+        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
+    },
+    {
+        "folderName" : "paid",
+        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
+    },
+    {
+        "folderName" : "invested",
+        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
+    }
+]
+
+
+[
+    {
+        "fileName"   : "passportSatendra.jpg",
+        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
+    },
+    {
+        "fileName"   : "drivingIDNidhi.jpg",
+        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
+    }
+]
+ */
 
     createdDate: {                  // When was this investment created
         type: Date, 
