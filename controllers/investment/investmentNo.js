@@ -12,10 +12,9 @@ export const investmentNo = async () => {
     return new Promise(async (resolve, reject) => {
         try {
            
-            // getting last document id 
-            const lastDocument = await Models.investmentModel.findOne({}, {}, { sort: { _id: -1 } });
-            investmentTable = lastDocument ? lastDocument._id + 1 : 1;
-          
+
+            const count = await Models.investmentModel.countDocuments({});
+            investmentTable = count + 1;
             if (investmentTable) {
                 return resolve({ err: false, investmentNo: investmentTable });
             } else {
