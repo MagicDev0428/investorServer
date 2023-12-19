@@ -26,18 +26,18 @@ const aggregateStages = [{
 						sumOfTotalAmountInvested: {  
 							$sum: "$amountInvested"     // sum of all amount invested in myInvestments
 						},
-						myInvestments: {
+						myInvestmentsList: {
 							$push: "$$ROOT"             
 						},
 					},
 				},
 			],
-			as: "myInvestments",
+			as: "myInvestmentsList",
 		},
 	},
 	{
 		$unwind: {
-			path: "$myInvestments",
+			path: "$myInvestmentsList",
 			preserveNullAndEmptyArrays: true,
 		},
 	},
@@ -106,28 +106,62 @@ const aggregateStages = [{
 			preserveNullAndEmptyArrays: true,
 		},
 	},
-	{
+	// {
 
-		$project: {
-			investments: "$$ROOT",
-			investMinusMyInvest: {
-				$subtract: ["$investAmount", "$myInvestments.sumOfTotalAmountInvested"]
-			},
-			remainingDays: {          // counting remaining days of investment
-				$divide: [{
-						$subtract: [{
-								$toDate: "$endDate"
-							},
-							{
-								$toDate: "$startDate"
-							},
-						],
-					},
-					1000 * 60 * 60 * 24, // Convert milliseconds to days
-				],
-			},
-		},
-	},
+	// 	$project: {
+	// 		investments: "$$ROOT",
+	// 		investmentMissing: {
+	// 			$subtract: ["$investAmount", "$myInvestments.sumOfTotalAmountInvested"]
+	// 		},
+	// 		remainingDays: {          // counting remaining days of investment
+	// 			$divide: [{
+	// 					$subtract: [{
+	// 							$toDate: "$endDate"
+	// 						},
+	// 						{
+	// 							$toDate: "$startDate"
+	// 						},
+	// 					],
+	// 				},
+	// 				1000 * 60 * 60 * 24, // Convert milliseconds to days
+	// 			],
+	// 		},
+	// 	},
+	// },
+	
+{
+  $project: {
+    investments: "$$ROOT",
+    investmentMissing: {
+      $ifNull: [
+        {
+          $subtract: [
+            { $ifNull: ["$investAmount", 0] },
+            { $ifNull: ["$myInvestments.sumOfTotalAmountInvested", 0] }
+          ]
+        },
+        0 // Default value if the result is null
+      ]
+    },
+    remainingDays: {
+      $ifNull: [
+        {
+          $divide: [
+            {
+              $subtract: [
+                { $ifNull: [{ $toDate: "$endDate" }, new Date(0)] },
+                { $ifNull: [{ $toDate: "$startDate" }, new Date(0)] },
+              ],
+            },
+            1000 * 60 * 60 * 24, // Convert milliseconds to days
+          ],
+        },
+        0 // Default value if the result is null
+      ]
+    },
+  },
+},
+
 
 ];
 
