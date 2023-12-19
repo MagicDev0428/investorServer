@@ -106,28 +106,7 @@ const aggregateStages = [{
 			preserveNullAndEmptyArrays: true,
 		},
 	},
-	// {
-
-	// 	$project: {
-	// 		investments: "$$ROOT",
-	// 		investmentMissing: {
-	// 			$subtract: ["$investAmount", "$myInvestments.sumOfTotalAmountInvested"]
-	// 		},
-	// 		remainingDays: {          // counting remaining days of investment
-	// 			$divide: [{
-	// 					$subtract: [{
-	// 							$toDate: "$endDate"
-	// 						},
-	// 						{
-	// 							$toDate: "$startDate"
-	// 						},
-	// 					],
-	// 				},
-	// 				1000 * 60 * 60 * 24, // Convert milliseconds to days
-	// 			],
-	// 		},
-	// 	},
-	// },
+	
 	
 {
   $project: {
@@ -137,7 +116,7 @@ const aggregateStages = [{
         {
           $subtract: [
             { $ifNull: ["$investAmount", 0] },
-            { $ifNull: ["$myInvestments.sumOfTotalAmountInvested", 0] }
+            { $ifNull: ["$myInvestmentsList.sumOfTotalAmountInvested", 0] }
           ]
         },
         0 // Default value if the result is null
