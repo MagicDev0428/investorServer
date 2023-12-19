@@ -14,7 +14,7 @@ export class Document {
     this.fileId = undefined;
   }
 
-  /* create a document by using the liquid template and render the html and store it at the path */
+  /* create a PDF document by using the liquid template and render the html and store it at the path */
   async create() {
 
     const name = this.name && this.name.length > 0 ? `${formatDate(new Date(Date.now()))}-${transformNameToPath(this.name)}` : this.name;
