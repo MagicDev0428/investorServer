@@ -1,5 +1,5 @@
 import express from "express";
-import { createInvestment } from "../../controllers/myInvestment/myInvestment";
+import { createInvestment } from "../../controllers/myInvestment/creaeteMyInvestment";
 import { myInvestmentList } from "../../controllers/myInvestment/myInvestmentList";
 import { deleteMyInvestment } from "../../controllers/myInvestment/deleteMyInvestment";
 
