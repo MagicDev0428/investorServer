@@ -14,7 +14,7 @@ let investmentTable = Models.investmentModel
 // Create NEW investment with the data from the form
 //
 
-exports.createInvestment = (req) => {
+export const createInvestment = (req) => {
     global.show("###### investmentCreate ######");
     let received = req ? req.body : null;
     if (received) global.show({

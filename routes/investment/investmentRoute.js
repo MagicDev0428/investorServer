@@ -1,12 +1,12 @@
 const express = require("express");
 
 import { investmentNo } from "../../controllers/investment/investmentNo";
-const {createInvestment} =  require("../../controllers/investment/createInvestment");
-const {deleteInvestment} = require("../../controllers/investment/deleteInvestment");
-const {getInvestment} = require("../../controllers/investment/getInvestment");
-const {updateInvestment} = require("../../controllers/investment/updateInvestment");
-const {investmentList} = require("../../controllers/investment/investmentList");
-const {investmentInfo} = require("../../controllers/investment/investmentInfo");
+import {createInvestment} from"../../controllers/investment/createInvestment";
+import {deleteInvestment}  from "../../controllers/investment/deleteInvestment";
+import {getInvestment}  from "../../controllers/investment/getInvestment";
+import {updateInvestment}  from "../../controllers/investment/updateInvestment";
+import {investmentList}  from "../../controllers/investment/investmentList";
+import {investmentInfo}  from "../../controllers/investment/investmentInfo";
 
 const router = express.Router();
 

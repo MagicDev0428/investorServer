@@ -13,7 +13,7 @@ let investmentTable = Models.investmentModel
 //
 // Get all data used on the investment form
 //
-exports.getInvestment = (investmentId) => {
+export const getInvestment = (investmentId) => {
     global.show("###### investmentGet ######");
     if (investmentId) global.show(investmentId);
 

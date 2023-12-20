@@ -11,7 +11,7 @@ let investmentTable = Models.investmentModel;
 //
 // Update EXISTING investment with the data from the form
 //
-exports.updateInvestment = (req) => {
+export const updateInvestment = (req) => {
     global.show("###### investmentSave ######");
     let received = req ? req.body : null;
     if (received) global.show({

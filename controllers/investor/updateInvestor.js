@@ -75,6 +75,12 @@ exports.updateInvestor = (req) => {
         { investorName: received._oldId },
         { $set: { investorName: received._id } }
       );
+
+      // update log collection against new id
+      await Models.logModel.updateMany(
+        { investorName: received._oldId },
+        { $set: { investorName: received._id } }       
+      )
     } else {
       // checking if pincode exist then delete it
       if (received.pincode) delete received.pincode;

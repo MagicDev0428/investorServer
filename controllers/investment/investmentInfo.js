@@ -167,7 +167,7 @@ const aggregateStages = [
 
 
 
-exports.investmentInfo = (investmentId) => {
+export const investmentInfo = (investmentId) => {
 
     global.show("###### investmentInfo ######")
     if (investmentId) global.show(investmentId);

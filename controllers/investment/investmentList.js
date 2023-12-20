@@ -12,7 +12,7 @@ let investmentTable = Models.investmentModel;
 //
 // List all from investment collection
 //
-exports.investmentList = () => {
+export const investmentList = () => {
     global.show("###### List of Investments ######");
 
     return new Promise(async (resolve, reject) => {

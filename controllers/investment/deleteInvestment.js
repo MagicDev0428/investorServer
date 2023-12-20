@@ -13,7 +13,7 @@ let investmentTable = Models.investmentModel
 //
 // Delete EXISTING investment with the data from the form
 //
-exports.deleteInvestment = (investmentId) => {
+export const deleteInvestment = (investmentId) => {
     global.show("###### investmentDelete  ######");
 
     if (investmentId) global.show(investmentId);
