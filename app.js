@@ -10,7 +10,7 @@ import swaggerUI from "swagger-ui-express";
 import jwksClient from "jwks-rsa";
 import { expressjwt as jwt } from "express-jwt";
 import jsondocs from "./docs/index.json";
-import { investorRoutes, documentRoutes } from "./routes";
+import { investorRoutes, documentRoutes,logRoutes,balanceRoute } from "./routes";
 import { Middlewares, Docs } from "./utils";
 import { router as myInvestmentRouter} from "./routes/myInvestment/myInvestmentRoute"
 const investorRoute = require("./routes/investor/investorRoute");
@@ -185,7 +185,9 @@ app.use("/investors", investorRoutes.router);
 //app.use("/documents", documentRoutes);
 app.use("/investor", investorRoute);
 app.use("/adam", adamRoute);
+app.use("/log", logRoutes.router);
 app.use("/investments",investmentRoute);
+app.use("/balances",balanceRoute.router);
 app.use("/myinvestment",myInvestmentRouter)
 
 // Helper port

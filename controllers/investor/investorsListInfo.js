@@ -16,7 +16,7 @@ const aggregateInvestorData = async (pipeline) => {
 const commonStages = [
   {
     $lookup: {
-      from: "balances",
+      from: "balance",
       let: { investor: "$_id" },
       pipeline: [
         {
@@ -34,6 +34,9 @@ const commonStages = [
                 $subtract: [{ $sum: "$deposit" }, { $sum: "$withdraw" }],
               },
             },
+             balanceList: {
+                $push: "$$ROOT"
+            },
           },
         },
       ],
@@ -48,7 +51,7 @@ const commonStages = [
   },
   {
     $lookup: {
-      from: "myinvestments",
+      from: "myInvestments",
       let: { investor: "$_id" },
       pipeline: [
         {
@@ -60,7 +63,10 @@ const commonStages = [
           $group: {
             _id: null,
             totalInvested: { $sum: "$amountInvested" },
-            totalProfitPrMonth: { $sum: "$profitPrMonth" },
+            totalProfitMonthly: { $sum: "$profitMonthly" },
+            myInvestmentList: {
+                $push: "$$ROOT"
+            },
           },
         },
       ],
