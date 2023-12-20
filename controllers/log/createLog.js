@@ -27,7 +27,7 @@ export const createLog = (req) => {
 
         try {
 
-            // Checking if investor body is empty or not
+            // Checking if log body is empty or not
             if (!received) {
                 return reject({
                     err: true,

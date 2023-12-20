@@ -1,7 +1,7 @@
 import {
     Models
 } from "../../models";
-// creating investor table model
+// creating balance table model
 let logTable = Models.logModel;
 
 
@@ -36,13 +36,13 @@ export const updateLog = (req) => {
                 _id: received._id
             });
 
-            console.log("This log exist ==>",logExist);
-            if (!logExist)
+           
+            if (!logExist){
                 return reject({
                     err: true,
                     message: `Log id ${received._id} is not exist!`,
                 });
-
+            }
 
             const logId = received._id
             delete received._id             // deleting id so it will not update the document id

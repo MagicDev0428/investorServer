@@ -1,4 +1,4 @@
-const express = require("express");
+import express from "express";
 
 import { investmentNo } from "../../controllers/investment/investmentNo";
 import {createInvestment} from"../../controllers/investment/createInvestment";

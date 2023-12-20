@@ -2,13 +2,13 @@ import {
     Models
 } from "../../models";
 // creating balance table model
-let logTable = Models.logModel;
+let balanceTable = Models.balanceModel;
 
 
 //
-// List all the logs using search params
+// List all the balances using search params
 //
-export const logList = (req) => {
+export const balanceList = (req) => {
 
     global.show("###### logList ######")
     let received = req ? req.body : null;
@@ -21,20 +21,20 @@ export const logList = (req) => {
 
     return new Promise(async (resolve, reject) => {
         try {
-            logTable = null;
-            logTable = await Models.logModel.find().sort({
+            balanceTable = null;
+            balanceTable = await Models.balanceModel.find().sort({
                 _id: 1
             });
 
-            if (logTable) {
+            if (balanceTable) {
                 return resolve({
                     err: false,
-                    logs: logTable
+                    balances: balanceTable
                 });
             }
             return reject({
                 err: true,
-                message: "Unable to receive Logs list!"
+                message: "Unable to receive balances list!"
             });
         } catch (error) {
             return reject({

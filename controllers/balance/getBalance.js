@@ -2,38 +2,38 @@ import {
     Models
 } from "../../models";
 // creating balance table model
-let logTable = Models.logModel;
+let balanceTable = Models.balanceModel;
 
 
 
 
-export const getLog = (logId) => {
-    global.show("###### Get Log ######");
-    if (logId) global.show(logId);
+export const getBalance = (balanceId) => {
+    global.show("###### Get Balance ######");
+    if (balanceId) global.show(balanceId);
 
 
     return new Promise(async (resolve, reject) => {
         try {
 
             // Check for received data
-            if (!logId) {
-                return reject("Id is not recieved.");
+            if (!balanceId) {
+                return reject("Balance Id is not recieved.");
             }
 
-            logTable = null;
-            logTable = await Models.logModel.findOne({
-                _id: logId
+            balanceTable = null;
+            balanceTable = await Models.balanceModel.findOne({
+                _id: balanceId
             });
-            if (!logTable) {
+            if (!balanceTable) {
                 return reject({
                     err: true,
-                    message: "log " + logId + "Not Found!"
+                    message: "Balance " + balanceId + "Not Found!"
                 });
             }
 
             return resolve({
                 err: false,
-                logs: logTable
+                balances: balanceTable
             });
         } catch (error) {
             return reject({

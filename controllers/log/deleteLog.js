@@ -1,27 +1,27 @@
 import {
     Models
 } from "../../models";
-// creating investor table model
+// creating Log table model
 let logTable = Models.logModel;
 
 
 export const deleteLog = async (_id) => {
-    global.show("###### deleteInvestor ######");
+    global.show("###### delete Log ######");
     return new Promise(async (resolve, reject) => {
         try {
 
             logTable = null; // intializing table values null
-            logTable = await Models.logModel.findByIdAndDelete(_id); // passing id in delete function and storing response in investor table
+            logTable = await Models.logModel.findByIdAndDelete(_id); // passing id in delete function and storing response in Log table
 
-            // checking that investor exist or not
+            // checking that Log exist or not
             if (!logTable) {
                 return reject({
                     err: true,
-                    message: "Investor id " + _id + " Not Found!",
+                    message: "Log id " + _id + " Not Found!",
                 });
             }
 
-            // if investor exist then return all data
+            // if Log exist then return all data
             return resolve({
                 err: false,
                 logs: logTable
