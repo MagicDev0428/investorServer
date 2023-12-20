@@ -26,7 +26,7 @@ var myInvestmentsSchema  = new Schema({
     investType:         String,     // InvestmentType: Monthly Profit, Annual Profit, One-time Profit, Mixed 
     firstProfitDate:    Date,       // When will we PAY the first PROFIT to the investor
     lastProfitDate:     Date,       // When will we PAY the last PROFIT to the investor
-    payBackDate:        Date,       // When do we have to pay the investor the money back
+    payBackDate:        Date,       // When do we have to pay the investor the money back (if blank then 6 months notice)
 
     torbenMonthlyPct:   Number,     // Torbens Monthly Profit Procentage
     torbenMonthly:      Number,     // Torbens Monthly Profit Amount

@@ -8,7 +8,9 @@ var investmentSchema = new Schema(
   {
     _id:                  Number,    // REQUIERED Investment No
 
-    startDate:             Date,     // When do the investment start
+    startDate:             Date,     // When do the investment start 
+    firstProfitDate:       Date,     // When do the investor get his first profit
+    lastProfitDate:        Date,     // When do the investment get his last profit
     endDate:               Date,     // When do the investment end
 
     investAmount:         Number,    // The amount we want to have invested
