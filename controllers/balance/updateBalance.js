@@ -21,7 +21,7 @@ export const updateBalance = (req) => {
 
             // Check for received data
             if (!received._id) {
-                return reject("_id is not recieved in form.");
+                return reject({err:true,message:"_id is not recieved in form."});
             }
 
             const balanceId = received._id
