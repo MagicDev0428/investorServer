@@ -306,11 +306,11 @@ app.post('/createFolder', async (req, res) => {
   const client = factory.getGoogleDriveInstance();
 
   // Use google drive client and create folder
-  // create only parent folder
-  // const folders = await client.createFolders("Parent Folder2");
-
-  // create parent folder and child folder
-  const folders = await client.createFolders("Satendra2");
+  
+  // create only 1 folder at root level
+  //const folders = await client.createFolders(null, "Satendra2");
+  // Create folder at any level @argument1=<Parent Folder ID>, @argument2="Child Folder Name"
+  const folders = await client.createFolders("1qwsDVtMvKBv-c7hLekDUt6EXTiNOMeI7", "Satendra2-child1");
   res.respond(folders);
 });
 
