@@ -24,50 +24,71 @@ const GoogleDriveFactory = (config) => {
     }
   };
 
+  // Create folder
+  // Google drive api https://developers.google.com/drive/api/guides/folder
+  //
   const createFolder = async (drive, folderName, parentFolderId = null) => {
+
+    // File meta data
     const fileMetadata = {
       name: folderName,
       mimeType: "application/vnd.google-apps.folder",
       ...(parentFolderId && { parents: [parentFolderId] }),
     };
     try {
+      // Actual call of google drive for create folder
       const response = await drive.files.create({
         resource: fileMetadata,
         fields: "id",
       });
       return response.data.id;
     } catch (error) {
-      throw new FailServerError("Google Drive investor folder creation failed");
+      throw new FailServerError("Google Drive folder creation failed");
     }
   };
 
   return {
-    createFolders: async (rootFolderName) => {
+    // Create folder just pass the folder names createFolders("Parent Folder", "Child Folder") or client.createFolders("Parent Folder")
+    createFolders: async (parentFolder, childFolder) => {
+
+      // Authorize the token, is this user the valid user or not??
       const auth = await authorize();
       const drive = google.drive({ version: "v3", auth });
       try {
-        const investorFolderId = await createFolder(
-          drive,
-          rootFolderName,
-          process.env.GOOGLE_DRIVE_ROOT
-        );
-        if (investorFolderId) {
-          const documentsFolder = await createFolder(
-            drive,
-            "Documents",
-            investorFolderId
-          );
-          const passportsFolder = await createFolder(
-            drive,
-            "Passports",
-            investorFolderId
-          );
-          if (documentsFolder && passportsFolder) {
+        
+        
+        // Get all the folders list in root level
+        let listFolderNames = await instance.listFolders();
+        
+        // check if the parentFolder is already exists, if yes then send the message        
+        if (listFolderNames.includes(parentFolder)) {
+          return { 
+            msg: `${parentFolder} already exists.`
+          };
+        }
+
+        // If parentFolder is not present in the root then only create it
+        const rootFolderId = await createFolder(drive, parentFolder, process.env.GOOGLE_DRIVE_ROOT);
+
+        
+        // If user don't want to create child folder only one folder i.e parent folder        
+        if(rootFolderId && !childFolder) {
+          return {
+            parentFolderId: rootFolderId
+          };
+        }
+
+        //
+        // If user wants to create child and parent both folder then create child folder
+        //
+        if (rootFolderId && childFolder) {
+          const childFolderId = await createFolder(drive, childFolder, rootFolderId);
+
+          if (childFolderId) {
             // All folders has been created
             return {
-              folderId: investorFolderId,
-              documentsFolderId: documentsFolder,
-              passportsFolderId: passportsFolder,
+              parentFolderId: rootFolderId,
+              childFolderId: childFolderId,
             };
           }
         }
@@ -112,15 +133,19 @@ const GoogleDriveFactory = (config) => {
         throw new FailServerError("Google Drive invoice export failed");
       }
     },
+    // Get the list of all folders in root level
     listFolders: async () => {
       try {
+        // Authorize the user for token
         const auth = await authorize();
-        const drive = google.drive({ version: 'v3', auth });
+        const drive = google.drive({ version: "v3", auth });
+
+        // Google drive api for list of files
         const response = await drive.files.list({
           q: `'${process.env.GOOGLE_DRIVE_ROOT}' in parents`, // query for the root folder
-          fields: 'files(id, name)', // get id and name for the folders
+          fields: "files(id, name)", // get id and name for the folders
         });
-    
+
         const folders = response.data.files;
         const folderNames = [];
         if (folders.length) {
@@ -135,25 +160,25 @@ const GoogleDriveFactory = (config) => {
 
         return folderNames;
       } catch (error) {
-        console.error('The API returned an error:', error);
+        console.error("The API returned an error:", error);
         return undefined; // for error handling on the caller side, undefined means api was unsuccessful
       }
     },
-    get: async fileId => {
+    get: async (fileId) => {
       const auth = await authorize();
-      const drive = google.drive({ version: 'v3', auth });
+      const drive = google.drive({ version: "v3", auth });
       try {
         const response = await drive.files.get({
           fileId: fileId,
-          fields: 'id, name, mimeType'
+          fields: "id, name, mimeType",
         });
 
         return response.data;
       } catch (error) {
-        console.error('Error fetching file:', error.message);
-        throw new Error('Error fetching file');
+        console.error("Error fetching file:", error.message);
+        throw new Error("Error fetching file");
       }
-    }
+    },
   };
 };
 

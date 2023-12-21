@@ -17,6 +17,7 @@ const investorRoute = require("./routes/investor/investorRoute");
 const adamRoute = require("./routes/adam/adamRoute");
 const investmentRoute = require("./routes/investment/investmentRoute")
 require("./logger/simpleLogger"); // global.show is imported from simpleLogger
+const factory = require("./utils/factories/google");
 
 dotenv.config({
   path: process.env.NODE_ENV === "production" ? ".env.prod" : ".env.local",
@@ -170,16 +171,6 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get('/private', async (req, res) => {
-  const client = Factories.getGoogleDriveInstance();
-  const folders = await client.listFolders();
-  console.log({folders});
-
-  res.respond({
-    message:
-      "Hello from a private endpoint! You need to be authenticated to see this.",
-  });
-});
 
 app.use("/investors", investorRoutes.router);
 //app.use("/documents", documentRoutes);
@@ -286,3 +277,46 @@ global.show = (myVariable) => {
   }
   console.log(front + back);
 };
+
+
+/******************************************************************** ************************
+* *************** All PRIVATE Routes for TESTING of Utilities Methods for Torben *************
+**********************************************************************************************/
+
+//
+// List all folders
+//
+app.get('/listFolders', async (req, res) => {
+
+  // Get the google drive client 
+  const client = factory.getGoogleDriveInstance();
+  // use google drive client for list of folders
+  const folders = await client.listFolders();
+  console.log({folders});
+
+  res.respond({folders});
+});
+
+//
+// Create folder
+//
+app.post('/createFolder', async (req, res) => {
+
+  // Get the google drive client 
+  const client = factory.getGoogleDriveInstance();
+
+  // Use google drive client and create folder
+  // create only parent folder
+  // const folders = await client.createFolders("Parent Folder2");
+
+  // create parent folder and child folder
+  const folders = await client.createFolders("Parent Folder", "child folder");
+  console.log(folders);
+
+  res.respond(folders);
+});
+
+
+//
+// Delete folder
+//
