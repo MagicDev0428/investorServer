@@ -292,9 +292,9 @@ app.get('/listFolders', async (req, res) => {
   const client = factory.getGoogleDriveInstance();
   // use google drive client for list of folders
   const folders = await client.listFolders();
-  console.log({folders});
+  console.log(folders);
 
-  res.respond({folders});
+  res.respond(folders);
 });
 
 //
@@ -310,9 +310,7 @@ app.post('/createFolder', async (req, res) => {
   // const folders = await client.createFolders("Parent Folder2");
 
   // create parent folder and child folder
-  const folders = await client.createFolders("Parent Folder", "child folder");
-  console.log(folders);
-
+  const folders = await client.createFolders("Satendra2");
   res.respond(folders);
 });
 
@@ -320,3 +318,16 @@ app.post('/createFolder', async (req, res) => {
 //
 // Delete folder
 //
+app.delete('/deleteFolder', async(req, res) => {
+
+  // Get the google drive client 
+  const client = factory.getGoogleDriveInstance();
+  // use google drive client for list of folders
+  const folders = await client.listFolders();
+  // Find the folderId which folder you want to delete
+  let folderToDelete = folders.find(folder => folder.name === "Satendra");
+  // Delete the folder Using folderId
+  const response = client.deleteFolder(folderToDelete.id);
+  res.respond(response);
+});
+

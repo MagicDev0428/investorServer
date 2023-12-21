@@ -58,8 +58,9 @@ const GoogleDriveFactory = (config) => {
         
         
         // Get all the folders list in root level
-        let listFolderNames = await instance.listFolders();
-        
+        let listFolders = await instance.listFolders();
+        console.log(listFolders);
+        let listFolderNames = listFolders.map(item => item.name);       
         // check if the parentFolder is already exists, if yes then send the message        
         if (listFolderNames.includes(parentFolder)) {
           return { 
@@ -146,19 +147,7 @@ const GoogleDriveFactory = (config) => {
           fields: "files(id, name)", // get id and name for the folders
         });
 
-        const folders = response.data.files;
-        const folderNames = [];
-        if (folders.length) {
-          folders.forEach((folder) => {
-            // add the folder name to array
-            folderNames.push(folder.name);
-          });
-        } else {
-          // return an empty array
-          return [];
-        }
-
-        return folderNames;
+        return response.data.files;
       } catch (error) {
         console.error("The API returned an error:", error);
         return undefined; // for error handling on the caller side, undefined means api was unsuccessful
@@ -179,6 +168,22 @@ const GoogleDriveFactory = (config) => {
         throw new Error("Error fetching file");
       }
     },
+    // Delete folder by folderId
+    async deleteFolder(fileId) {
+
+      // Authorize user
+      const auth = await authorize();
+      // Get the goolge drive API instance
+      const drive = google.drive({ version: "v3", auth });
+      // Actual Delete call with google API
+      const response = await drive.files.update({
+        fileId: fileId,
+        requestBody: {
+          'trashed': true
+        },
+      });
+      return response;
+    }
   };
 };
 
