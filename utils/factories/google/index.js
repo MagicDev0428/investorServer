@@ -50,7 +50,7 @@ const GoogleDriveFactory = (config) => {
 
   return {
     // Create folder just pass the folder names
-    // createFolders("Parent Folder", "Child Folder") or client.createFolders("Parent Folder")
+    // createFolders("Parent Folder", "Child Folder") or client.createFolders(null, "Parent Folder")
     createFolders: async (parentFolderId = null, childFolder) => {
       // Authorize the token, is this user the valid user or not??
       const auth = await authorize();
@@ -59,23 +59,16 @@ const GoogleDriveFactory = (config) => {
         auth,
       });
       try {
-        // If parentFolder is not present in the root then only create it
-        //const rootFolderId = await createFolder(drive, childFolder, process.env.GOOGLE_DRIVE_ROOT);
+        // If parentFolder is present then create parent folder at root and child folder under the parent.
         if (parentFolderId) {
-          const folderId = await createFolder(
-            drive,
-            childFolder,
-            parentFolderId
-          );
-
-          // If user don't want to create child folder only one folder i.e parent folder
+          const folderId = await createFolder(drive, childFolder, parentFolderId);          
           if (folderId) {
             return folderId;
           }
         }
 
         //
-        // If user wants to create child and parent both folder then create child folder
+        // If user wants to create only child folder at specific location
         //
         if (parentFolderId === null) {
           // Get all the folders list in root level
@@ -104,7 +97,10 @@ const GoogleDriveFactory = (config) => {
         console.log(error);
       }
     },
-    uploadFile: async (filePath, folderId, mimeType = "application/pdf") => {
+    // Upload file
+    // Arguments: "uploads/<file>", "FolderID where you want to upload the file"
+    uploadFile: async (filePath, folderId) => {
+
       const auth = await authorize();
       const drive = google.drive({
         version: "v3",
@@ -117,7 +113,7 @@ const GoogleDriveFactory = (config) => {
           name: path.basename(filePath),
         },
         media: {
-          mimeType,
+         // mimeType,
           body: fs.createReadStream(filePath),
         },
         fields: "id",
@@ -125,7 +121,7 @@ const GoogleDriveFactory = (config) => {
 
       try {
         const response = await drive.files.create(fileMetadata);
-        return response.data.id;
+        return response.data;
       } catch (error) {
         throw new FailServerError("Google Drive invoice upload failed");
       }
@@ -200,14 +196,69 @@ const GoogleDriveFactory = (config) => {
         auth,
       });
       // Actual Delete call with google API
-      const response = await drive.files.update({
-        fileId: fileId,
-        requestBody: {
-          trashed: true,
-        },
-      });
-      return response;
+      try {
+        const response = await drive.files.update({
+          fileId: fileId,
+          requestBody: {
+            trashed: true,
+          },
+        });
+        return response;
+      } catch (error) {
+        console.error("Error deleting folder:", error.message);
+        throw new Error("Error deleting folder:");
+      }
     },
+    // Delete File by fileId
+    async deleteFile(fileId) {
+      // Authorize user
+      const auth = await authorize();
+      // Get the goolge drive API instance
+      const drive = google.drive({
+        version: "v3",
+        auth,
+      });
+      // Actual Delete call with google API
+      try {
+        const response = await drive.files.delete({
+          fileId: fileId
+        });
+        return response;
+      } catch (error) {
+        console.error("Error deleting file:", error.message);
+        throw new Error("Error deleting file:");
+      }
+    },
+    // Get the web link
+    async getWebLink(fileId) {
+      // Authorize user
+      const auth = await authorize();
+      // Get the goolge drive API instance
+      const drive = google.drive({
+        version: "v3",
+        auth,
+      });
+       // get web link 
+       try {
+        // First give reader permission to anyone
+        await drive.permissions.create({
+          fileId: fileId,
+          requestBody: {
+            role: 'reader',
+            type: 'anyone',
+          }
+        });
+        // get the webViewLink
+        const response = await drive.files.get({
+          fileId: fileId,
+          fields: 'webViewLink'
+      })
+        return response.data.webViewLink;
+      } catch (error) {
+        console.error("Error while getting the weblink of file:", error.message);
+        throw new Error("Error while getting the weblink of file:");
+      }
+    }
   };
 };
 

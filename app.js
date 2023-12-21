@@ -308,9 +308,9 @@ app.post('/createFolder', async (req, res) => {
   // Use google drive client and create folder
   
   // create only 1 folder at root level
-  //const folders = await client.createFolders(null, "Satendra2");
+  const folders = await client.createFolders(null, "Satendra5");
   // Create folder at any level @argument1=<Parent Folder ID>, @argument2="Child Folder Name"
-  const folders = await client.createFolders("1qwsDVtMvKBv-c7hLekDUt6EXTiNOMeI7", "Satendra2-child1");
+  //const folders = await client.createFolders("1qwsDVtMvKBv-c7hLekDUt6EXTiNOMeI7", "Satendra2-child1");
   res.respond(folders);
 });
 
@@ -325,9 +325,41 @@ app.delete('/deleteFolder', async(req, res) => {
   // use google drive client for list of folders
   const folders = await client.listFolders();
   // Find the folderId which folder you want to delete
-  let folderToDelete = folders.find(folder => folder.name === "Satendra");
-  // Delete the folder Using folderId
+  let folderToDelete = folders.find(folder => folder.name === "Satendra5");
+  // Delete the folder Using folderId  
   const response = client.deleteFolder(folderToDelete.id);
   res.respond(response);
 });
 
+//
+// Delete File
+//
+app.delete('/deleteFile', async(req, res) => {
+
+  // Get the google drive client 
+  const client = factory.getGoogleDriveInstance(); 
+  // Delete the file Using fileId  
+  const response = client.deleteFile("15l4cs9a3R4ppB6eDmAoozr4JoysA7mIB");
+  res.respond(response);
+});
+
+//
+// Upload file
+//
+app.post("/uploadFile", async(req, res) => {
+
+  // Get the google drive client 
+  const client = factory.getGoogleDriveInstance();
+  // Upload the file 
+  const response = await client.uploadFile("uploads/1701982589471.PNG", "11RlsyA0qpvLj_rnW6xXYHH0QJVIEpFf7");
+  res.respond(response);
+});
+
+// Get weblink of any file
+app.get("/getWebLink", async(req, res) => {
+  // Get the google drive client 
+  const client = factory.getGoogleDriveInstance();
+  // Upload the file 
+  const response = await client.getWebLink("1eezvsMdtd5eSUn5Cj29yjPYcGPrwEEMk");
+  res.respond(response);
+});
