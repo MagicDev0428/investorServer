@@ -5,6 +5,7 @@ import {
     Models
 } from "../../models";
 
+import { Lib } from "../../utils";
 // creating table model
 let investmentTable = Models.investmentModel;
 
@@ -33,12 +34,19 @@ export const updateInvestment = (req) => {
                 });
             }
 
-            const _id = received._id;
-            delete received._id;
 
+            const dateTime = new Date().toISOString();
+            received.modifiedDate = dateTime;
+           // getting user name from auth token
+            const userName = Lib.getAdminName(req.auth);
+
+            received.modifiedBy = userName?userName:"";
+
+
+            console.log("modified ==> ",received);
             investmentTable = null;
 
-            investmentTable = await Models.investmentModel.findByIdAndUpdate(_id, received, {
+            investmentTable = await Models.investmentModel.findByIdAndUpdate(received._id, received, {
                 new: true,
             });
             // Update the investment in "investment" collection
