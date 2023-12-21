@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { getGoogleDriveInstance } from '../factories/google';
 import { AUTH0_NAMESPACE, ROLES } from '../../constants';
 import { ServiceError } from '../errors';
@@ -11,6 +12,14 @@ export const formatDate = date => {
 
   return `${year}-${month}-${day}-${hour}:${minutes}`;
 };
+
+export const  calculateDays = (startDate, endDate) =>{
+  const startMoment = moment(startDate);
+  const endMoment = moment(endDate);
+  return endMoment.diff(startMoment, 'days');
+
+
+}
 
 export const transformNameToPath = name => name.split(' ').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
 

@@ -1,5 +1,5 @@
 import express from "express";
-
+import { Lib } from "../../utils";
 import { investmentNo } from "../../controllers/investment/investmentNo";
 import {createInvestment} from"../../controllers/investment/createInvestment";
 import {deleteInvestment}  from "../../controllers/investment/deleteInvestment";
@@ -55,6 +55,9 @@ router.put("/updateinvestment", async (req, res) => {
 // getting investment list
 router.get("/investmentlist", async (req, res) => {
   try {
+     const adminName = Lib.getAdminName(req.auth);
+
+     console.log("this is adming name ==>",adminName);
     const result = await investmentList();
     res.json(result);
   } catch (error) {

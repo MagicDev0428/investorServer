@@ -72,10 +72,9 @@ exports.investorCreate = async (req) => {
       }
       
     } catch (error) {
-      console.log(error);
       return reject({
         err: true,
-        message: "Can't ",
+        message:error.message,
       });
     }
 
