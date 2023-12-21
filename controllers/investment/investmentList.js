@@ -5,6 +5,7 @@ import {
     Models
 } from "../../models";
 
+import { Lib } from "../../utils";
 // creating table model
 let investmentTable = Models.investmentModel;
 
@@ -17,18 +18,27 @@ export const investmentList = () => {
 
     return new Promise(async (resolve, reject) => {
         try {
+
+             
             investmentTable = null;
             investmentTable = await Models.investmentModel.find().sort({
                 _id: 1
-            });
+            }).lean();
 
-            if (investmentTable) {
+
+            if (investmentTable ) {
+               
+                // adding new property investment ends 
+        investmentTable = investmentTable.map(investment => ({
+                    ...investment,
+                    investmentEnds: Lib.calculateDays(investment.startDate, investment.endDate)
+                }));
                 return resolve({
                     err: false,
                     investments: investmentTable
                 });
             }
-            return reject({
+            return reject({ 
                 err: true,
                 message: "Unable to receive investment list!"
             });
@@ -41,3 +51,4 @@ export const investmentList = () => {
         }
     });
 };
+

@@ -6,7 +6,7 @@ import {
     Models
 } from "../../models";
 
-
+import{Lib} from "../../utils"
 // creating Balance table model
 let balanceTable = Models.balanceModel;
 
@@ -42,6 +42,17 @@ export const createBalance = (req) => {
                     message: "Check balance form investorName and profitMonth are required!",
                 });
             }
+
+            // date and time in createDate and modified date
+            const dateTime = new Date().toISOString();
+            received.createdDate = dateTime;
+            received.modifiedDate =dateTime;
+
+            // getting user name from auth token
+            const userName = Lib.getAdminName(req.auth);
+
+            received.createdBy = userName?userName:"";
+            received.modifiedBy = userName?userName:"";
 
 
               // check recieved.investorName exist in investors or not

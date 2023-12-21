@@ -40,6 +40,16 @@ exports.updateInvestor = (req) => {
     // Removing admin if it exists in the body
     if (received.admin) delete received.admin;
 
+    const dateTime = new Date().toISOString();
+    received.modifiedDate = dateTime;
+
+     // getting user name from auth token
+    const userName = Lib.getAdminName(req.auth);
+
+    received.modifiedBy = userName?userName:"";
+
+ 
+
     if (received?._oldId) {
       // Check if the new "_id" already exists
       const existingInvestor = await Models.Investor.findById(received._id);

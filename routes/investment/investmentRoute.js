@@ -1,5 +1,5 @@
 import express from "express";
-
+import { Lib } from "../../utils";
 import { investmentNo } from "../../controllers/investment/investmentNo";
 import {createInvestment} from"../../controllers/investment/createInvestment";
 import {deleteInvestment}  from "../../controllers/investment/deleteInvestment";

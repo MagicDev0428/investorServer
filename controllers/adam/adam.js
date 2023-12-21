@@ -3,7 +3,7 @@
 //
 
 import { Models } from "../../models";
-
+import {Lib} from "../../utils";
 // creating adam table model
 let adamTable = Models.adamModel;
 
@@ -26,8 +26,18 @@ exports.adamCreate = (req) => {
       });
     }
 
-    // Unixx date as an id
-    // received._id = new Date().getTime();
+    // date and time in createDate and modified date
+    const dateTime = new Date().toISOString();
+    received.createdDate = dateTime;
+    received.modifiedDate =dateTime;
+    
+
+    // getting user name from auth token
+    const userName = Lib.getAdminName(req.auth);
+
+    received.createdBy = userName?userName:"";
+    received.modifiedBy = userName?userName:"";
+
 
     // creating new adam instance
     const newAdam = new Models.adamModel(received);
@@ -159,6 +169,15 @@ exports.adamUpdate = (req) => {
         err: true,
         message: `Adam id ${received._id} is not exist!`,
       });
+
+      const dateTime = new Date().toISOString();
+      received.modifiedDate = dateTime;
+
+      // getting user name from auth token
+      const userName = Lib.getAdminName(req.auth);
+
+      received.modifiedBy = userName?userName:"";
+
 
     adamTable = null;
 
