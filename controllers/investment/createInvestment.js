@@ -6,6 +6,7 @@ import {
     Models
 } from '../../models';
 
+import { Lib } from '../../utils';
 // creating Investment table model
 let investmentTable = Models.investmentModel
 
@@ -40,6 +41,17 @@ export const createInvestment = (req) => {
                 });
             }
 
+
+            // date and time in createDate and modified date
+            const dateTime = new Date().toISOString();
+            received.createdDate = dateTime;
+            received.modifiedDate =dateTime;
+
+            // getting user name from auth token
+            const userName = Lib.getAdminName(req.auth);
+
+            received.createdBy = userName?userName:"";
+            received.modifiedBy = userName?userName:"";
 
             // checking investment recieved._id already exists
             const investmentExists = await Models.investmentModel.exists({

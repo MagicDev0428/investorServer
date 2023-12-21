@@ -1,6 +1,8 @@
 import {
     Models
 } from "../../models";
+
+import { Lib } from "../../utils";
 // creating balance table model
 let balanceTable = Models.balanceModel;
 
@@ -24,12 +26,18 @@ export const updateBalance = (req) => {
                 return reject({err:true,message:"_id is not recieved in form."});
             }
 
-            const balanceId = received._id
-            delete received._id             // deleting id so it will not update the document id
+            const dateTime = new Date().toISOString();
+            received.modifiedDate = dateTime;
+
+           // getting user name from auth token
+            const userName = Lib.getAdminName(req.auth);
+
+            received.modifiedBy = userName?userName:"";
+
 
             balanceTable = null;
             balanceTable = await Models.balanceModel.findOneAndUpdate({
-                    _id: balanceId
+                    _id: received._id
                 },
                 received, {
                     new: true

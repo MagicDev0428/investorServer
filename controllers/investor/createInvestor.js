@@ -57,6 +57,19 @@ exports.investorCreate = async (req) => {
       });
     }
 
+
+    // date and time in createDate and modified date
+    const dateTime = new Date().toISOString();
+    received.createdDate = dateTime;
+    received.modifiedDate =dateTime;
+
+    // getting user name from auth token
+    const userName = Lib.getAdminName(req.auth);
+
+    received.createdBy = userName?userName:"";
+    received.modifiedBy = userName?userName:"";
+
+
     // Adding pin to the received object
     received.pincode = Lib.pingenerator();
 
@@ -72,10 +85,9 @@ exports.investorCreate = async (req) => {
       }
       
     } catch (error) {
-      console.log(error);
       return reject({
         err: true,
-        message: "Can't ",
+        message:error.message,
       });
     }
 
