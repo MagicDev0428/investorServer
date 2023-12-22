@@ -3,7 +3,7 @@
 //
 
 import { Models } from '../../models';
-
+import { Lib } from '../../utils';
 // creating Investment table model
 let myInvestmentTable = Models.myInvestmentsModel
 
@@ -26,28 +26,43 @@ export const createInvestment = (req) => {
                 message: "my investment form is empty!",
             });
         }
+ 
 
-        // investment id is required
-        // if (!received._id) {
-        //   return reject({
-        //     err: true,
-        //     message: "my investment id is empty!",
-        //   });
-        // }
+            // checking id exists in myInvestments
+            const investmentExists = await Models.investmentModel.exists({
+                _id: received.investmentNo
+            });
+            if (!investmentExists) {
+                return reject({
+                    status: 403,
+                    err: true,
+                    message: "Investment No does not exist!",
+                });
+            }
+            // checking id exists in myInvestments
+            const investorExists = await Models.Investor.exists({
+                _id: received.investorName
+            });
+            if (!investorExists) {
+                return reject({
+                    status: 403,
+                    err: true,
+                    message: "Investor id does not exist!",
+                });
+            }
+
+    // date and time in createDate and modified date
+    const dateTime = new Date().toISOString();
+    received.createdDate = dateTime;
+    received.modifiedDate =dateTime;
+
+    // getting user name from auth token
+    const userName = Lib.getAdminName(req.auth);
+
+    received.createdBy = userName?userName:"";
+    received.modifiedBy = userName?userName:"";
 
 
-        // checking investment recieved._id already exists
-        // const investmentExists = await Models.myInvestmentsModel.exists({
-        //       _id: received?._id,
-        //     });
-        // if (investmentExists)
-        //     return reject({
-        //     err: true,
-        //     message: `Investment id ${received._id} is already exist!`,
-        // });
-
-        // received._id = new Date().getTime();
-        // creating new investment instance
         const newMyInvestment = new Models.myInvestmentsModel(received);
 
         myInvestmentTable = null;
@@ -65,7 +80,7 @@ export const createInvestment = (req) => {
         // );
 
         if (myInvestmentTable){
-             return resolve({ status: 201, err: false, investments: myInvestmentTable });
+             return resolve({ status: 201, err: false, myInvestments: myInvestmentTable });
         }
         return reject({
         status: 500,

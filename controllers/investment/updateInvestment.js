@@ -42,8 +42,6 @@ export const updateInvestment = (req) => {
 
             received.modifiedBy = userName?userName:"";
 
-
-            console.log("modified ==> ",received);
             investmentTable = null;
 
             investmentTable = await Models.investmentModel.findByIdAndUpdate(received._id, received, {

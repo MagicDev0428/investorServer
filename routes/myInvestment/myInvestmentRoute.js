@@ -1,11 +1,14 @@
 import express from "express";
-import { createInvestment } from "../../controllers/myInvestment/creaeteMyInvestment";
+import { createInvestment } from "../../controllers/myInvestment/createMyInvestment";
 import { myInvestmentList } from "../../controllers/myInvestment/myInvestmentList";
 import { deleteMyInvestment } from "../../controllers/myInvestment/deleteMyInvestment";
+import { getMyInvestment } from "../../controllers/myInvestment/getMyInvestment";
+import { updateMyInvestment } from "../../controllers/myInvestment/updateMyInvestment";
+
 
 export const router = express.Router();
 
-// Investor Creation Route
+// my investment Creation Route
 router.post("/createmyinvestment", async (req, res) => {
   try {
     const result = await createInvestment(req);
@@ -26,12 +29,32 @@ router.delete("/deletemyinvestment/:myInvestmentId", async (req, res) => {
 });
 
 
-// getting investment list
+// getting my investment list
 router.get("/myinvestmentlist", async (req, res) => {
   try {
     const result = await myInvestmentList();
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// getting my investment 
+router.get("/getmyinvestment/:myinvestmentId", async (req, res) => {
+  try {
+    const result = await getMyInvestment(req.params.myinvestmentId);
+    res.status(result.status).json(result);
+  } catch (error) {
+    res.status(error.status).json({ error: error.message });
+  }
+});
+
+// update my investment 
+router.put("/updatemyinvestment", async (req, res) => {
+  try {
+    const result = await updateMyInvestment(req);
+    res.status(result.status).json(result);
+  } catch (error) {
+    res.status(error.status).json({ error: error.message });
   }
 });
