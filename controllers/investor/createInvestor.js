@@ -14,6 +14,7 @@ let investorTable = Models.Investor
 exports.investorCreate = async (req) => {
   global.show("###### investorCreate ######");
   const received = req ? req.body : null;
+  console.log(req.body);
   if (received) global.show({ received });
 
   return new Promise(async (resolve, reject) => {
