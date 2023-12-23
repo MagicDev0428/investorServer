@@ -7,7 +7,7 @@ import {getInvestment}  from "../../controllers/investment/getInvestment";
 import {updateInvestment}  from "../../controllers/investment/updateInvestment";
 import {investmentList}  from "../../controllers/investment/investmentList";
 import {investmentInfo}  from "../../controllers/investment/investmentInfo";
-
+import { allInvestments } from "../../controllers/investment/allInvestment";
 const router = express.Router();
 
 // Investment Creation Route
@@ -79,6 +79,18 @@ router.get("/investmentinfo/:investmentId", async (req, res) => {
 router.get("/investmentno",async(req,res)=>{
   try {
     const result = await investmentNo();
+    res.json(result);
+  } catch (error) {
+     res.status(500).json({ error: error.message });
+  }
+})
+
+
+// get investment no
+
+router.get("/allinvestments",async(req,res)=>{
+  try {
+    const result = await allInvestments();
     res.json(result);
   } catch (error) {
      res.status(500).json({ error: error.message });
