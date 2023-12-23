@@ -3,7 +3,7 @@
 //
 var mongoose             = require('mongoose');
 var Schema               = mongoose.Schema;
-var myInvestmentsSchema  = new Schema({
+var myInvestmentsSchema  = new Schema({ 
 
     investmentNo:       Number,     // REQUIRED Investment Number from Investment Table
     investorName:       String,     // REQUIRED Name/_id from Investors Table 
@@ -24,6 +24,7 @@ var myInvestmentsSchema  = new Schema({
     profitEnd:          Number,     // Investors When investment ends Profit Amount 
 
     investType:         String,     // InvestmentType: Monthly Profit, Annual Profit, One-time Profit, Mixed 
+    startDate:          Date,       // Date the investment started or contract was signed.
     firstProfitDate:    Date,       // When will we PAY the first PROFIT to the investor
     lastProfitDate:     Date,       // When will we PAY the last PROFIT to the investor
     payBackDate:        Date,       // When do we have to pay the investor the money back (if blank then 6 months notice)

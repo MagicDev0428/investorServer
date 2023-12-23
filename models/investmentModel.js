@@ -4,9 +4,9 @@
 
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-var investmentSchema = new Schema(
+var investmentSchema = new Schema( 
   {
-    _id:                  Number,    // REQUIERED Investment No
+    _id:                   Number,    // REQUIERED Investment No
 
     startDate:             Date,     // When do the investment start 
     firstProfitDate:       Date,     // When do the investor get his first profit
