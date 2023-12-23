@@ -172,7 +172,7 @@ app.get("/", (req, res) => {
 });
 
 
-app.use("/investors", investorRoutes.router);
+//app.use("/investors", investorRoutes.router);
 //app.use("/documents", documentRoutes);
 app.use("/investor", investorRoute);
 app.use("/adam", adamRoute);
@@ -308,7 +308,7 @@ app.post('/createFolder', async (req, res) => {
   // Use google drive client and create folder
   
   // create only 1 folder at root level
-  const folders = await client.createFolders(null, "Satendra5");
+  const folders = await client.createFolders(null, "Satendra6");
   // Create folder at any level @argument1=<Parent Folder ID>, @argument2="Child Folder Name"
   //const folders = await client.createFolders("1qwsDVtMvKBv-c7hLekDUt6EXTiNOMeI7", "Satendra2-child1");
   res.respond(folders);
@@ -351,7 +351,7 @@ app.post("/uploadFile", async(req, res) => {
   // Get the google drive client 
   const client = factory.getGoogleDriveInstance();
   // Upload the file 
-  const response = await client.uploadFile("uploads/1701982589471.PNG", "11RlsyA0qpvLj_rnW6xXYHH0QJVIEpFf7");
+  const response = await client.uploadFile("uploads/1701982589471.PNG", "1EE3cKs2FvwnFw_zzHAfTwJ1qEhmXAm8C");
   res.respond(response);
 });
 
@@ -360,6 +360,6 @@ app.get("/getWebLink", async(req, res) => {
   // Get the google drive client 
   const client = factory.getGoogleDriveInstance();
   // Upload the file 
-  const response = await client.getWebLink("1eezvsMdtd5eSUn5Cj29yjPYcGPrwEEMk");
+  const response = await client.getWebLink("1x2ZAX1OLZCLYi06XTqV15RGL5nawiJwK");
   res.respond(response);
 });

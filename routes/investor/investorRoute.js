@@ -3,6 +3,8 @@ const { investorGet } = require("../../controllers/investor/getInvestor");
 const { updateInvestor } = require("../../controllers/investor/updateInvestor");
 const { deleteInvestor } = require("../../controllers/investor/deleteInvestor");
 const { investorCreate } = require("../../controllers/investor/createInvestor");
+import {  Middlewares } from "../../utils";
+import { MAX_FILES_PER_REQUEST } from "../../constants";
 const {
   investorInfo,
   investorList,
@@ -11,7 +13,12 @@ const {
 const router = express.Router();
 
 // Investor Creation Route
-router.post("/createinvestor", async (req, res) => {
+router.post("/createinvestor", 
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "passportImages",
+  MAX_FILES_PER_REQUEST
+), async (req, res) => {
   try {
     const result = await investorCreate(req);
     res.json(result);
