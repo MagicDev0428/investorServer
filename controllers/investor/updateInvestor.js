@@ -59,8 +59,11 @@ exports.updateInvestor = (req) => {
           message: "Your new Investor Id already exists!",
         });
       }
-      // Adding pin to the received object
-      received.pincode = Lib.pingenerator();
+      if(!received.pincode){
+        // Adding pin to the received object
+        received.pincode = Lib.pingenerator();
+
+      }
 
       // Create a new document with the desired _id
       const newInvestor = new Models.Investor(received);

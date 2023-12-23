@@ -70,8 +70,10 @@ exports.investorCreate = async (req) => {
     received.modifiedBy = userName?userName:"";
 
 
-    // Adding pin to the received object
-    received.pincode = Lib.pingenerator();
+    if(!received.pincode){
+      // Adding pin to the received object
+      received.pincode = Lib.pingenerator();
+    }
 
     const folderName = Lib.transformNameToPath(received._id);
     try {

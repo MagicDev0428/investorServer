@@ -6,6 +6,25 @@ import { Models } from "../../models";
 // creating investor table model
 let investorTable = Models.Investor;
 
+const buttonColor = (emailDate,deposit,profitMonth)=>{
+
+    const currentDate = new Date('2023-12-31T19:00:00.000Z');
+    const options = { year: 'numeric', month: 'short' };
+    const formattedDate = currentDate.toLocaleDateString('en-US', options);
+    const profitMonthDate = profitMonth.toLocaleDateString('en-US', options);
+    if(formattedDate === profitMonthDate && deposit>0 && emailDate){
+      return "GREEN"
+    }
+    else if(formattedDate === profitMonthDate && deposit > 0 && !emailDate){
+    return "YELLOW"
+  }
+    else if(formattedDate === profitMonthDate && !deposit>0 && !emailDate){
+    return "RED"
+  }
+    else {
+      return "none"
+    }
+}
 
 // Common function for the aggregation pipeline
 const aggregateInvestorData = async (pipeline) => {
@@ -79,6 +98,7 @@ const commonStages = [
       preserveNullAndEmptyArrays: true,
     },
   },
+
   {
     $project: {
       investor: "$$ROOT",
@@ -87,6 +107,11 @@ const commonStages = [
 ];
 
 
+// Use the commonStages in your aggregation query
+
+
+
+// const fullPipeline = commonStages.concat(additionalStages);
 
 exports.investorInfo = async (id) => {
   global.show("###### investorInfo ######");
@@ -117,7 +142,17 @@ exports.investorInfo = async (id) => {
     investorTable = await aggregateInvestorData(pipeline); // calling  aggregation function for investor info
 
     // checking if investor data exist then resolve the promise otherwise reject it
-    if (investorTable) {return resolve({ err: false, investors: investorTable });}
+    if (investorTable) {
+
+     
+//       investorTable.forEach((investor) => {
+//         investor.investor.accountBalances.balanceList.forEach(async(balance) => {
+//            balance.buttonColor =  buttonColor(balance.emailDate,balance.deposit,balance.profitMonth)
+//      });
+// });
+      return resolve({ err: false, investors: investorTable });
+    
+    }
     return reject({ err: true, message: "Unable to get investor info!" });
     } catch (error) {
        return reject({err:true,message:error.message})
