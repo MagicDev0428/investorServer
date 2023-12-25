@@ -2,6 +2,7 @@ import moment from 'moment';
 import { getGoogleDriveInstance } from '../factories/google';
 import { AUTH0_NAMESPACE, ROLES } from '../../constants';
 import { ServiceError } from '../errors';
+const fs = require('fs');
 
 export const formatDate = date => {
   const year = date.getFullYear();
@@ -73,3 +74,21 @@ export const isInvestorFolderNameTaken = async name => {
 
   return false;
 };
+
+export const deleteFile = (filePath) => {
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      // An error occurred while deleting the file
+      if (err.code === 'ENOENT') {
+        // The file does not exist
+        console.error('The file does not exist');
+      } else {
+        // Some other error
+        console.error(err.message);
+      }
+    } else {
+      // The file was deleted successfully
+      console.log('The file was deleted');
+    }
+  });
+}

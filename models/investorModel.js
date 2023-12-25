@@ -16,7 +16,7 @@ const schema = new Schema({
     pincode:            String,     // REQUIRED Pincode for logging in "0202" 
 
     address:            String,     // Address 
-    postcode:           Number,     // Postcode
+    postcode:           String,     // Postcode
     city:               String,     // City 
     country:            String,     // Country
     email:              String,     // Email address

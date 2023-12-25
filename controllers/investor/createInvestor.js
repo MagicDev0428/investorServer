@@ -5,17 +5,20 @@
 import { Models } from '../../models';
 import { Lib } from '../../utils';
 const validator = require("validator"); 
+const factory = require("../../utils/factories/google");
+
 
 
 // creating investor table model
 let investorTable = Models.Investor
 
 
+
 exports.investorCreate = async (req) => {
   global.show("###### investorCreate ######");
   const received = req ? req.body : null;
   console.log(req.body);
-  if (received) global.show({ received });
+  //if (received) global.show({ received });
 
   return new Promise(async (resolve, reject) => {
     try{
@@ -70,29 +73,55 @@ exports.investorCreate = async (req) => {
     received.createdBy = userName?userName:"";
     received.modifiedBy = userName?userName:"";
 
+    // create folder in google drive
+    // Get the google drive client 
+    const client = factory.getGoogleDriveInstance();
+    // use google drive client for list of folders
+    const folders = await client.listFolders();
+    // Find the folderId which folder you want to create the folder
+    let filteredFolder = folders.find(folder => folder.name === received._id);
+    let passportFolderId;
+    let investorFolderId;
+    let uploadResponse = [];
+    // If user has already folder created with the name
+    try {
+      if(filteredFolder) {
+        // Upload the file 
+        investorFolderId = filteredFolder.id;
+      } else {
+        // If folder is not created then first create folder
+        // create only 1 folder at root level
+        investorFolderId = await client.createFolders(null, received._id);
+      }
+      
+      // create only 1 folder at root level
+      // create folder and get folder Id
+      passportFolderId = await client.createFolders(investorFolderId, "Passports");
+
+      for(const imagePath of received.passportImage) {
+        let fileId = await client.uploadFile("uploads/" +imagePath, passportFolderId);
+        if(fileId) {
+          uploadResponse.push({
+            image: imagePath,
+            googleFileId: fileId.id,
+            passportFolderId: passportFolderId.id
+          })
+        }
+        Lib.deleteFile("uploads/" +imagePath);
+      }
+    } catch(ex) {
+      console.error(ex);
+      return reject({err:true,message: ex});
+    }
+
+    received.folders = uploadResponse;
 
     if(!received.pincode){
       // Adding pin to the received object
       received.pincode = Lib.pingenerator();
     }
 
-    const folderName = Lib.transformNameToPath(received._id);
-    try {
-      /* checking if a folder with name of the investor already exists */
-      const isFolderNameTaken = await Lib.isInvestorFolderNameTaken(folderName);
-      if (isFolderNameTaken === true) {
-        return reject({
-          err: true,
-          message: "Folder with investor name already exists!",
-        });
-      }
-      
-    } catch (error) {
-      return reject({
-        err: true,
-        message:error.message,
-      });
-    }
+ 
 
 
     // Creating a new investor instance
@@ -108,3 +137,4 @@ exports.investorCreate = async (req) => {
     }
   });
 };
+
