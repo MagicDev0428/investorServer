@@ -62,9 +62,9 @@ exports.updateInvestor = (req) => {
       // Find the folderId which folder you want to create the folder
       let filteredFolder = folders.find(folder => folder.name === received._id);
       if(!filteredFolder) {
-        console.log("before", passportFolderId);
-        passportFolderId = await client.renameFolder(existingInvestor.investorFolderId, received._id);        
-        console.log("after", passportFolderId);
+        console.log("before", existingInvestor.investorFolderId);
+        let res = await client.renameFolder(existingInvestor.investorFolderId, received._id);        
+        console.log("after", res);
       }
 
       // Delete file if user has deleted the saved file in google drive
