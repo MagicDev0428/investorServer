@@ -45,3 +45,11 @@ export const SampleInvoice = {
   ],
   total: '$385.00'
 };
+
+export const BALANCE_SHEET = "Balance Sheets";
+export const DOCUMENTS = "Documents";
+export const PASSPORTS = "Passports";
+export const RECIETPTS = "Reciepts";
+export const DEPOSIT = "Deposit";
+export const INVEST = "Invest";
+export const WITHDRAW = "Withdraw";

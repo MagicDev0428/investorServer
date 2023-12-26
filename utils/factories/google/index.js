@@ -209,6 +209,29 @@ const GoogleDriveFactory = (config) => {
         throw new Error("Error deleting folder:");
       }
     },
+    // Rename folder by folderId
+    async renameFolder(fileId, newName) {
+      // Authorize user
+      const auth = await authorize();
+      // Get the goolge drive API instance
+      const drive = google.drive({
+        version: "v3",
+        auth,
+      });
+      // Actual Update folder call with google API
+      try {
+        const response = await drive.files.update({
+          fileId: fileId,
+          requestBody: {
+            name: newName,
+          },
+        });
+        return response.data.id;
+      } catch (error) {
+        console.error("Error update rename folder:", error.message);
+        throw new Error("Error update rename folder:");
+      }
+    },
     // Delete File by fileId
     async deleteFile(fileId) {
       // Authorize user
