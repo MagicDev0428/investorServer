@@ -6,7 +6,7 @@ import { Models } from '../../models';
 import { Lib } from '../../utils';
 const validator = require("validator"); 
 const factory = require("../../utils/factories/google");
-
+import * as CONSTANT from "../../constants";
 
 
 // creating investor table model
@@ -97,47 +97,65 @@ exports.investorCreate = async (req) => {
       
       // create only 1 folder at root level
       // create folder and get folder Id
-      passportFolderId = await client.createFolders(investorFolderId, "Id");
-      await client.createFolders(investorFolderId, "Contracts");
-      let recieptFolderId = await client.createFolders(investorFolderId, "Reciepts");
-      await client.createFolders(recieptFolderId.id, "Deposit");
-      await client.createFolders(recieptFolderId.id, "Withdraw");
-      await client.createFolders(recieptFolderId.id, "Invest");
+      passportFolderId = await client.createFolders(investorFolderId, CONSTANT.PASSPORTS);
+      await client.createFolders(investorFolderId, CONSTANT.BALANCE_SHEET);
+      await client.createFolders(investorFolderId, CONSTANT.DOCUMENTS);
+      let recieptFolderId = await client.createFolders(investorFolderId, CONSTANT.RECIETPTS);
+      await client.createFolders(recieptFolderId.id, CONSTANT.DEPOSIT);
+      await client.createFolders(recieptFolderId.id, CONSTANT.WITHDRAW);
+      await client.createFolders(recieptFolderId.id, CONSTANT.INVEST);
 
-      if(received.passportImage && Array.isArray(received.passportImage)) {
-        for(const imagePath of received?.passportImage) {
-          
-          let fileId = await client.uploadFile("uploads/" + imagePath, passportFolderId.id);         
-          if(fileId) {
-            uploadResponse.push({
-              image: imagePath,
-              googleFileId: fileId.id,
-              passportFolderId: passportFolderId.id
-            })
-            // Delete this uploaded file in server
-            Lib.deleteFile("uploads/" + imagePath);
+      if(received.passportImage ) {
+        if(Array.isArray(received.passportImage)) {
+          for (const imagePath of received?.passportImage) {
+            let fileId = await client.uploadFile(
+              "uploads/" + imagePath,
+              passportFolderId.id
+            );
+            // Get weblink of file
+            let webLink = await client.getWebLink(fileId.id);
+            if (fileId) {
+              uploadResponse.push({
+                image: imagePath,
+                googleFileId: fileId.id,
+                passportFolderId: passportFolderId.id,
+                webLink: webLink
+              });
+              // Delete this uploaded file in server
+              Lib.deleteFile("uploads/" + imagePath);
+            }
           }
-          
-        }
-      } else {
-        let fileId = await client.uploadFile("uploads/" + received.passportImage, passportFolderId.id);        
-          if(fileId) {
-            uploadResponse.push({
-              image: received.passportImage,
-              googleFileId: fileId.id,
-              passportFolderId: passportFolderId.id
-            })
-            // Delete this uploaded file in server
-            Lib.deleteFile("uploads/" + received.passportImage);
-          }
-
-      }
+        } else {
+          let fileId = await client.uploadFile("uploads/" + received.passportImage, passportFolderId.id); 
+          // Get weblink of file
+          let webLink = await client.getWebLink(fileId.id);       
+            if(fileId) {
+              uploadResponse.push({
+                image: received.passportImage,
+                googleFileId: fileId.id,
+                passportFolderId: passportFolderId.id,
+                webLink: webLink
+              })
+              // Delete this uploaded file in server
+              Lib.deleteFile("uploads/" + received.passportImage);
+            }
+        }      
+      } 
+      // Keep default uploadResponse that what is the passport folder id
+      uploadResponse.push({
+        readonly: true, // Never delete this object
+        image: null,
+        googleFileId: null,
+        passportFolderId: passportFolderId.id,
+        webLink: null
+      });
     } catch(ex) {
       console.error(ex);
       return reject({err:true,message: ex});
     }
 
     received.folders = uploadResponse;
+    received.investorFolderId = investorFolderId;
 
     if(!received.pincode){
       // Adding pin to the received object

@@ -48,7 +48,12 @@ router.delete("/deleteinvestor/:investorId", async (req, res) => {
 });
 
 // updating investor
-router.put("/updateinvestor", async (req, res) => {
+router.put("/updateinvestor",
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "passportImages",
+  MAX_FILES_PER_REQUEST
+), async (req, res) => {
   try {
     const result = await updateInvestor(req);
     res.json(result);
