@@ -137,8 +137,17 @@ const commonStages = (date_)=>{
       pipeline: [
         {
           $match: {
-            $expr: {$eq: ["$investorName", "$$investor"]},
-            
+            $expr: { $and:[{$eq: ["$investorName", "$$investor"]},
+            {              
+              $eq: [
+                {
+                  $dateToString: {
+                    format: "%Y-%m",
+                    date: "$profitMonth",
+                  },
+                },
+                date_, // Replace with the desired month and year
+              ],}] },
           },
         },
         {
@@ -204,7 +213,7 @@ exports.investorInfo = async (id) => {
     // pipeline setup for aggregation
     const pipeline = [
       { $match: { _id: id } },
-      ...commonStages(), // Include common stages
+      ...commonStages('2023-12'), // Include common stages
     ];
 
     investorTable = null;
@@ -234,7 +243,7 @@ exports.investorList = async () => {
     try{
     //pipeline setup for aggregation
     const pipeline = [
-      ...commonStages(), // Include common stages
+      ...commonStages('2023-12'), // Include common stages
     ];
 
     investorTable = null;

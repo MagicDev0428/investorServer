@@ -49,10 +49,10 @@ export const createBalance = (req) => {
             received.modifiedDate =dateTime;
 
             // getting user name from auth token
-            const userName = Lib.getAdminName(req.auth);
+            // const userName = Lib.getAdminName(req.auth);
 
-            received.createdBy = userName?userName:"";
-            received.modifiedBy = userName?userName:"";
+            // received.createdBy = userName?userName:"";
+            // received.modifiedBy = userName?userName:"";
 
 
               // check recieved.investorName exist in investors or not
