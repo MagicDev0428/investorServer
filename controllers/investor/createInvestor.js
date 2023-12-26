@@ -57,7 +57,7 @@ exports.investorCreate = async (req) => {
     if (existingInvestor) {
       return reject({
         err: true,
-        message: "Investor with this _id already exists!",
+        message: `Investor with ${received._id} already exists!`,
       });
     }
 
@@ -91,23 +91,46 @@ exports.investorCreate = async (req) => {
       } else {
         // If folder is not created then first create folder
         // create only 1 folder at root level
-        investorFolderId = await client.createFolders(null, received._id);
+        let res = await client.createFolders(null, received._id);
+        investorFolderId = res.id;
       }
       
       // create only 1 folder at root level
       // create folder and get folder Id
-      passportFolderId = await client.createFolders(investorFolderId, "Passports");
+      passportFolderId = await client.createFolders(investorFolderId, "Id");
+      await client.createFolders(investorFolderId, "Contracts");
+      let recieptFolderId = await client.createFolders(investorFolderId, "Reciepts");
+      await client.createFolders(recieptFolderId.id, "Deposit");
+      await client.createFolders(recieptFolderId.id, "Withdraw");
+      await client.createFolders(recieptFolderId.id, "Invest");
 
-      for(const imagePath of received.passportImage) {
-        let fileId = await client.uploadFile("uploads/" +imagePath, passportFolderId);
-        if(fileId) {
-          uploadResponse.push({
-            image: imagePath,
-            googleFileId: fileId.id,
-            passportFolderId: passportFolderId.id
-          })
+      if(received.passportImage && Array.isArray(received.passportImage)) {
+        for(const imagePath of received?.passportImage) {
+          
+          let fileId = await client.uploadFile("uploads/" + imagePath, passportFolderId.id);         
+          if(fileId) {
+            uploadResponse.push({
+              image: imagePath,
+              googleFileId: fileId.id,
+              passportFolderId: passportFolderId.id
+            })
+            // Delete this uploaded file in server
+            Lib.deleteFile("uploads/" + imagePath);
+          }
+          
         }
-        Lib.deleteFile("uploads/" +imagePath);
+      } else {
+        let fileId = await client.uploadFile("uploads/" + received.passportImage, passportFolderId.id);        
+          if(fileId) {
+            uploadResponse.push({
+              image: received.passportImage,
+              googleFileId: fileId.id,
+              passportFolderId: passportFolderId.id
+            })
+            // Delete this uploaded file in server
+            Lib.deleteFile("uploads/" + received.passportImage);
+          }
+
       }
     } catch(ex) {
       console.error(ex);
