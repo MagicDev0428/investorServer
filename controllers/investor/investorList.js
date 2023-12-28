@@ -41,6 +41,11 @@ const aggregateInvestorData = async (pipeline) => {
 };
 
 
+const dateInMonth = (date_)=>{
+const dateString = new Date(date_).toISOString();
+return dateString.substring(0, 7);
+}
+
 // Inserting button color
 
 const insertingButtonColor = (data)=>{
@@ -189,15 +194,15 @@ const commonStages = (date_)=>{
 
 // const fullPipeline = commonStages.concat(additionalStages);
 
-exports.investorInfo = async (id) => {
+export const investorInfoForDate = async (req) => {
   global.show("###### investorInfo ######");
-  // const received = req ? req.body : null;
-  // if (received) global.show({ received });
+  const received = req ? req.body : null;
+  if (received) global.show({ received });
 
 
   return new Promise(async (resolve, reject) => {
     try{
-      // const id = received._id
+      const id = received._id
     // Check for id
     if (!id) {
       return reject({ err: true, message: "Didn't get investor id in params" });
@@ -210,10 +215,13 @@ exports.investorInfo = async (id) => {
       return reject({ err: true, message: "Your Investor Id does not exist!" });
     }
 
+    // getting month and year 
+    const requiredDate = dateInMonth(received.date)
+
     // pipeline setup for aggregation
     const pipeline = [
       { $match: { _id: id } },
-      ...commonStages('2023-12'), // Include common stages
+      ...commonStages(requiredDate), // Include common stages
     ];
 
     investorTable = null;
@@ -235,15 +243,19 @@ exports.investorInfo = async (id) => {
   });
 };
 
-exports.investorList = async () => {
-  global.show("###### investorList ######");
+export const investorListForDate = async (req) => {
+    global.show("###### investorList ######");
+    const received = req ? req.body : null;
 
   return new Promise(async (resolve, reject) => {
 
     try{
+
+    // getting month and year 
+    const requiredDate = dateInMonth(received.date)
     //pipeline setup for aggregation
     const pipeline = [
-      ...commonStages('2023-12'), // Include common stages
+      ...commonStages(requiredDate), // Include common stages
     ];
 
     investorTable = null;
@@ -253,7 +265,7 @@ exports.investorList = async () => {
     if (investorTable) {
 
       // calling a inserting button color which will insert color and return it
-      // investorTable = insertingButtonColor(investorTable);
+      investorTable = insertingButtonColor(investorTable);
    
       return resolve({ err: false, investors: investorTable });
     }
