@@ -56,14 +56,14 @@ exports.updateInvestor = (req) => {
       let filteredObj = uploadResponse.find(item => item.readonly == true);
       let passportFolderId = filteredObj?.passportFolderId;
 
-      let existingInvestor = await Models.Investor.findById(received._oldId);
+      let originalDoc = await Models.Investor.findById(received._oldId);
       // use google drive client for list of folders
       const folders = await client.listFolders();
       // Find the folderId which folder you want to create the folder
-      let filteredFolder = folders.find(folder => folder.name === received._id);
-      if(!filteredFolder) {
-        console.log("before", existingInvestor.investorFolderId);
-        let res = await client.renameFolder(existingInvestor.investorFolderId, received._id);        
+      let filteredFolder = folders.find(folder => folder.name === received._oldId);
+      if(filteredFolder) {
+        console.log("before", originalDoc.investorFolderId);
+        let res = await client.renameFolder(originalDoc.investorFolderId, received._id);        
         console.log("after", res);
       }
 
@@ -120,8 +120,8 @@ exports.updateInvestor = (req) => {
       }
 
       received.folders = uploadResponse;
-
-      if (received?._oldId) {
+     
+      if (received?._oldId && received._oldId !== received._id) {
         // Check if the new "_id" already exists  
         const existingInvestor = await Models.Investor.findById(received._id);      
         if (existingInvestor) {
@@ -135,6 +135,12 @@ exports.updateInvestor = (req) => {
           received.pincode = Lib.pingenerator();
         }
 
+      
+        Object.keys(originalDoc._doc).forEach(item => {
+          if(!received[item]) {
+            received[item] = originalDoc[item];
+          }
+        });
         // Create a new document with the desired _id
         const newInvestor = new Models.Investor(received);
 
