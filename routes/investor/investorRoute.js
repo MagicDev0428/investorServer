@@ -5,6 +5,7 @@ const { deleteInvestor } = require("../../controllers/investor/deleteInvestor");
 const { investorCreate } = require("../../controllers/investor/createInvestor");
 import {  Middlewares } from "../../utils";
 import { MAX_FILES_PER_REQUEST } from "../../constants";
+import { investorInfoForDate,investorListForDate } from "../../controllers/investor/investorList";
 const {
   investorInfo,
   investorList,
@@ -14,11 +15,13 @@ const router = express.Router();
 
 // Investor Creation Route
 router.post("/createinvestor", 
+
 Middlewares.checkAdminPrivileges,
 Middlewares.StorageMiddlewares.upload.array(
   "passportImages",
   MAX_FILES_PER_REQUEST
-), async (req, res) => {
+), 
+async (req, res) => {
   try {
     const result = await investorCreate(req);
     res.json(result);
@@ -76,6 +79,26 @@ router.get("/investorlist", async (req, res) => {
 router.get("/investorinfo/:investorId", async (req, res) => {
   try {
     const result = await investorInfo(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// getting investor information by date
+router.post("/investorinfobydate", async (req, res) => {
+  try {
+    const result = await investorInfoForDate(req);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/investorlistbydate", async (req, res) => {
+  try {
+    const result = await investorListForDate(req);
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });

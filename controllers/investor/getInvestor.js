@@ -7,14 +7,6 @@ import { Models } from "../../models";
 let investorTable = Models.Investor;
 
 
-//
-// Getting back investor from id
-//
-//URL => http://localhost:3007/investor/getinvestor/id
-//
-// replace id with investor id to get investor data
-//
-
 exports.investorGet = (id) => {
   global.show("###### investorGet ###### ");
 
