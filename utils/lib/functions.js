@@ -22,6 +22,77 @@ export const  calculateDays = (startDate, endDate) =>{
 
 }
 
+export const returnTheInvestmentType = async (investorData) => {
+
+	await investorData.forEach(investor_ => {
+
+		// console.log("this is investor ==> ",investor_);
+		if (investor_.investor.hasOwnProperty('accountInvestments') && investor_.investor.accountInvestments.hasOwnProperty('myInvestmentList')) {
+			for (const investment of investor_.investor.accountInvestments.myInvestmentList) {
+				if (investment.hasOwnProperty('investType') && (investment.investType === "Mixed" || investment.investType === "Monthly Profit")) {
+					investor_.investor.getInvestType = true
+					return true
+					// break;
+				} else {
+					investor_.investor.getInvestType = false
+				}
+			}
+		}
+	})
+	return investorData
+}
+
+
+export const  sumDepositAndEmailStatus = (objectsArray) => {
+  
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // Months are zero-indexed
+    const currentDay = currentDate.getDate();
+
+    // Assuming each object has a 'date' property representing the date in the format 'YYYY-MM-DD'
+    const isCurrentMonth = obj => {
+        const date = new Date(obj.profitMonth);
+        return date.getMonth() + 1 === currentMonth;
+    };
+
+	// Using the reduce function to iterate over the array and accumulate the sum
+	const result = objectsArray.reduce(
+		(accumulator, obj) => {
+
+			// Check if the profitMonthPaid property is true for the current object
+			if (obj.profitMonthPaid) {
+				// Add the deposit amount to the sum
+				accumulator.totalDeposit += obj.deposit;
+			}
+
+			// Check if emailDate is null for any object
+			if (obj.emailDate === null) {
+				accumulator.emailDateStatus = false;
+			}
+
+
+			return accumulator;
+		}, {
+			totalDeposit: 0,
+			emailDateStatus: true,
+      isBefore15th:false,
+		} // Starting values for totalAmount and emailDateStatus
+	);
+
+      // Check if the current date is less than 15 and if there's any date in the array for the current month
+    if (currentDay <15 && objectsArray.some(isCurrentMonth)) {
+        result.isBefore15th = true;
+    }
+
+	return result;
+}
+
+export const removeNullValuesFromArray = arr => {
+  const filteredArray = arr.filter(item => item !== null);
+  return filteredArray;
+}
+
 export const transformNameToPath = name => name.split(' ').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
 
 export const pingenerator = () => {
