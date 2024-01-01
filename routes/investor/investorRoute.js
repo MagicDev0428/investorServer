@@ -16,11 +16,11 @@ const router = express.Router();
 // Investor Creation Route
 router.post("/createinvestor", 
 
-// Middlewares.checkAdminPrivileges,
-// Middlewares.StorageMiddlewares.upload.array(
-//   "passportImages",
-//   MAX_FILES_PER_REQUEST
-// ), 
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "passportImages",
+  MAX_FILES_PER_REQUEST
+), 
 async (req, res) => {
   try {
     const result = await investorCreate(req);
