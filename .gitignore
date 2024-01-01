@@ -3,3 +3,6 @@ node_modules
 .DS_Store
 google-client-config.json
 .history/
+.vscode/
+.vscode/launch.json
+uploads/*
