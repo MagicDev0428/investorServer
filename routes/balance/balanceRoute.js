@@ -5,6 +5,7 @@ import { getBalance } from "../../controllers/balance/getBalance";
 import { deleteBalance } from "../../controllers/balance/deleteBalance";
 import { updateBalance } from "../../controllers/balance/updateBalance";
 import { balanceList } from "../../controllers/balance/balanceList";
+import { investorBalanceList } from "../../controllers/balance/investorBalanceList";
 
 export const router = express.Router();
 
@@ -62,3 +63,13 @@ router.get("/balancelist", async (req, res) => {
   }
 });
 
+
+// get balance
+router.get("/investorbalancelist/:investorId", async (req, res) => {
+  try {
+    const result = await investorBalanceList(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});

@@ -5,7 +5,7 @@ import { deleteLog } from "../../controllers/log/deleteLog";
 import { getLog } from "../../controllers/log/getLog";
 import { logList } from "../../controllers/log/logList";
 import { updateLog } from "../../controllers/log/updateLog";
-
+import { investorLogs } from "../../controllers/log/investorLogs";
 export const router = express.Router();
 
 // Log Creation Route
@@ -60,3 +60,16 @@ router.get("/loglist", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+
+// get log
+router.get("/investorlogs/:investorId", async (req, res) => {
+  try {
+    const result = await investorLogs(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
