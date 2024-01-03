@@ -189,8 +189,6 @@ const investorIdAggregation = () => {
                     {
                         $group: {
                             _id: null,
-
-
                             latestBalance: {
                                 $push: "$$ROOT"
                             }
@@ -234,6 +232,7 @@ export const investorInfoById = (id) => {
 
             if (!existingInvestor) {
                 return reject({
+                    status: 404,
                     err: true,
                     message: "Your Investor Id does not exist!"
                 });
