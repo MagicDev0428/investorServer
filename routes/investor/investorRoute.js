@@ -10,6 +10,7 @@ const {
   investorInfo,
   investorList,
 } = require("../../controllers/investor/investorsListInfo");
+import { investorInfoById } from "../../controllers/investor/investorInfoById";
 
 const router = express.Router();
 
@@ -105,4 +106,14 @@ router.post("/investorlistbydate", async (req, res) => {
   }
 });
 
+
+// getting investor info by id
+router.get("/investorinfobyid/:investorId", async (req, res) => {
+  try {
+    const result = await investorInfoById(req.params.investorId);
+    res.status(result.status).json(result);
+  } catch (error) {
+    res.status(error.status).json({ error: error.message });
+  }
+});
 module.exports = router;
