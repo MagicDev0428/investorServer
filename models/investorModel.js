@@ -32,6 +32,9 @@ const schema = new Schema({
     transferInfo:       String,     // Money Transfer Information (bank etc.)
     currency:           String,     // Prefered currency of the investor
 
+    hiddenRemark:       String,     // Hidden Description that only we can see
+    copyPaste:          Array,      // Array of texts to copy and paste
+
     investorFolderId:   String,     // Investor google drive folder id
     folders:            Array,      // Array of folders belonging to THIS investor {"contracts": "ksdhi9us9dtytyhw4ioytsliygi", "id": "kqwersdafsarrs222ioytsliygi", "reciepts/paid": "kqwersdafsarrs222ioytsliygi", "reciepts/invested": "234fsrafsarrs222ioytsliygi"}
     attachments:        Array,      // Array of Images of the passports / IDs 
