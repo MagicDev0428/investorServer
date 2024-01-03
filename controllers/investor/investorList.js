@@ -113,6 +113,7 @@ const frontPageFunctionality = (data) => {
 
 // Common stages for the aggregation pipeline
 const commonStages = (date_) => {
+	const today = new Date();
 	return [
 
 		{
@@ -137,9 +138,23 @@ const commonStages = (date_) => {
 								}
 							},
 							totalProfitMonthly: {
-								$sum: {
-									$ifNull: ["$profitMonthly", 0]
-								}
+								// $sum: {
+								// 	$ifNull: ["$profitMonthly", 0]
+								// }
+								  $sum: {
+                                    $cond: [{
+                                            $and: [{
+                                                    $lte: ["$firstProfitDate", today]
+                                                },
+                                                {
+                                                    $gte: ["$lastProfitDate", today]
+                                                }
+                                            ]
+                                        },
+                                        "$profitMonthly",
+                                        0
+                                    ]
+                                }
 							},
 							totalProfitEnd: {
 								$sum: {

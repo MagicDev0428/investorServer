@@ -112,7 +112,7 @@ const insertingButtonColor = async (data) => {
 
 // Common stages for the aggregation pipeline
 const commonStages = () => {
-
+	const today = new Date();
 	return [
 
 		{
@@ -137,9 +137,23 @@ const commonStages = () => {
 								}
 							},
 							totalProfitMonthly: {
+								// $sum: {
+								// 	$ifNull: ["$profitMonthly", 0]
+								// }
 								$sum: {
-									$ifNull: ["$profitMonthly", 0]
-								}
+                                    $cond: [{
+                                            $and: [{
+                                                    $lte: ["$firstProfitDate", today]
+                                                },
+                                                {
+                                                    $gte: ["$lastProfitDate", today]
+                                                }
+                                            ]
+                                        },
+                                        "$profitMonthly",
+                                        0
+                                    ]
+                                }
 							},
 							totalProfitEnd: {
 								$sum: {
