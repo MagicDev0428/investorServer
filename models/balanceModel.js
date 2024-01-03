@@ -13,6 +13,11 @@ var balanceSchema  = new Schema({
         default: false
     }, 
 
+    profitOtherPaid: {              // Is false, unless true is sent to the form/controller - once true its set to true, set emailDate to null or zero)
+        type: Boolean, 
+        default: false
+    }, 
+
     emailDate:          Date,       // Date and Time the email was sent (ALWAYS set this to null or 0 when create new record)
 
     deposit:            Number,     // Amount deposited into investors account (profit)
@@ -29,7 +34,6 @@ var balanceSchema  = new Schema({
     }, 
 
     description:        String,     // Description of what happened 
-    hiddenRemark:       String,     // Hidden Description that only we can see
     attachments:        Array,      // Array of Images and files ("filename","filename") containing transfer reciepts
 
     createdDate: {                  // When was this balance created
