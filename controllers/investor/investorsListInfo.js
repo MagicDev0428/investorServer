@@ -52,6 +52,7 @@ const insertingButtonColor = async (data) => {
           balanceInfo: {
             currentMonthDeposit: totalDeposit,
             buttonColor: "Purple",
+			nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
           },
         });
       } else if (isBefore15th && investorInfo.investor.accountBalances.currentMonthBalanceList) {
@@ -59,6 +60,7 @@ const insertingButtonColor = async (data) => {
           balanceInfo: {
             currentMonthDeposit: totalDeposit,
             buttonColor: "Green",
+			nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
           },
         });
       } else {
@@ -71,6 +73,7 @@ const insertingButtonColor = async (data) => {
             balanceInfo: {
               currentMonthDeposit: totalDeposit,
               buttonColor: "Green",
+			  nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
             },
           });
         } else if (
@@ -82,6 +85,7 @@ const insertingButtonColor = async (data) => {
             balanceInfo: {
               currentMonthDeposit: totalDeposit,
               buttonColor: "Yellow",
+			  nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
             },
           });
         } else if (
@@ -95,6 +99,7 @@ const insertingButtonColor = async (data) => {
               currentMonthDeposit: totalDeposit,
               // currentMonthDeposit: remainingAmount,
               buttonColor: "Red",
+			  nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
             },
           });
         } else if (
@@ -108,6 +113,7 @@ const insertingButtonColor = async (data) => {
               currentMonthDeposit: totalDeposit,
               // currentMonthDeposit: remainingAmount,
               buttonColor: "Red",
+			  nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
             },
           });
         }
