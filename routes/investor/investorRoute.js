@@ -11,6 +11,8 @@ const {
   investorList,
 } = require("../../controllers/investor/investorsListInfo");
 import { investorInfoById } from "../../controllers/investor/investorInfoById";
+import { getHiddenRemarks, saveHiddenRemarks } from "../../controllers/investor/investorHiddenRemark";
+import { getCopyPaste, saveCopyPaste } from "../../controllers/investor/investorCopyPaste";
 
 const router = express.Router();
 
@@ -116,4 +118,51 @@ router.get("/investorinfobyid/:investorId", async (req, res) => {
     res.status(error.status).json({ error: error.message });
   }
 });
+
+// getting investor hidden remarks by id
+router.get("/investorhiddenremarks/:investorId", async (req, res) => {
+  try {
+    const result = await getHiddenRemarks(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// save investor hidden remarks by id
+router.post("/investorhiddenremarks", async (req, res) => {
+  try {
+    const result = await saveHiddenRemarks(req);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// getting investor copy paster by id
+router.get("/investorcopypaste/:investorId", async (req, res) => {
+  try {
+    const result = await getCopyPaste(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// save investor copy paster by id
+router.post("/investorcopypaste", async (req, res) => {
+  try {
+    const result = await saveCopyPaste(req);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
+
 module.exports = router;
