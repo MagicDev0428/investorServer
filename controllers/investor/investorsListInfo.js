@@ -22,6 +22,15 @@ const aggregateInvestorData = async (pipeline) => {
 // Inserting button color
 
 const insertingButtonColor = async (data) => {
+	data = await data.filter((investorInfo) => {
+    const accountBalances = investorInfo.investor.accountBalances;
+    const currentMonthBalanceList = accountBalances ? accountBalances.currentMonthBalanceList : null;
+    const previousMonthBalanceList = accountBalances ? accountBalances.previousUnpaidBalanceList : null;
+
+    return (currentMonthBalanceList && currentMonthBalanceList.length > 0) || 
+           (previousMonthBalanceList && previousMonthBalanceList.length > 0);
+});
+
   for (const investorInfo of data) {
     if (investorInfo.investor.accountBalances?.currentMonthBalanceList) {
       investorInfo.investor.accountBalances.currentMonthBalanceList = await Lib.removeNullValuesFromArray(
@@ -112,7 +121,7 @@ const insertingButtonColor = async (data) => {
 
 // Common stages for the aggregation pipeline
 const commonStages = () => {
-
+	const today = new Date();
 	return [
 
 		{
@@ -137,9 +146,23 @@ const commonStages = () => {
 								}
 							},
 							totalProfitMonthly: {
+								// $sum: {
+								// 	$ifNull: ["$profitMonthly", 0]
+								// }
 								$sum: {
-									$ifNull: ["$profitMonthly", 0]
-								}
+                                    $cond: [{
+                                            $and: [{
+                                                    $lte: ["$firstProfitDate", today]
+                                                },
+                                                {
+                                                    $gte: ["$lastProfitDate", today]
+                                                }
+                                            ]
+                                        },
+                                        "$profitMonthly",
+                                        0
+                                    ]
+                                }
 							},
 							totalProfitEnd: {
 								$sum: {
@@ -169,35 +192,7 @@ const commonStages = () => {
 				totalProfit: {
 					$add: ["$accountInvestments.totalInvested", "$accountInvestments.totalProfitMonthly", "$accountInvestments.totalProfitEnd"],
 				},
-				// getInvestmentType: {
-				//     $cond: {
-				//         if: {
-				//             $eq: [{
-				//                     $size: {
-				//                         $filter: {
-				//                             input: {
-				//                                 $ifNull: ['$accountInvestments.myInvestmentList', []],
-				//                             },
-				//                             as: 'myInvestment',
-				//                             cond: {
-				//                                 $or: [{
-				//                                         $eq: ['$$myInvestment.investType', 'Mixed']
-				//                                     },
-				//                                     {
-				//                                         $eq: ['$$myInvestment.investType', 'Monthly Profit']
-				//                                     },
-				//                                 ],
-				//                             },
-				//                         },
-				//                     },
-				//                 },
-				//                 1,
-				//             ],
-				//         },
-				//         then: true,
-				//         else: false,
-				//     },
-				// }
+				
 			}
 		},
 		{
