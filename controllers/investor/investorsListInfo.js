@@ -46,76 +46,64 @@ const insertingButtonColor = async (data) => {
         investorInfo.investor.accountBalances?.currentMonthBalanceList
       );
 
-      // Conditions for current month
+    
       if (investorInfo.investor.getInvestmentType == false) {
-        investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
-          balanceInfo: {
-            currentMonthDeposit: totalDeposit,
-            buttonColor: "Purple",
-			nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
-          },
-        });
+       
+			let accountBalances = investorInfo.investor.accountBalances
+            accountBalances.currentMonthDeposit = totalDeposit,
+            accountBalances.buttonColor= "Purple",
+			accountBalances.nextMonth=investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
+       
       } else if (isBefore15th && investorInfo.investor.accountBalances.currentMonthBalanceList) {
-        investorInfo.investor.accountBalances?.currentMonthBalanceList.unshift({
-          balanceInfo: {
-            currentMonthDeposit: totalDeposit,
-            buttonColor: "Green",
-			nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
-          },
-        });
+      
+			let accountBalances = investorInfo.investor.accountBalances
+            accountBalances.currentMonthDeposit = totalDeposit,
+            accountBalances.buttonColor = "Green",
+			accountBalances.nextMonth = investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
+        
       } else {
         if (
           totalInvestment <= totalDeposit &&
           emailDateStatus &&
           investorInfo.investor.accountBalances.currentMonthBalanceList
         ) {
-          investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
-            balanceInfo: {
-              currentMonthDeposit: totalDeposit,
-              buttonColor: "Green",
-			  nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
-            },
-          });
+			let accountBalances = investorInfo.investor.accountBalances
+            accountBalances.currentMonthDeposit = totalDeposit,
+            accountBalances.buttonColor = "Green",
+			accountBalances.nextMonth = investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
+        
         } else if (
           totalInvestment <= totalDeposit &&
           !emailDateStatus &&
           investorInfo.investor.accountBalances.currentMonthBalanceList
         ) {
-          investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
-            balanceInfo: {
-              currentMonthDeposit: totalDeposit,
-              buttonColor: "Yellow",
-			  nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
-            },
-          });
+			let accountBalances = investorInfo.investor.accountBalances
+            accountBalances.currentMonthDeposit = totalDeposit,
+            accountBalances.buttonColor = "Yellow",
+			accountBalances.nextMonth = investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
+        
         } else if (
           totalDeposit <= totalInvestment &&
           !emailDateStatus &&
           investorInfo.investor.accountBalances.currentMonthBalanceList
         ) {
           const remainingAmount = totalInvestment - totalDeposit;
-          investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
-            balanceInfo: {
-              currentMonthDeposit: totalDeposit,
-              // currentMonthDeposit: remainingAmount,
-              buttonColor: "Red",
-			  nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
-            },
-          });
+		  let accountBalances = investorInfo.investor.accountBalances
+            accountBalances.currentMonthDeposit = totalDeposit,
+            accountBalances.buttonColor = "Red",
+			accountBalances.nextMonth = investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
+      
         } else if (
           totalDeposit == 0 &&
           !emailDateStatus &&
           investorInfo.investor.accountBalances.currentMonthBalanceList
         ) {
           const remainingAmount = totalInvestment - totalDeposit;
-          investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
-            balanceInfo: {
-              currentMonthDeposit: totalDeposit,
-              // currentMonthDeposit: remainingAmount,
-              buttonColor: "Red",
-			  nextMonth:investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
-            },
-          });
+		  let accountBalances = investorInfo.investor.accountBalances
+            accountBalances.currentMonthDeposit = totalDeposit,
+            accountBalances.buttonColor = "Red",
+			accountBalances.nextMonth = investorInfo.investor.accountBalances.currentMonthBalanceList[0].profitMonth
+      
         }
       }
     
