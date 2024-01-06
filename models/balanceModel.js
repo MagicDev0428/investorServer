@@ -28,7 +28,7 @@ var balanceSchema  = new Schema({
     transactionTo:      String,     // Transfer transaction TO bank / account 
     transactionNo:      String,     // Transaction number from bank 
 
-    transferMethod: {              // "Envelope", "Thai Bank", "Foreign Bank", "Crypto Wallet", "Western Union", "WISE", "Other Transfer" 
+    transferMethod: {               // "Envelope", "Thai Bank", "Foreign Bank", "Crypto Wallet", "Western Union", "WISE", "Other Transfer" 
         type: String, 
         default: "Envelope"
     }, 
@@ -45,7 +45,7 @@ var balanceSchema  = new Schema({
     modifiedDate: {                 // When was this balance modified
         type: Date, 
         default: Date.now
-    },     
+    },  
     modifiedBy:         String      // Who modified the balance
 
 }, { versionKey: false });          // Don't want to insert _v in document
