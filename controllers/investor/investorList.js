@@ -25,12 +25,12 @@ const frontPageFunctionality = (data) => {
     let profitLeftToPay = 0
     let profitAlreadyPaid = 0
     let profitToPay = 0
-    data = data.filter((investorInfo) => {
-        const accountBalances = investorInfo.investor.accountBalances;
-        const balanceList = accountBalances ? accountBalances.balanceList : null;
+    // data = data.filter((investorInfo) => {
+    //     const accountBalances = investorInfo.investor.accountBalances;
+    //     const balanceList = accountBalances ? accountBalances.balanceList : null;
 
-        return balanceList && balanceList.length > 0;
-    });
+    //     return balanceList && balanceList.length > 0;
+    // });
     data.forEach((investorInfo) => {
 
         const accountBalances = investorInfo.investor.accountBalances;

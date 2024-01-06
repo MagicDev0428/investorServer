@@ -4,104 +4,12 @@ import {
 // creating balance table model
 let balanceTable = Models.balanceModel;
 
-
-
-// const investorBalance = (investorId) => {
-//     const today = new Date();
-//     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-//     const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-//     return [
-//         {
-//             $sort: {
-//                 "profitMonth": 1
-//             }
-//         },
-//         {
-//             $group: {
-//                 _id: null,
-//                 totalDeposit: {
-//                     $sum: '$deposit'
-//                 },
-//                 investorBalanceLists: {
-//                     $push: "$$ROOT"
-//                 }
-//             }
-//         },
-//         {
-//             $unionWith: {
-//                 coll: "myInvestments",
-//                 pipeline: [
-//                     {
-//                         $match: {
-//                             investorName: investorId
-//                         }
-//                     },
-//                     {
-//                         $group: {
-//                             _id: null,
-//                             totalMonthlyProfit: {
-//                                 $sum: {
-//                                     $cond: [
-//                                         {
-//                                             $and: [
-//                                                 { $lte: ["$firstProfitDate", today] },
-//                                                 { $gte: ["$lastProfitDate", today] }
-//                                             ]
-//                                         },
-//                                         "$profitMonthly",
-//                                         0
-//                                     ]
-//                                 }
-//                             },
-//                             newMyInvestments: {
-//                                 $push:
-//                                 {
-//                                     $cond: [
-//                                         {
-//                                             $and: [
-//                                                 { $gte: ["$startDate", firstDayOfMonth] },
-//                                                 { $lt: ["$startDate", lastDayOfMonth] }
-//                                             ]
-//                                         },
-//                                         // "$$ROOT",
-//                                         ,
-//                                         {
-//                                             $mergeObjects: ["$$ROOT", { newInvestment: true }]
-//                                         },
-//                                         null
-//                                     ]
-//                                 }
-//                             }
-//                         }
-//                     },
-//                     {
-//                         $project: {
-//                             newMyInvestments: {
-//                                 $filter: {
-//                                     input: "$newMyInvestments",
-//                                     as: "investment",
-//                                     cond: { $ne: ["$$investment", null] }
-//                                 }
-//                             },
-//                             totalMonthlyProfit: 1
-//                         }
-//                     }
-//                 ]
-//             }
-//         },
-//     ];
-// };
 const investorBalance = (investorId) => {
     const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-    return [
-        {
+    return [{
             $sort: {
                 "profitMonth": 1
-            }
+            } // Sorting in ascending order, adjust as needed
         },
         {
             $group: {
@@ -109,6 +17,7 @@ const investorBalance = (investorId) => {
                 totalDeposit: {
                     $sum: '$deposit'
                 },
+                // totalMonthlyProfit: { $sum: '$accountInvestments.totalProfitMonthly' },
                 investorBalanceLists: {
                     $push: "$$ROOT"
                 }
@@ -116,9 +25,8 @@ const investorBalance = (investorId) => {
         },
         {
             $unionWith: {
-                coll: "myInvestments",
-                pipeline: [
-                    {
+                coll: "myInvestments", // The name of the MyInvestment collection
+                pipeline: [{
                         $match: {
                             investorName: investorId
                         }
@@ -127,12 +35,15 @@ const investorBalance = (investorId) => {
                         $group: {
                             _id: null,
                             totalMonthlyProfit: {
+                                // $sum: "$profitMonthly"
                                 $sum: {
-                                    $cond: [
-                                        {
-                                            $and: [
-                                                { $lte: ["$firstProfitDate", today] },
-                                                { $gte: ["$lastProfitDate", today] }
+                                    $cond: [{
+                                            $and: [{
+                                                    $lte: ["$firstProfitDate", today]
+                                                },
+                                                {
+                                                    $gte: ["$lastProfitDate", today]
+                                                }
                                             ]
                                         },
                                         "$profitMonthly",
@@ -140,57 +51,16 @@ const investorBalance = (investorId) => {
                                     ]
                                 }
                             },
-                            newMyInvestments: {
-                                $push: {
-                                    $cond: [
-                                        {
-                                            $and: [
-                                                { $gte: ["$startDate", firstDayOfMonth] },
-                                                { $lt: ["$startDate", lastDayOfMonth] }
-                                            ]
-                                        },
-                                        "$$ROOT",
-                                        null
-                                    ]
-                                }
-                            }
+
                         }
                     },
-                    {
-                        $addFields: {
-                            newMyInvestments: {
-                                $filter: {
-                                    input: "$newMyInvestments",
-                                    as: "investment",
-                                    cond: { $ne: ["$$investment", null] }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        $addFields: {
-                            newMyInvestments: {
-                                $map: {
-                                    input: "$newMyInvestments",
-                                    as: "investment",
-                                    in: { $mergeObjects: ["$$investment", { newInvestment: true }] }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            newMyInvestments: 1,
-                            totalMonthlyProfit: 1
-                        }
-                    }
+
+
                 ]
             }
         },
     ];
 };
-
-
 
 
 export const investorBalanceList = (investorId) => {
@@ -228,7 +98,7 @@ export const investorBalanceList = (investorId) => {
             if (!balanceTable) {
                 return reject({
                     err: true,
-                    message: "Didn't ger investor balance data"
+                    message: "Balance " + balanceId + "Not Found!"
                 });
             }
 

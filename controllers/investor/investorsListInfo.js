@@ -22,14 +22,14 @@ const aggregateInvestorData = async (pipeline) => {
 // Inserting button color
 
 const insertingButtonColor = async (data) => {
-	data = await data.filter((investorInfo) => {
-    const accountBalances = investorInfo.investor.accountBalances;
-    const currentMonthBalanceList = accountBalances ? accountBalances.currentMonthBalanceList : null;
-    const previousMonthBalanceList = accountBalances ? accountBalances.previousUnpaidBalanceList : null;
+// 	data = await data.filter((investorInfo) => {
+//     const accountBalances = investorInfo.investor.accountBalances;
+//     const currentMonthBalanceList = accountBalances ? accountBalances.currentMonthBalanceList : null;
+//     const previousMonthBalanceList = accountBalances ? accountBalances.previousUnpaidBalanceList : null;
 
-    return (currentMonthBalanceList && currentMonthBalanceList.length > 0) || 
-           (previousMonthBalanceList && previousMonthBalanceList.length > 0);
-});
+//     return (currentMonthBalanceList && currentMonthBalanceList.length > 0) || 
+//            (previousMonthBalanceList && previousMonthBalanceList.length > 0);
+// });
 
   for (const investorInfo of data) {
     if (investorInfo.investor.accountBalances?.currentMonthBalanceList) {

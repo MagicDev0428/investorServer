@@ -13,6 +13,7 @@ const {
 import { investorInfoById } from "../../controllers/investor/investorInfoById";
 import { getHiddenRemarks, saveHiddenRemarks } from "../../controllers/investor/investorHiddenRemark";
 import { getCopyPaste, saveCopyPaste } from "../../controllers/investor/investorCopyPaste";
+import { investorPortfolio } from "../../controllers/portfolio/portfolio";
 
 const router = express.Router();
 
@@ -160,6 +161,16 @@ router.post("/investorcopypaste", async (req, res) => {
   }
 });
 
+
+// getting investor hidden remarks by id
+router.get("/investorportfolio/:investorId", async (req, res) => {
+  try {
+    const result = await investorPortfolio(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 
