@@ -5,16 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "args": [
-                "start"
-            ],
-            "name": "node debug",
-            "program": "C:/Program Files/nodejs/node_modules/npm",
+            "command": "npm start",
+            "name": "Run npm start",
             "request": "launch",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "node"
-        }
+            "type": "node-terminal"
+        },
+        
     ]
 }

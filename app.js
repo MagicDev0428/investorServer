@@ -17,7 +17,8 @@ const investorRoute = require("./routes/investor/investorRoute");
 const adamRoute = require("./routes/adam/adamRoute");
 const investmentRoute = require("./routes/investment/investmentRoute")
 require("./logger/simpleLogger"); // global.show is imported from simpleLogger
-const factory = require("./utils/factories/google");
+const factory = require("./utils/factories/google"); // Google factory
+import { Factories } from './utils';
 
 dotenv.config({
   path: process.env.NODE_ENV === "production" ? ".env.prod" : ".env.local",
@@ -362,4 +363,67 @@ app.get("/getWebLink", async(req, res) => {
   // Upload the file 
   const response = await client.getWebLink("1x2ZAX1OLZCLYi06XTqV15RGL5nawiJwK");
   res.respond(response);
+});
+
+
+/************* Documents functions examples ***********************/
+app.post("/savePDF", async(req, res) => {
+
+  const name = 'Torben';
+  const data = {
+    name: 'Torben Rudgaard',
+    email: 'torben.test@gmail.com',
+    company_name: 'thaihome',
+    number: 23456
+    // more data as needed by the liquid file of the invoice template
+  };
+  
+  /* the template is in the documents folder */
+  //const type = 'documents';
+
+  /* the acutual template folder name where liquid file is placed. */
+  const template = 'invoice';
+  
+  /* the id of the documents folder which belongs the the investor Ahsan Butt */
+  const folderId = '1bnbCKqIgVJnxt1t-YEu2rKSIDGAGvZAo';
+
+  const typeOfDocument = 'Balance';
+  /* create the template file */
+  const document = new Factories.Document(data, template, name, typeOfDocument);
+  const path = await document.create();
+  
+  /* fileId is the id of the file on google drive. You need to save it to the */
+  /* investor object in db. */
+  const fileId = await document.savePDF(folderId);
+  res.respond(fileId);
+});
+
+
+/******************* Email function *****************************/
+app.post("/sendEmail", async(req, res) => {
+
+  let email = "torben@rudgaard.com";
+  //let email = "satendra.rawat2011@gmail.com";
+  const client = new Factories.Email(email);
+
+  /* setSubject is used to set the subject of the email. */
+  client.setSubject('This is a test email of Email System');
+
+  /* setText to set the raw text as body of the email */
+  //client.setText('This is the body of the email. Right now it is text');
+
+  /* setHtml to set the html as body of the email */
+  client.setHtml('<html><b>Happy New Year Torben :)</b></html>');
+
+  /* attach function attaches the pdf files which are at the google drive */
+  /* you need to provide the fileId, which should've been saved in the investor model. */
+  /* you can attach multiple documents like that. The attachment must be a pdf,  */
+  /* otherwise your the client will throw an error. */
+  await client.attach("1GNTkCg3oGXpyyhl5ChoMSNlBMhpeKdpd");
+  //await client.attach(fileIdB);
+
+  /* when you have set everything, call send function to send the email. */
+  await client.send();
+
+  res.respond("mail sent");
 });
