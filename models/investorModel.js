@@ -8,7 +8,7 @@ const schema = new Schema({
     _id:                String,     // REQUIRED Investor Name
     nickname:           String,     // REQUIRED The investors Nick Name 
 
-    status: {                       // REQUIRED [ INVESTOR, PENDING, DISABLED ]
+    status: {                       // REQUIRED [ INVESTOR, PENDING, DISABLED, FROZEN ]
         type: String,
         default: 'INVESTOR'
     },     
@@ -38,7 +38,17 @@ const schema = new Schema({
     investorFolderId:   String,     // Investor google drive folder id
     folders:            Array,      // Array of folders belonging to THIS investor {"contracts": "ksdhi9us9dtytyhw4ioytsliygi", "id": "kqwersdafsarrs222ioytsliygi", "reciepts/paid": "kqwersdafsarrs222ioytsliygi", "reciepts/invested": "234fsrafsarrs222ioytsliygi"}
     attachments:        Array,      // Array of Images of the passports / IDs 
-    
+ 
+    LastLoginDate: {                // When was the last time this investor logged in or attempted to log in
+        type: Date, 
+        default: null
+    },
+    loginAttempts: {                // Number of wrong attempts today, after 3 wrong attempts we change investor.status = "FROZEN"
+        type: Number, default: 0, 
+    },   
+
+
+
 /* [
     {
         "folderName" : "contracts",
@@ -78,7 +88,7 @@ const schema = new Schema({
     createdDate: {                  // When was this investment created
         type: Date, 
         default: Date.now
-    },                            
+    },
     createdBy:            String,   // Who created the investment
 
     modifiedDate: {                 // When was this investment modified
