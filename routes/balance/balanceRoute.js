@@ -6,6 +6,7 @@ import { deleteBalance } from "../../controllers/balance/deleteBalance";
 import { updateBalance } from "../../controllers/balance/updateBalance";
 import { balanceList } from "../../controllers/balance/balanceList";
 import { investorBalanceList } from "../../controllers/balance/investorBalanceList";
+import { investorBalanceListWithNewInvestment } from "../../controllers/balance/investorBalanceWithNewMyInvestment";
 
 export const router = express.Router();
 
@@ -73,3 +74,15 @@ router.get("/investorbalancelist/:investorId", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// get balance list with new investment
+router.get("/balancewithmyinvestment/:investorId", async (req, res) => {
+  try {
+    const result = await investorBalanceListWithNewInvestment(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
