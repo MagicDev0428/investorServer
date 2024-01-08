@@ -1,37 +1,38 @@
 import {
     Models
 } from "../../models";
+import { Lib } from '../../utils';
 // creating balance table model
 let balanceTable = Models.balanceModel;
 
-const changeIntoFormat = (response)=>{
-    // Merge investorBalanceLists and newMyInvestments into one array
-const balancesAndMyInvestments = response.reduce((acc, item) => {
-  if (item.investorBalanceLists) {
-    acc.push(...item.investorBalanceLists);
-  } else if (item.newMyInvestments) {
-    acc.push(...item.newMyInvestments);
-  }
-  return acc;
-}, []);
+const addingThaiBalances = async (response) => {
+ 
+    let balanceInThai = 0;
 
-balancesAndMyInvestments.sort((a, b) => {
-  const dateA = a.profitMonth || a.startDate;
-  const dateB = b.profitMonth || b.startDate;
-  return new Date(dateA) - new Date(dateB);
-});
-// Extract totalMonthlyProfit and totalDeposit from the original response
-const totalMonthlyProfit = response.reduce((acc, item) => (item.totalMonthlyProfit !== undefined ? item.totalMonthlyProfit : acc), undefined);
-const totalDeposit = response.reduce((acc, item) => (item.totalDeposit !== undefined ? item.totalDeposit : acc), undefined);
+    function sortByDateAscending(a, b) {
+        const dateA = new Date(a.startDate || a.profitMonth);
+        const dateB = new Date(b.startDate || b.profitMonth);
 
-// Create a single object with the merged array, totalMonthlyProfit, and totalDeposit
-return {
-    totalMonthlyProfit,
-    totalDeposit,
-    balancesAndMyInvestments,
-};
+        return dateA - dateB;
+    }
+    let sortedArrayResult  = await response.balancesAndMyInvestments.sort(sortByDateAscending);
+    //  let sortedArrayResult = await response[0].investor.accountBalances.investorBalanceList.sort(sortByDateAscending);
+    await sortedArrayResult.forEach((value) => {
+        if (value.deposit > 0) {
+            balanceInThai += value.deposit
+            value.balanceInThai = balanceInThai
+        } else if (value.withdraw > 0) {
+            balanceInThai -= value.withdraw
+            value.balanceInThai = balanceInThai
+        } else {
+            value.balanceInThai = balanceInThai
+        }
 
+    })
+console.log(response)
+    return response
 }
+
 
 const investorBalance = (investorId) => {
     const today = new Date();
@@ -168,9 +169,9 @@ export const investorBalanceListWithNewInvestment = (investorId) => {
              const response_= await Models.balanceModel.aggregate(pipeline);
 
             balanceTable = null;
-            balanceTable = changeIntoFormat(response_)
+            let  formatedBalanceRecords_ = await Lib.changeIntoFormat(response_)
            
-
+            balanceTable = await addingThaiBalances(formatedBalanceRecords_)
             if (!balanceTable) {
                 return reject({
                     err: true,

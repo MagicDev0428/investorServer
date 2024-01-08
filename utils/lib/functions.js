@@ -4,6 +4,37 @@ import { AUTH0_NAMESPACE, ROLES } from '../../constants';
 import { ServiceError } from '../errors';
 const fs = require('fs');
 
+
+
+export const changeIntoFormat = async (response)=>{
+    // Merge investorBalanceLists and newMyInvestments into one array
+const balancesAndMyInvestments = await response.reduce((acc, item) => {
+  if (item.investorBalanceLists) {
+    acc.push(...item.investorBalanceLists);
+  } else if (item.newMyInvestments) {
+    acc.push(...item.newMyInvestments);
+  }
+  return acc;
+}, []);
+
+await balancesAndMyInvestments.sort((a, b) => {
+  const dateA = a.profitMonth || a.startDate;
+  const dateB = b.profitMonth || b.startDate;
+  return new Date(dateA) - new Date(dateB);
+});
+// Extract totalMonthlyProfit and totalDeposit from the original response
+const totalMonthlyProfit = await response.reduce((acc, item) => (item.totalMonthlyProfit !== undefined ? item.totalMonthlyProfit : acc), undefined);
+const totalDeposit = await response.reduce((acc, item) => (item.totalDeposit !== undefined ? item.totalDeposit : acc), undefined);
+
+// Create a single object with the merged array, totalMonthlyProfit, and totalDeposit
+return {
+    totalMonthlyProfit,
+    totalDeposit,
+    balancesAndMyInvestments,
+};
+
+}
+
 export const formatDate = date => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
