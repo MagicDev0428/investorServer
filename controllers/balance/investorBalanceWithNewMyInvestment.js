@@ -134,7 +134,7 @@ const investorBalance = (investorId) => {
 
 
 
-export const investorBalanceList = (investorId) => {
+export const investorBalanceListWithNewInvestment = (investorId) => {
     global.show("###### Get Balance ######");
     if (investorId) global.show(investorId);
 
