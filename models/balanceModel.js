@@ -22,8 +22,10 @@ var balanceSchema  = new Schema({
 
     deposit:            Number,     // Amount deposited into investors account (profit)
     withdraw:           Number,     // Amount withdraw from investors account (payment)
-    transferDate:       Number,     // Transaction transfer Date and Time
-
+    transferDate: {                 // Transaction transfer Date and Time
+        type: Date, 
+        default: Date.now
+    }, 
     transactionFrom:    String,     // Transfer transaction FROM bank / account 
     transactionTo:      String,     // Transfer transaction TO bank / account 
     transactionNo:      String,     // Transaction number from bank 
