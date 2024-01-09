@@ -252,6 +252,7 @@ const addingThaiBalances = async (response) => {
 }
 
 export const investorPortfolio = (id) => {
+    global.show("###### Investor Portfolio ######")
 
     return new Promise(async (resolve, reject) => {
         try {

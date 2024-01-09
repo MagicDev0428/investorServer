@@ -45,18 +45,22 @@ exports.adamCreate = (req) => {
     adamTable = null;
     adamTable = await newAdam.save();
 
-    // global.saveLog(
-    //   global.adminNick,
-    //   "ADAM",
-    //   adamTable.investorName,
-    //   adamTable.investmentNo,
-    //   "Created transaction: " +
-    //     formatDateTime(adamTable._id) +
-    //     " " +
-    //     adamTable.desctiption
-    // );
 
-    if (adamTable) {return resolve({ err: false, adams: adamTable });}
+   
+
+    if (adamTable) {
+
+      // calling global save logs
+      global.saveLogs({
+        logBy:userName,
+        logType:'ADAM',
+        investorName:adamTable.investorName,
+        investmentNo:adamTable.investmentNo,
+        description:`New Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
+      })
+
+      return resolve({ err: false, adams: adamTable });
+    }
     return reject({ err: true, message: "Error in adam creation!" });
     } catch (error) {
        return reject({err:true,message:error.message})
@@ -121,7 +125,10 @@ exports.adamDelete = (adamId) => {
     //     " " +
     //     adamTable.desctiption
     // );
-    if (adamTable) {return resolve({ err: false, adams: adamTable });}
+    if (adamTable) {
+
+      return resolve({ err: false, adams: adamTable });
+    }
     return reject({
       err: true,
       message: "Error in adam deletion,please check your id!",

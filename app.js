@@ -16,7 +16,8 @@ import { router as myInvestmentRouter} from "./routes/myInvestment/myInvestmentR
 const investorRoute = require("./routes/investor/investorRoute");
 const adamRoute = require("./routes/adam/adamRoute");
 const investmentRoute = require("./routes/investment/investmentRoute")
-require("./logger/simpleLogger"); // global.show is imported from simpleLogger
+// require("./logger/simpleLogger"); // global.show is imported from simpleLogger
+require('./logger/index');
 const factory = require("./utils/factories/google"); // Google factory
 import { Factories } from './utils';
 

@@ -1,5 +1,5 @@
 const express = require("express");
-const { investorGet } = require("../../controllers/investor/getInvestor");
+const { investorGet,getInvestorNickName} = require("../../controllers/investor/getInvestor");
 const { updateInvestor } = require("../../controllers/investor/updateInvestor");
 const { deleteInvestor } = require("../../controllers/investor/deleteInvestor");
 const { investorCreate } = require("../../controllers/investor/createInvestor");
@@ -173,7 +173,15 @@ router.get("/investorportfolio/:investorId", async (req, res) => {
 });
 
 
-
+// get investor nick name
+router.get("/getinvestornickname/:investorId", async (req, res) => {
+  try {
+    const result = await getInvestorNickName(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 module.exports = router;
