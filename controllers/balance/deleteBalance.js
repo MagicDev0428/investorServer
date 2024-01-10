@@ -21,6 +21,12 @@ export const deleteBalance = async (_id) => {
                 });
             }
 
+            global.saveLogs({
+                logType:'Balance',
+                investorName:balanceTable.investorName,
+                description:`Delete Deposit from ${balanceTable.investorName} for ${balanceTable.deposit}.`,
+            })
+
             // if balance exist then return all data
             return resolve({
                 err: false,

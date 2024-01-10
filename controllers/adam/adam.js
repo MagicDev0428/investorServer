@@ -35,8 +35,8 @@ exports.adamCreate = (req) => {
     // getting user name from auth token
     const userName = Lib.getAdminName(req.auth);
 
-    received.createdBy = userName?userName:"";
-    received.modifiedBy = userName?userName:"";
+    received.createdBy = userName;
+    received.modifiedBy = userName;
 
 
     // creating new adam instance
@@ -52,7 +52,6 @@ exports.adamCreate = (req) => {
 
       // calling global save logs
       global.saveLogs({
-        logBy:userName,
         logType:'ADAM',
         investorName:adamTable.investorName,
         investmentNo:adamTable.investmentNo,
@@ -84,7 +83,7 @@ exports.adamGet = (adamId) => {
     if (!adamId) {
       return reject("Id is not recieved.");
     }
-    
+  
     adamTable = null;
     adamTable = await Models.adamModel.findOne({ _id: adamId });
     if (!adamTable) {
@@ -114,19 +113,16 @@ exports.adamDelete = (adamId) => {
     adamTable = await Models.adamModel.findOneAndDelete({ _id: adamId });
     // Check that adam allready exist based _id
 
-    // IF he exist then DELETE the adam
 
-    // global.saveLog(
-    //   global.adminNick,
-    //   adamTable.investorName,
-    //   adamTable.investmentNo,
-    //   "Deleted transaction: " +
-    //     formatDateTime(adamTable._id) +
-    //     " " +
-    //     adamTable.desctiption
-    // );
     if (adamTable) {
 
+      global.saveLogs({
+        logType:'ADAM',
+        investorName:adamTable.investorName,
+        investmentNo:adamTable.investmentNo,
+        description:`Delete Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
+      })
+      
       return resolve({ err: false, adams: adamTable });
     }
     return reject({
@@ -193,19 +189,20 @@ exports.adamUpdate = (req) => {
       received,
       { new: true }
     );
-    // Update the adam in "adam" collection
-    // global.saveLog(
-    //   global.adminNick,
-    //   "ADAM",
-    //   adamTable.investorName,
-    //   adamTable.investmentNo,
-    //   "Updated transaction: " +
-    //     formatDateTime(adamTable._id) +
-    //     " " +
-    //     adamTable.desctiption
-    // );
+   
+    if (adamTable) {
 
-    if (adamTable) {return resolve({ err: false, adams: adamTable });}
+      // save log for update adam
+      global.saveLogs({
+        logType:'ADAM',
+        investorName:adamTable.investorName,
+        investmentNo:adamTable.investmentNo,
+        description:`Update Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
+      })
+
+      
+      return resolve({ err: false, adams: adamTable });
+    }
     return reject({ err: true, message: "Unable to update Adam!" });
     } catch (error) {
        return reject({err:true,message:error.message})

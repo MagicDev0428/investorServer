@@ -19,6 +19,22 @@ export const deleteMyInvestment = async (_id) => {
       });
     }
 
+      // this is for investment profit logs 
+    let investmentProfit = 0
+    if(myInvestmentTable.investType =='Monthly Profit' ||myInvestmentTable.investType =='Mixed'  ){
+        investmentProfit = myInvestmentTable.profitMonthlyPct
+    }else if(myInvestmentTable.investType =='Annual Profit' || myInvestmentTable.investType =='One-time Profit'){
+        investmentProfit = myInvestmentTable.profitAnnualPct
+    } 
+    // save log for create my investment
+    global.saveLogs({
+        logType:'MY Investment',
+        investorName:myInvestmentTable.investorName,
+        investmentNo:myInvestmentTable.investmentNo,
+        description:`Delete My Investment, ${myInvestmentTable.investorName} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
+    })
+            
+
     // if investor exist then return all data
     return resolve({ err: false, investors: myInvestmentTable });
     } catch (error) {

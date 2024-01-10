@@ -29,6 +29,12 @@ exports.deleteInvestor = async (_id) => {
         });
       }
 
+    // save log for to delete investor 
+    global.saveLogs({
+        logType:'INVESTOR',
+        investorName:investorTable._id,
+        description:`Delete Investor ${investorTable._id}  ${investorTable.nickname} from ${investorTable.country}.`,
+    })
       // if investor exist then return all data
       return resolve({ err: false, investors: investorTable });
     } catch (error) {

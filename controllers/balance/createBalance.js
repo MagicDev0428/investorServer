@@ -78,6 +78,24 @@ export const createBalance = (req) => {
             // Create the balances in "balances" collection
 
             if (balanceTable) {
+                let logDesc = '';
+                if(balanceTable.deposit>0 && balanceTable.profitMonthPaid){
+                    logDesc = `New Balance,  ${balanceTable.investorName} was paid ${balanceTable.deposit} as Monthly Profit.`
+                }else if(balanceTable.deposit > 0 && balanceTable.profitOtherPaid){
+                       logDesc = `New Balance,  ${balanceTable.investorName} was paid ${balanceTable.deposit} as Annual Profit to account.` 
+                }else if(balanceTable.withdraw > 0 ){
+                    logDesc = `New Balance,  ${balanceTable.investorName} took out ${balanceTable.deposit} as withdrawal from account.` 
+                }else if(balanceTable.deposit>0){
+                    logDesc = `New Balance,  ${balanceTable.investorName} was paid ${balanceTable.deposit} as normal deposit to account.` 
+                }
+
+
+                global.saveLogs({
+                    logType:'Balance',
+                    investorName:balanceTable.investorName,
+                    description:logDesc,
+                })
+
                 return resolve({
                     err: false,
                     balances: balanceTable

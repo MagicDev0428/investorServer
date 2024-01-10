@@ -71,20 +71,27 @@ export const updateMyInvestment = (req) => {
             myInvestmentTable = await Models.myInvestmentsModel.findByIdAndUpdate(received._id, received, {
                 new: true,
             });
-            // Update the investment in "investment" collection
-            // global.saveLog(
-            //   global.adminNick,
-            //   "investment",
-            //   myInvestmentTable.investorName,
-            //   myInvestmentTable.investmentNo,
-            //   "Updated transaction: " +
-            //     formatDateTime(myInvestmentTable._id) +
-            //     " " +
-            //     myInvestmentTable.desctiption
-            // );
+       
 
             if (myInvestmentTable) {
-                return resolve({
+
+
+            // this is for investment profit logs 
+            let investmentProfit = 0
+            if(myInvestmentTable.investType =='Monthly Profit' ||myInvestmentTable.investType =='Mixed'  ){
+                investmentProfit = myInvestmentTable.profitMonthlyPct
+            }else if(myInvestmentTable.investType =='Annual Profit' || myInvestmentTable.investType =='One-time Profit'){
+                investmentProfit = myInvestmentTable.profitAnnualPct
+            } 
+            // save log for create my investment
+            global.saveLogs({
+                logType:'MY Investment',
+                investorName:myInvestmentTable.investorName,
+                investmentNo:myInvestmentTable.investmentNo,
+                description:`Updated My Investment, ${myInvestmentTable.investorName} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
+            })
+            
+            return resolve({
                     status: 200,
                     err: false,
                     myInvestments: myInvestmentTable

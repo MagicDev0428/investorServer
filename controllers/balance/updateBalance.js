@@ -50,6 +50,14 @@ export const updateBalance = (req) => {
                     message:`Balance id ${balanceId} is not exist!`
                 })
             }
+
+            // save log for update adam
+            global.saveLogs({
+                logType:'Balance',
+                investorName:balanceTable.investorName,
+                description:`Update Balance from ${balanceTable.investorName} for ${balanceTable.deposit}`,
+            })
+            
             return resolve({
                 err: false,
                 balances: balanceTable

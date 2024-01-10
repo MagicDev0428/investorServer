@@ -63,16 +63,21 @@ export const deleteInvestment = (investmentId) => {
                 _id: investmentId,
             });
 
-            // global.saveLog(
-            //   global.adminNick,
-            //   investmentTable.investorName,
-            //   investmentTable.investmentNo,
-            //   "Deleted transaction: " +
-            //     formatDateTime(investmentTable._id) +
-            //     " " +
-            //     investmentTable.desctiption
-            // );
+            
             if (investmentTable) {
+                // this is for investment profit logs 
+                let investmentProfit
+                if(investmentTable.investType =='Monthly Profit' ||investmentTable.investType =='Mixed'  ){
+                    investmentProfit = investmentTable.profitMonthly
+                }else if(investmentTable.investType =='Annual Profit' || investmentTable.investType =='One-time Profit'){
+                    investmentProfit = investmentTable.profitYearly
+                }
+                 // save log for to create investment 
+                global.saveLogs({
+                    logType:'Investment',
+                    investmentNo:investmentTable._id,
+                    description:`Delete Investment ${investmentTable._id} for ${investmentTable.investAmount} paying ${investmentProfit}%`,
+                })
                 return resolve({
                     err: false,
                     investments: investmentTable

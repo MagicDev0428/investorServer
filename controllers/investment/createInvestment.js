@@ -70,18 +70,24 @@ export const createInvestment = (req) => {
             investmentTable = null;
             investmentTable = await newinvestment.save();
 
-            // global.saveLog(
-            //   global.adminNick,
-            //   "investment",
-            //   investmentTable.investorName,
-            //   investmentTable.investmentNo,
-            //   "Created transaction: " +
-            //     formatDateTime(investmentTable._id) +
-            //     " " +
-            //     investmentTable.desctiption
-            // );
+           
 
             if (investmentTable) {
+
+                // this is for investment profit logs 
+                let investmentProfit
+                if(investmentTable.investType =='Monthly Profit' ||investmentTable.investType =='Mixed'  ){
+                    investmentProfit = investmentTable.profitMonthly
+                }else if(investmentTable.investType =='Annual Profit' || investmentTable.investType =='One-time Profit'){
+                    investmentProfit = investmentTable.profitYearly
+                }
+                 // save log for to create investment 
+                global.saveLogs({
+                    logType:'Investment',
+                    investmentNo:investmentTable._id,
+                    description:`New Investment ${investmentTable._id} for ${investmentTable.investAmount} paying ${investmentProfit}%`,
+                })
+
                 return resolve({
                     status: 201,
                     err: false,

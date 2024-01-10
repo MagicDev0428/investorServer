@@ -184,6 +184,12 @@ exports.updateInvestor = (req) => {
 
       // Return investor update data
       if (investorTable) {
+      // save log for to update investor 
+      global.saveLogs({
+          logType:'INVESTOR',
+          investorName:investorTable._id,
+          description:`Update Investor ${investorTable._id}  ${investorTable.nickname} from ${investorTable.country}.`,
+      })
         return resolve({ err: false, investors: investorTable });
       }
 

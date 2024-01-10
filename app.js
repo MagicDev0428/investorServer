@@ -17,9 +17,10 @@ const investorRoute = require("./routes/investor/investorRoute");
 const adamRoute = require("./routes/adam/adamRoute");
 const investmentRoute = require("./routes/investment/investmentRoute")
 // require("./logger/simpleLogger"); // global.show is imported from simpleLogger
-require('./logger/index');
+require('./utils/logger/index');
 const factory = require("./utils/factories/google"); // Google factory
-import { Factories } from './utils';
+import { Factories,Lib } from './utils';
+
 
 dotenv.config({
   path: process.env.NODE_ENV === "production" ? ".env.prod" : ".env.local",
@@ -164,6 +165,11 @@ app.use("/docs", swaggerUI.serve, swaggerUI.setup(jsondocs));
 // use auth for all endpoints
 app.use(checkJwt);
 
+// setting user name in global variable 
+app.use((req, res, next) => {
+  global.userName = Lib.getAdminName(req.auth);
+  next();
+});
 /**
  * ROUTES
  */

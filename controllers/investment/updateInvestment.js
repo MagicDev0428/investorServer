@@ -47,19 +47,17 @@ export const updateInvestment = (req) => {
             investmentTable = await Models.investmentModel.findByIdAndUpdate(received._id, received, {
                 new: true,
             });
-            // Update the investment in "investment" collection
-            // global.saveLog(
-            //   global.adminNick,
-            //   "investment",
-            //   investmentTable.investorName,
-            //   investmentTable.investmentNo,
-            //   "Updated transaction: " +
-            //     formatDateTime(investmentTable._id) +
-            //     " " +
-            //     investmentTable.desctiption
-            // );
-
+          
             if (investmentTable) {
+
+
+            
+                 // save log for to create investment 
+                global.saveLogs({
+                    logType:'Investment',
+                    investmentNo:investmentTable._id,
+                    description:`Updated the Investment ${investmentTable._id} for ${investmentTable.investAmount}.`,
+                })
                 return resolve({
                     status: 200,
                     err: false,

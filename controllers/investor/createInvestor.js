@@ -171,7 +171,16 @@ exports.investorCreate = async (req) => {
     // Saving investor data in the collection
     investorTable = null;
     investorTable = await newInvestor.save();
-    if (investorTable) {return resolve({ err: false, investors: investorTable });}
+    if (investorTable) {
+    // save log for to create investor 
+    global.saveLogs({
+        logType:'INVESTOR',
+        investorName:investorTable._id,
+        description:`New Investor ${investorTable._id}  ${investorTable.nickname} from ${investorTable.country}.`,
+    })
+
+      return resolve({ err: false, investors: investorTable });
+    }
     return reject({ err: true, message: "Error in investor creation!" });
     } catch (error) {
        return reject({err:true,message:error.message})
