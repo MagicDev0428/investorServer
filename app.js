@@ -409,6 +409,8 @@ app.post("/savePDF", async(req, res) => {
 /******************* Email function *****************************/
 app.post("/sendEmail", async(req, res) => {
 
+  let received = req.body
+
   let email = "torben@rudgaard.com";
   //let email = "satendra.rawat2011@gmail.com";
   const client = new Factories.Email(email);
@@ -431,6 +433,12 @@ app.post("/sendEmail", async(req, res) => {
 
   /* when you have set everything, call send function to send the email. */
   await client.send();
+
+  //   global.saveLogs({
+  //     logType:'EMAIL',
+  //     investorName:received.investorName,
+  //     description:`Sent email to ${received.investorName} that ${received.amount} was paid as Monthly Profit.`,
+  // })
 
   res.respond("mail sent");
 });

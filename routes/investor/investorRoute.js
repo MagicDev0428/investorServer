@@ -14,6 +14,7 @@ import { investorInfoById } from "../../controllers/investor/investorInfoById";
 import { getHiddenRemarks, saveHiddenRemarks } from "../../controllers/investor/investorHiddenRemark";
 import { getCopyPaste, saveCopyPaste } from "../../controllers/investor/investorCopyPaste";
 import { investorPortfolio } from "../../controllers/portfolio/portfolio";
+import { lastLoginDate } from "../../controllers/investorPinandLogin/investorPinandLogin";
 
 const router = express.Router();
 
@@ -183,5 +184,14 @@ router.get("/getinvestornickname/:investorId", async (req, res) => {
   }
 });
 
+
+router.put("/updateLastLogin/:investorId",async(req,res)=>{
+  try {
+    const result = await lastLoginDate(req.params.investorId);
+    res.status(result.status).json(result);
+  } catch (error) {
+    res.status(error.status).json({ error: error.message });
+  }
+})
 
 module.exports = router;

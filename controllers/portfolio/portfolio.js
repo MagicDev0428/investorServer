@@ -2,9 +2,7 @@ import {
     Models
 } from "../../models";
 
-import {
-    Lib
-} from '../../utils';
+
 // creating investor table model
 let investorTable = Models.Investor;
 
