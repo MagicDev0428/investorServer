@@ -82,6 +82,7 @@ exports.investorCreate = async (req) => {
     let filteredFolder = folders.find(folder => folder.name === received._id);
     let passportFolderId;
     let investorFolderId;
+    let balanceSheetFolderId, documentsFolderId, recieptFolderId, depositFolderId, withdrawFolderId, investFolderId;
     let uploadResponse = [];
     // If user has already folder created with the name
     try {
@@ -98,19 +99,27 @@ exports.investorCreate = async (req) => {
       // create only 1 folder at root level
       // create folder and get folder Id
       passportFolderId = await client.createFolders(investorFolderId, CONSTANT.PASSPORTS);
-      await client.createFolders(investorFolderId, CONSTANT.BALANCE_SHEET);
-      await client.createFolders(investorFolderId, CONSTANT.DOCUMENTS);
-      let recieptFolderId = await client.createFolders(investorFolderId, CONSTANT.RECIETPTS);
-      await client.createFolders(recieptFolderId.id, CONSTANT.DEPOSIT);
-      await client.createFolders(recieptFolderId.id, CONSTANT.WITHDRAW);
-      await client.createFolders(recieptFolderId.id, CONSTANT.INVEST);
+      balanceSheetFolderId = await client.createFolders(investorFolderId, CONSTANT.BALANCE_SHEET);
+      documentsFolderId = await client.createFolders(investorFolderId, CONSTANT.DOCUMENTS);
+      recieptFolderId = await client.createFolders(investorFolderId, CONSTANT.RECIETPTS);
+      depositFolderId = await client.createFolders(recieptFolderId, CONSTANT.DEPOSIT);
+      withdrawFolderId = await client.createFolders(recieptFolderId, CONSTANT.WITHDRAW);
+      investFolderId = await client.createFolders(recieptFolderId, CONSTANT.INVEST);
+
+      passportFolderId = passportFolderId.id;
+      balanceSheetFolderId = balanceSheetFolderId.id;
+      documentsFolderId = documentsFolderId.id;
+      recieptFolderId = recieptFolderId.id;
+      depositFolderId = depositFolderId.id;
+      withdrawFolderId = withdrawFolderId.id;
+      investFolderId = investFolderId.id;
 
       if(received.passportImage ) {
         if(Array.isArray(received.passportImage)) {
           for (const imagePath of received?.passportImage) {
             let fileId = await client.uploadFile(
               "uploads/" + imagePath,
-              passportFolderId.id
+              passportFolderId
             );
             // Get weblink of file
             let webLink = await client.getWebLink(fileId.id);
@@ -118,7 +127,7 @@ exports.investorCreate = async (req) => {
               uploadResponse.push({
                 image: imagePath,
                 googleFileId: fileId.id,
-                passportFolderId: passportFolderId.id,
+                passportFolderId: passportFolderId,
                 webLink: webLink
               });
               // Delete this uploaded file in server
@@ -126,14 +135,14 @@ exports.investorCreate = async (req) => {
             }
           }
         } else {
-          let fileId = await client.uploadFile("uploads/" + received.passportImage, passportFolderId.id); 
+          let fileId = await client.uploadFile("uploads/" + received.passportImage, passportFolderId); 
           // Get weblink of file
           let webLink = await client.getWebLink(fileId.id);       
             if(fileId) {
               uploadResponse.push({
                 image: received.passportImage,
                 googleFileId: fileId.id,
-                passportFolderId: passportFolderId.id,
+                passportFolderId: passportFolderId,
                 webLink: webLink
               })
               // Delete this uploaded file in server
@@ -146,7 +155,13 @@ exports.investorCreate = async (req) => {
         readonly: true, // Never delete this object
         image: null,
         googleFileId: null,
-        passportFolderId: passportFolderId.id,
+        passportFolderId: passportFolderId,
+        balanceSheetFolderId: balanceSheetFolderId,
+        documentsFolderId: documentsFolderId,
+        recieptFolderId: recieptFolderId,
+        depositFolderId: depositFolderId,
+        withdrawFolderId: withdrawFolderId,
+        investFolderId: investFolderId,
         webLink: null
       });
     } catch(ex) {
