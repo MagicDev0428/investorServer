@@ -7,7 +7,7 @@ import { Models } from "../../models";
 let investorTable = Models.Investor;
 
 
-exports.investorGet = (id) => {
+exports.investorGet = async(id) => {
   global.show("###### investorGet ###### ");
 
   if (id) global.show(id);
@@ -36,7 +36,7 @@ exports.investorGet = (id) => {
 };
 
 
-exports.getInvestorNickName = (id) => {
+exports.getInvestorNickName = async (id) => {
   global.show("###### Get investor nick name ###### ");
 
   if (id) global.show(id);

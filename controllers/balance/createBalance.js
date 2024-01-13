@@ -7,6 +7,7 @@ import {
 } from "../../models";
 
 import{Lib} from "../../utils"
+const {getInvestorNickName} = require("../investor/getInvestor")
 // creating Balance table model
 let balanceTable = Models.balanceModel;
 
@@ -78,21 +79,22 @@ export const createBalance = (req) => {
             // Create the balances in "balances" collection
 
             if (balanceTable) {
+                let  {investors} = await getInvestorNickName(balanceTable.investorName)
                 let logDesc = '';
                 if(balanceTable.deposit>0 && balanceTable.profitMonthPaid){
-                    logDesc = `New Balance,  ${balanceTable.investorName} was paid ${balanceTable.deposit} as Monthly Profit.`
+                    logDesc = `New Balance,  ${investors.nickname} was paid ${balanceTable.deposit} as Monthly Profit.`
                 }else if(balanceTable.deposit > 0 && balanceTable.profitOtherPaid){
-                       logDesc = `New Balance,  ${balanceTable.investorName} was paid ${balanceTable.deposit} as Annual Profit to account.` 
+                       logDesc = `New Balance,  ${investors.nickname} was paid ${balanceTable.deposit} as Annual Profit to account.` 
                 }else if(balanceTable.withdraw > 0 ){
-                    logDesc = `New Balance,  ${balanceTable.investorName} took out ${balanceTable.deposit} as withdrawal from account.` 
+                    logDesc = `New Balance,  ${investors.nickname} took out ${balanceTable.deposit} as withdrawal from account.` 
                 }else if(balanceTable.deposit>0){
-                    logDesc = `New Balance,  ${balanceTable.investorName} was paid ${balanceTable.deposit} as normal deposit to account.` 
+                    logDesc = `New Balance,  ${investors.nickname} was paid ${balanceTable.deposit} as normal deposit to account.` 
                 }
 
 
                 global.saveLogs({
                     logType:'Balance',
-                    investorName:balanceTable.investorName,
+                    investorName:investors.nickname,
                     description:logDesc,
                 })
 

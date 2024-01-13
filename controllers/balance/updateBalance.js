@@ -3,6 +3,7 @@ import {
 } from "../../models";
 
 import { Lib } from "../../utils";
+const {getInvestorNickName} = require("../investor/getInvestor")
 // creating balance table model
 let balanceTable = Models.balanceModel;
 
@@ -50,12 +51,14 @@ export const updateBalance = (req) => {
                     message:`Balance id ${balanceId} is not exist!`
                 })
             }
-
+            // get investor nick name
+            let  {investors} = await getInvestorNickName(balanceTable.investorName)
+           
             // save log for update adam
             global.saveLogs({
                 logType:'Balance',
-                investorName:balanceTable.investorName,
-                description:`Update Balance from ${balanceTable.investorName} for ${balanceTable.deposit}`,
+                investorName:investors.nickname,
+                description:`Update Balance from ${investors.nickname} for ${balanceTable.deposit}`,
             })
             
             return resolve({

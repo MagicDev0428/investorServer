@@ -61,7 +61,14 @@ exports.investorCreate = async (req) => {
       });
     }
 
-
+ 
+    const emailExist = await Models.Investor.exists({email:received.email});
+    if (emailExist) {
+      return reject({
+        err: true,
+        message: `Investor with email ${received.email} already exist, please change email!`,
+      });
+    }
     // date and time in createDate and modified date
     const dateTime = new Date().toISOString();
     received.createdDate = dateTime;

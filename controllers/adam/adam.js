@@ -4,6 +4,7 @@
 
 import { Models } from "../../models";
 import {Lib} from "../../utils";
+const {getInvestorNickName} = require("../investor/getInvestor")
 // creating adam table model
 let adamTable = Models.adamModel;
 
@@ -49,15 +50,18 @@ exports.adamCreate = (req) => {
    
 
     if (adamTable) {
+      let  {investors} = await getInvestorNickName(adamTable.investorName)
+      
 
+      if(investors){
       // calling global save logs
       global.saveLogs({
         logType:'ADAM',
-        investorName:adamTable.investorName,
+        investorName:investors.nickname,
         investmentNo:adamTable.investmentNo,
         description:`New Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
       })
-
+    }
       return resolve({ err: false, adams: adamTable });
     }
     return reject({ err: true, message: "Error in adam creation!" });
@@ -116,13 +120,15 @@ exports.adamDelete = (adamId) => {
 
     if (adamTable) {
 
+      const  {investors} = await getInvestorNickName(adamTable.investorName)
+      if(investors){
       global.saveLogs({
         logType:'ADAM',
-        investorName:adamTable.investorName,
+        investorName:investors.nickname,
         investmentNo:adamTable.investmentNo,
         description:`Delete Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
       })
-      
+    }
       return resolve({ err: false, adams: adamTable });
     }
     return reject({
@@ -192,15 +198,18 @@ exports.adamUpdate = (req) => {
    
     if (adamTable) {
 
+      let  {investors} = await getInvestorNickName(adamTable.investorName)
+      
+      if(investors){          
       // save log for update adam
       global.saveLogs({
         logType:'ADAM',
-        investorName:adamTable.investorName,
+        investorName:investors.nickname,
         investmentNo:adamTable.investmentNo,
         description:`Update Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
       })
 
-      
+    }
       return resolve({ err: false, adams: adamTable });
     }
     return reject({ err: true, message: "Unable to update Adam!" });

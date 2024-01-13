@@ -1,6 +1,7 @@
 import {
     Models
 } from "../../models";
+const {getInvestorNickName} = require("../investor/getInvestor")
 // creating Balance table model
 let balanceTable = Models.balanceModel;
 
@@ -21,10 +22,12 @@ export const deleteBalance = async (_id) => {
                 });
             }
 
+            let  {investors} = await getInvestorNickName(balanceTable.investorName)
+                
             global.saveLogs({
                 logType:'Balance',
-                investorName:balanceTable.investorName,
-                description:`Delete Deposit from ${balanceTable.investorName} for ${balanceTable.deposit}.`,
+                investorName:investors.nickname,
+                description:`Delete Deposit from ${investors.nickname} for ${balanceTable.deposit}.`,
             })
 
             // if balance exist then return all data

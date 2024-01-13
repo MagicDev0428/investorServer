@@ -38,7 +38,7 @@ export const deleteInvestment = (investmentId) => {
                 return reject({
                     status: 403,
                     err: true,
-                    message: "Investment already have investors",
+                    message: "Investment already have investors who put money into it.  Please remove them before you delete the investment.",
                 });
             }
 

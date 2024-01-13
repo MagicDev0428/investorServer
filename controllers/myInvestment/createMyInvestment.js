@@ -6,7 +6,7 @@ import { Models } from '../../models';
 import { Lib } from '../../utils';
 // creating Investment table model
 let myInvestmentTable = Models.myInvestmentsModel
-
+const {getInvestorNickName} = require("../investor/getInvestor")
 //
 // Create NEW investment with the data from the form
 //
@@ -71,6 +71,9 @@ export const createInvestment = (req) => {
      
 
         if (myInvestmentTable){
+
+            let  {investors} = await getInvestorNickName(myInvestmentTable.investorName)
+
               // this is for investment profit logs 
             let investmentProfit = 0
             if(myInvestmentTable.investType =='Monthly Profit' ||myInvestmentTable.investType =='Mixed'  ){
@@ -81,9 +84,9 @@ export const createInvestment = (req) => {
             // save log for create my investment
             global.saveLogs({
                 logType:'MY Investment',
-                investorName:myInvestmentTable.investorName,
+                investorName:investors.nickname,
                 investmentNo:myInvestmentTable.investmentNo,
-                description:`New My Investment, ${myInvestmentTable.investorName} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
+                description:`New My Investment, ${investors.nickname} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
             })
             
              return resolve({ status: 201, err: false, myInvestments: myInvestmentTable });

@@ -393,11 +393,12 @@ const investmentAggregate = async () => {
             $lookup: {
                 from: "log",
                 let: {},
-                pipeline: [{
-                        $sort: {
-                            id: -1
-                        }
-                    },
+                pipeline: [
+                    // {
+                    //     $sort: {
+                    //         id: -1
+                    //     }
+                    // },
                     {
                         $group: {
                             _id: null,
@@ -406,13 +407,13 @@ const investmentAggregate = async () => {
                             }
                         }
                     },
-                    {
-                        $project: {
-                            logRecords: {
-                                $slice: ["$logRecords", 15]
-                            }
-                        }
-                    }
+                    // {
+                    //     $project: {
+                    //         logRecords: {
+                    //             $slice: ["$logRecords", 15]
+                    //         }
+                    //     }
+                    // }
                 ],
                 as: "log"
             }

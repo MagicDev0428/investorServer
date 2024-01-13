@@ -1,4 +1,6 @@
 import { Models } from "../../models"; 
+const {getInvestorNickName} = require("../investor/getInvestor")
+//
 // creating investor table model
 let myInvestmentTable = Models.myInvestmentsModel;
 
@@ -19,6 +21,8 @@ export const deleteMyInvestment = async (_id) => {
       });
     }
 
+    let  {investors} = await getInvestorNickName(myInvestmentTable.investorName)
+
       // this is for investment profit logs 
     let investmentProfit = 0
     if(myInvestmentTable.investType =='Monthly Profit' ||myInvestmentTable.investType =='Mixed'  ){
@@ -29,9 +33,9 @@ export const deleteMyInvestment = async (_id) => {
     // save log for create my investment
     global.saveLogs({
         logType:'MY Investment',
-        investorName:myInvestmentTable.investorName,
+        investorName:investors.nickname,
         investmentNo:myInvestmentTable.investmentNo,
-        description:`Delete My Investment, ${myInvestmentTable.investorName} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
+        description:`Delete My Investment, ${investors.nickname} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
     })
             
 

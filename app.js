@@ -162,7 +162,7 @@ app.use(function (req, res, next) {
  */
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(jsondocs));
 
-// use auth for all endpoints
+// // use auth for all endpoints
 app.use(checkJwt);
 
 // setting user name in global variable 
