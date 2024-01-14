@@ -346,7 +346,10 @@ const investmentAggregate = async () => {
                 from: "investor",
                 pipeline: [{
                         $match: {
-                            status: "ACTIVE"
+                                $or: [
+                                { status: "ACTIVE" },
+                                { status: "active" } // Add this line if "active" is case-sensitive
+                            ]
                         }
                     },
                     {
