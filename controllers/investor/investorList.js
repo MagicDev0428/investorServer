@@ -346,7 +346,7 @@ const investmentAggregate = async () => {
                 from: "investor",
                 pipeline: [{
                         $match: {
-                            status: "INVESTOR"
+                            status: "ACTIVE"
                         }
                     },
                     {
