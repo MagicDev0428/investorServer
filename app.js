@@ -412,7 +412,7 @@ app.post("/sendEmail", async(req, res) => {
 
   let received = req.body
 
-  let email = " satendra.rawat2011@gmail.com";
+  let email = "torben@rudgaard.com;satendra.rawat2011@gmail.com";
   //let email = "satendra.rawat2011@gmail.com";
   const client = new Factories.Email(email);
 
