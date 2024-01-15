@@ -8,9 +8,9 @@ const schema = new Schema({
     _id:                String,     // REQUIRED Investor Name
     nickname:           String,     // REQUIRED The investors Nick Name 
 
-    status: {                       // REQUIRED [ INVESTOR, PENDING, DISABLED, FROZEN ]
+    status: {                       // REQUIRED [ ACTIVE, PENDING, DISABLED, FROZEN ]
         type: String,
-        default: 'INVESTOR'
+        default: 'ACTIVE'
     },     
 
     pincode:            String,     // REQUIRED Pincode for logging in "0202" 
@@ -47,43 +47,6 @@ const schema = new Schema({
         type: Number, default: 0, 
     },   
 
-
-
-/* [
-    {
-        "folderName" : "contracts",
-        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
-    },
-    {
-        "folderName" : "id",
-        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
-    },
-    {
-        "folderName" : "reciepts",
-        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
-    },
-    {
-        "folderName" : "paid",
-        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
-    },
-    {
-        "folderName" : "invested",
-        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
-    }
-]
-
-
-[
-    {
-        "fileName"   : "passportSatendra.jpg",
-        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
-    },
-    {
-        "fileName"   : "drivingIDNidhi.jpg",
-        "googleID"   : "ksdhi9us9dtytyhw4ioytsliygi"
-    }
-]
- */
 
     createdDate: {                  // When was this investment created
         type: Date, 
