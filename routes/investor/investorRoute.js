@@ -15,6 +15,7 @@ import { getHiddenRemarks, saveHiddenRemarks } from "../../controllers/investor/
 import { getCopyPaste, saveCopyPaste } from "../../controllers/investor/investorCopyPaste";
 import { investorPortfolio } from "../../controllers/portfolio/portfolio";
 import { lastLoginDate, loginWithPin } from "../../controllers/investor/investorPinandLogin/investorPinandLogin";
+import { resetLoginAttempts } from "../../controllers/investor/investorPinandLogin/resetLoginAttempts";
 
 const router = express.Router();
 
@@ -203,5 +204,16 @@ router.put("/loginpincode/:investoremail",async(req,res)=>{
     res.status(error.status).json({ error: error.message });
   }
 })
+
+
+// reset login attempts 
+router.get("/resetloginattempts/:investorId", async (req, res) => {
+  try {
+    const result = await resetLoginAttempts(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;
