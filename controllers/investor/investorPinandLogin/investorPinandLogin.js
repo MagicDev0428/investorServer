@@ -91,14 +91,6 @@ export const loginWithPin = (req) => {
                 });
             }
 
-            if (investor_.loginAttempts >= 3) {
-                return reject({
-                    status: 403,
-                    err: true,
-                    message: "THIS ACCOUNT IS FROZEN PLEASE CONTACT BEE OR TORBEN",
-                });
-            }
-
 
             if (investor_.pincode !== received.pincode) {
 
