@@ -21,6 +21,7 @@ require('./utils/logger/index');
 const factory = require("./utils/factories/google"); // Google factory
 import { Factories,Lib } from './utils';
 
+const fs = require("fs");
 
 dotenv.config({
   path: process.env.NODE_ENV === "production" ? ".env.prod" : ".env.local",
@@ -411,24 +412,34 @@ app.post("/sendEmail", async(req, res) => {
 
   let received = req.body
 
-  let email = "torben@rudgaard.com";
+  let email = "torben@rudgaard.com;satendra.rawat2011@gmail.com";
   //let email = "satendra.rawat2011@gmail.com";
   const client = new Factories.Email(email);
 
   /* setSubject is used to set the subject of the email. */
-  client.setSubject('This is a test email of Email System');
+  client.setSubject('BitCoin Investment Monthly Payment Dec 2023');
 
   /* setText to set the raw text as body of the email */
   //client.setText('This is the body of the email. Right now it is text');
 
+
+  let html = await Lib.readFile(__dirname + "/templates/emails/balance/balance.html");
+
+  html = html.replace("[NICKNAME]", 'Rawat')
+  html = html.replace("[MONTHPROFIT]", '1500 thb');
+  html = html.replace("[MONTH-YEAR]", "Dec 2023");
+  html = html.replace("[TOTALINVEST]", "10,000 thb");
+  html =  html.replace("[TOTALPROFIT]", "150,000 thb");
+  html =  html.replaceAll("[INVESTORSPAGE]", "http://localhost:4200/");
+
   /* setHtml to set the html as body of the email */
-  client.setHtml('<html><b>Happy New Year Torben :)</b></html>');
+  client.setHtml(html);
 
   /* attach function attaches the pdf files which are at the google drive */
   /* you need to provide the fileId, which should've been saved in the investor model. */
   /* you can attach multiple documents like that. The attachment must be a pdf,  */
   /* otherwise your the client will throw an error. */
-  await client.attach("1GNTkCg3oGXpyyhl5ChoMSNlBMhpeKdpd");
+  //await client.attach("1GNTkCg3oGXpyyhl5ChoMSNlBMhpeKdpd");
   //await client.attach(fileIdB);
 
   /* when you have set everything, call send function to send the email. */
