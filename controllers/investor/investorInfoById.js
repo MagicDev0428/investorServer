@@ -33,7 +33,7 @@ const investorIdAggregation = () => {
                         $group: {
                             _id: null,
                             firstInvestment: {
-                                $min: '$firstProfitDate'
+                                $min: '$transferDate'
                             },
                             totalMonthlyProfit: {
                                 $sum: {
