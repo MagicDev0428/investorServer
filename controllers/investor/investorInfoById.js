@@ -52,22 +52,7 @@ const investorIdAggregation = () => {
                                     }
                                 }
                             },
-
-                            investForMonths: {
-                                $first: {
-                                    $divide: [{
-                                            $subtract: [{
-                                                    $max: "$lastProfitDate"
-                                                },
-                                                {
-                                                    $min: "$firstProfitDate"
-                                                }
-                                            ]
-                                        },
-                                        2629746000 // milliseconds in a month
-                                    ]
-                                }
-                            },
+                             
                         },
                     },
                 ],
@@ -79,6 +64,20 @@ const investorIdAggregation = () => {
                 path: "$accountInvestments",
                 preserveNullAndEmptyArrays: true,
             },
+        },
+         {
+            $addFields: {
+                "accountInvestments.investForMonths": {
+                    $divide: [{
+                            $subtract: [
+                                currentDate,
+                                "$accountInvestments.firstInvestment"
+                            ]
+                        },
+                        2629746000 // milliseconds in a month
+                    ]
+                }
+            }
         },
         {
             $lookup: {
