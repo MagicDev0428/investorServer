@@ -29,7 +29,6 @@ const addingThaiBalances = async (response) => {
         }
 
     })
-console.log(response)
     return response
 }
 
@@ -87,8 +86,8 @@ const investorBalance = (investorId) => {
                                     $cond: [
                                         {
                                             $and: [
-                                                { $gte: ["$startDate", firstDayOfMonth] },
-                                                { $lt: ["$startDate", lastDayOfMonth] }
+                                                { $gte: ["$firstProfitDate", firstDayOfMonth] },
+                                                { $lt: ["$firstProfitDate", lastDayOfMonth] }
                                             ]
                                         },
                                         "$$ROOT",
