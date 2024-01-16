@@ -92,7 +92,7 @@ export const updateMyInvestment = (req) => {
                 logType:'MY Investment',
                 investorName:investors.nickname,
                 investmentNo:myInvestmentTable.investmentNo,
-                description:`Updated My Investment, ${investors.nickname} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
+                description:`Updated My Investment, ${investors.nickname} invested ฿${myInvestmentTable.amountInvested.toLocaleString()} in #${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
             })
             
             return resolve({

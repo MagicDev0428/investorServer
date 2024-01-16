@@ -58,7 +58,7 @@ export const updateBalance = (req) => {
             global.saveLogs({
                 logType:'Balance',
                 investorName:investors.nickname,
-                description:`Update Balance from ${investors.nickname} for ${balanceTable.deposit}`,
+                description:`Update Balance from ${investors.nickname} for ฿${balanceTable.deposit.toLocaleString()}.`,
             })
             
             return resolve({

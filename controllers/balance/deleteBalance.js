@@ -27,7 +27,7 @@ export const deleteBalance = async (_id) => {
             global.saveLogs({
                 logType:'Balance',
                 investorName:investors.nickname,
-                description:`Delete Deposit from ${investors.nickname} for ${balanceTable.deposit}.`,
+                description:`Delete Deposit from ${investors.nickname} for ฿${balanceTable.deposit.toLocaleString()}.`,
             })
 
             // if balance exist then return all data

@@ -35,7 +35,7 @@ export const deleteMyInvestment = async (_id) => {
         logType:'MY Investment',
         investorName:investors.nickname,
         investmentNo:myInvestmentTable.investmentNo,
-        description:`Delete My Investment, ${investors.nickname} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
+        description:`Delete My Investment, ${investors.nickname} invested ฿${myInvestmentTable.amountInvested.toLocaleString()} in #${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
     })
             
 

@@ -86,7 +86,7 @@ export const createInvestment = (req) => {
                 logType:'MY Investment',
                 investorName:investors.nickname,
                 investmentNo:myInvestmentTable.investmentNo,
-                description:`New My Investment, ${investors.nickname} invested ${myInvestmentTable.amountInvested} in ${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
+                description:`New My Investment, ${investors.nickname} invested ฿${myInvestmentTable.amountInvested.toLocaleString()} in #${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
             })
             
              return resolve({ status: 201, err: false, myInvestments: myInvestmentTable });
