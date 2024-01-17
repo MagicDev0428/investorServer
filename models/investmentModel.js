@@ -24,7 +24,8 @@ var investmentSchema = new Schema(
     profitYearly:         Number,   // Yearly Profit Procentage
     profitEnd:            Number,   // When investment ends Profit Procentage
 
-    explanation:          String,   // Desscription/Explanation 
+    name:                 String,   // Name and Folder Name of the invesment  
+    explanation:          String,   // Description/Explanation 
     attachments:          Array,    // Array of Images and documents ("filename","filename")
 
     createdDate: {                  // When was this investment created
