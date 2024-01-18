@@ -7,7 +7,7 @@ import { updateBalance } from "../../controllers/balance/updateBalance";
 import { balanceList } from "../../controllers/balance/balanceList";
 import { investorBalanceList } from "../../controllers/balance/investorBalanceList";
 import { investorBalanceListWithNewInvestment } from "../../controllers/balance/investorBalanceWithNewMyInvestment";
-
+import { sendBalanceEmail } from "../../controllers/balance/balanceEmail";
 export const router = express.Router();
 
 
@@ -86,3 +86,13 @@ router.get("/balancewithmyinvestment/:investorId", async (req, res) => {
 });
 
 
+// Send email for balance
+// Route: sendEmail
+router.post("/sendEmail", async (req, res) => {
+  try {
+    const result = await sendBalanceEmail(req);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});

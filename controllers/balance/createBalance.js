@@ -82,13 +82,13 @@ export const createBalance = (req) => {
                 let  {investors} = await getInvestorNickName(balanceTable.investorName)
                 let logDesc = '';
                 if(balanceTable.deposit>0 && balanceTable.profitMonthPaid){
-                    logDesc = `New Balance,  ${investors.nickname} was paid ฿${balanceTable.deposit.toLocaleString()} as Monthly Profit.`
+                    logDesc = `New Balance,  ${investors.nickname} was paid ${balanceTable.deposit} as Monthly Profit.`
                 }else if(balanceTable.deposit > 0 && balanceTable.profitOtherPaid){
-                       logDesc = `New Balance,  ${investors.nickname} was paid ฿${balanceTable.deposit.toLocaleString()} as Annual Profit to account.` 
+                       logDesc = `New Balance,  ${investors.nickname} was paid ${balanceTable.deposit} as Annual Profit to account.` 
                 }else if(balanceTable.withdraw > 0 ){
-                    logDesc = `New Balance,  ${investors.nickname} took out ฿${balanceTable.deposit.toLocaleString()} as withdrawal from account.` 
+                    logDesc = `New Balance,  ${investors.nickname} took out ${balanceTable.deposit} as withdrawal from account.` 
                 }else if(balanceTable.deposit>0){
-                    logDesc = `New Balance,  ${investors.nickname} was paid ฿${balanceTable.deposit.toLocaleString()} as normal deposit to account.` 
+                    logDesc = `New Balance,  ${investors.nickname} was paid ${balanceTable.deposit} as normal deposit to account.` 
                 }
 
 
