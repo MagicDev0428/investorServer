@@ -16,6 +16,7 @@ import { getCopyPaste, saveCopyPaste } from "../../controllers/investor/investor
 import { investorPortfolio } from "../../controllers/portfolio/portfolio";
 import { lastLoginDate, loginWithPin } from "../../controllers/investor/investorPinandLogin/investorPinandLogin";
 import { resetLoginAttempts } from "../../controllers/investor/investorPinandLogin/resetLoginAttempts";
+import { totalMyInvestment } from "../../controllers/myInvestment/totalMyInvestment";
 
 const router = express.Router();
 
@@ -210,6 +211,16 @@ router.put("/loginpincode/:investoremail",async(req,res)=>{
 router.get("/resetloginattempts/:investorId", async (req, res) => {
   try {
     const result = await resetLoginAttempts(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// get total investment
+router.get("/totalinvestments/:investorId", async (req, res) => {
+  try {
+    const result = await totalMyInvestment(req.params.investorId);
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
