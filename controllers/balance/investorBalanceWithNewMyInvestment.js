@@ -86,8 +86,8 @@ const investorBalance = (investorId) => {
                                     $cond: [
                                         {
                                             $and: [
-                                                { $gte: ["$firstProfitDate", firstDayOfMonth] },
-                                                { $lt: ["$firstProfitDate", lastDayOfMonth] }
+                                                { $gte: ["$transferDate", firstDayOfMonth] },
+                                                { $lt: ["$transferDate", lastDayOfMonth] }
                                             ]
                                         },
                                         "$$ROOT",

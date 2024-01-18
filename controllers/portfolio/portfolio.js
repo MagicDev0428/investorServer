@@ -60,10 +60,10 @@ const investorPortfolioAggregate = () => {
                                 $push: {
                                     $cond: [{
                                             $and: [{
-                                                    $gte: ["$firstProfitDate", firstDayOfMonth]
+                                                    $gte: ["$transferDate", firstDayOfMonth]
                                                 },
                                                 {
-                                                    $lt: ["$firstProfitDate", lastDayOfMonth]
+                                                    $lt: ["$transferDate", lastDayOfMonth]
                                                 }
                                             ]
                                         },
