@@ -23,9 +23,9 @@ export const sendBalanceEmail = (req) => {
             });
         }
 
-        let email = "torben@rudgaard.com;";
+        //let email = "torben@rudgaard.com;satendra.rawat2011@gmail.com;";
         
-        //let email = "satendra.rawat2011@gmail.com";
+        let email = "satendra.rawat2011@gmail.com";
         const client = new Factories.Email(email);
 
         /* setSubject is used to set the subject of the email. */
@@ -37,8 +37,8 @@ export const sendBalanceEmail = (req) => {
         html = html.replace("[NICKNAME]", received.userName)
         html = html.replace("[MONTHPROFIT]", received.depositProfit);
         html = html.replace("[MONTH-YEAR]", received.profitMonth);
-        html = html.replace("[TOTALINVEST]", "฿"+received.allInvestments);
-        html = html.replace("[TOTALPROFIT]", "฿"+received.totalProfitPaid);
+        html = html.replace("[TOTALINVEST]", received.allInvestments);
+        html = html.replace("[TOTALPROFIT]", received.totalProfitPaid);
         html = html.replaceAll("[INVESTORSPAGE]", "http://localhost:4200/");
 
         /* setHtml to set the html as body of the email */
