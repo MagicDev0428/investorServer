@@ -5,7 +5,7 @@ const { deleteInvestor } = require("../../controllers/investor/deleteInvestor");
 const { investorCreate } = require("../../controllers/investor/createInvestor");
 import {  Middlewares } from "../../utils";
 import { MAX_FILES_PER_REQUEST } from "../../constants";
-import { investorInfoForDate,investorListForDate } from "../../controllers/investor/investorList";
+import { investorInfoForDate,investorListForDate } from "../../controllers/investor/investorFrontPage";
 const {
   investorInfo,
   investorList,
