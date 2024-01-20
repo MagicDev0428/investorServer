@@ -26,16 +26,22 @@ const frontPageFunctionality = (data) => {
     let profitAlreadyPaid = 0
     let profitToPay = 0
     data = data.filter((investorInfo) => {
-        const accountBalances = investorInfo.investor.accountBalances;
-        const balanceList = accountBalances ? accountBalances.balanceList : null;
+        // myInvestmentList.accountInvestments
+        const accountInvestments = investorInfo.investor.accountInvestments;
+        const investmentList = accountInvestments ? accountInvestments.myInvestmentList : null;
 
-        return balanceList && balanceList.length > 0;
+        return investmentList && investmentList.length > 0;
+        // const accountBalances = investorInfo.investor.accountBalances;
+        // const balanceList = accountBalances ? accountBalances.balanceList : null;
+
+        // return balanceList && balanceList.length > 0;
     });
     data.forEach((investorInfo) => {
 
         const accountBalances = investorInfo.investor.accountBalances;
         const balanceList = accountBalances ? accountBalances.balanceList : null;
         const totalInvestment = investorInfo.investor.totalInvestment
+        const totalMonthlyProfit = investorInfo.investor.totalMonthlyProfit
         // const investmentType = investorInfo.investor.getInvestmentType
 
         // adding every investor total monthly profit into profit to pay
@@ -43,8 +49,15 @@ const frontPageFunctionality = (data) => {
         // if (investmentType === 'High' && balanceList) {
         // 	investorInfo.investor.buttonColor = 'PURPLE'
         // } else 
-
-        if (balanceList) {
+        if (investorInfo.investor.getInvestmentType == false) {
+                investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
+                    balanceInfo: {
+                        currentMonthDeposit: totalDeposit,
+                        buttonColor: "Purple",
+                    },
+                });
+            } 
+        else if (balanceList) {
 
             const {
                 totalDeposit,
@@ -53,14 +66,7 @@ const frontPageFunctionality = (data) => {
             } = Lib.sumDepositAndEmailStatus(balanceList);
 
             // Conditions for current month
-            if (investorInfo.investor.getInvestmentType == false) {
-                investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
-                    balanceInfo: {
-                        currentMonthDeposit: totalDeposit,
-                        buttonColor: "Purple",
-                    },
-                });
-            } else if (isBefore15th) {
+            if (isBefore15th) {
 
                 investorInfo.investor.buttonColor = 'GREEN';
 
@@ -94,6 +100,8 @@ const frontPageFunctionality = (data) => {
             }
 
 
+        }else{
+            investorInfo.investor.buttonColor = 'RED'
         }
 
     });
