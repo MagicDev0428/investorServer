@@ -140,17 +140,17 @@ const investorPortfolioAggregate = () => {
                             totalWithdraw: {
                                 $sum: "$withdraw"
                             },
-                            total_balance: {
-                                $sum: {
-                                    $subtract: [{
-                                            $sum: "$deposit"
-                                        },
-                                        {
-                                            $sum: "$withdraw"
-                                        }
-                                    ],
-                                },
-                            },
+                            // total_balance: {
+                            //     $sum: {
+                            //         $subtract: [{
+                            //                 $sum: "$deposit"
+                            //             },
+                            //             {
+                            //                 $sum: "$withdraw"
+                            //             }
+                            //         ],
+                            //     },
+                            // },
                             investorBalanceList: {
                                 $push: "$$ROOT"
                             }
@@ -237,8 +237,8 @@ const addingThaiBalances = async (response) => {
         if (value.deposit > 0) {
             balanceInThai += value.deposit
             value.balanceInThai = balanceInThai
-        } else if (value.withdraw > 0) {
-            balanceInThai -= value.withdraw
+        } else if (value.withdraw < 0) {
+            balanceInThai += value.withdraw
             value.balanceInThai = balanceInThai
         } else {
             value.balanceInThai = balanceInThai
@@ -246,6 +246,7 @@ const addingThaiBalances = async (response) => {
 
     })
 
+    response[0].investor.accountBalances.total_balance = balanceInThai
     return response
 }
 

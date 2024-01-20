@@ -21,8 +21,8 @@ const addingThaiBalances = async (response) => {
         if (value.deposit > 0) {
             balanceInThai += value.deposit
             value.balanceInThai = balanceInThai
-        } else if (value.withdraw > 0) {
-            balanceInThai -= value.withdraw
+        } else if (value.withdraw < 0) {
+            balanceInThai += value.withdraw
             value.balanceInThai = balanceInThai
         } else {
             value.balanceInThai = balanceInThai
