@@ -52,75 +52,82 @@ exports.updateInvestor = (req) => {
       const client = factory.getGoogleDriveInstance();      
 
       received.folders = JSON.parse(received.folders);
-      let uploadResponse = received.folders; // Object which contains the folderId, imageName, passportFolderId, and weblink
-      let filteredObj = uploadResponse.find(item => item.readonly == true);
-      let passportFolderId = filteredObj?.passportFolderId;
+      let attachments = JSON.parse(received.attachments);
+      
+      let passportFolderId = received.folders?.passportFolderId;
+      let documentsFolderId = received.folders?.documentsFolderId;
 
       let originalDoc = await Models.Investor.findById(received._oldId);
       // use google drive client for list of folders
       const folders = await client.listFolders();
       // Find the folderId which folder you want to create the folder
       let filteredFolder = folders.find(folder => folder.name === received._oldId);
-      if(filteredFolder) {
+      if(filteredFolder && received._oldId !== received._id) {
         console.log("before", originalDoc.investorFolderId);
-        let res = await client.renameFolder(originalDoc.investorFolderId, received._id);        
+        let res = await client.renameFolder(originalDoc.folders.investorFolderId, received._id);        
         console.log("after", res);
       }
 
       // Delete file if user has deleted the saved file in google drive
-      for (let item of uploadResponse) {
+      for (let item of attachments.passportImages) {
         // if image is deleted then delete from google drive
-        if (!item.image && !item.readonly) {
+        if (!item.filePath) {
           if(item.googleFileId) {
             await client.deleteFile(item.googleFileId);
-            item.googleFileId = null;
           }          
         }
       }
-      uploadResponse = uploadResponse.filter(item => item.readonly == true || item.googleFileId);
-
-      if (received.passportImage && passportFolderId) {
-        if (Array.isArray(received.passportImage)) {
-          for (const imagePath of received?.passportImage) {
-            let fileId = await client.uploadFile(
-              "uploads/" + imagePath,
-              passportFolderId
-            );
-            // Get weblink of file
-            let webLink = await client.getWebLink(fileId.id);
-            if (fileId && fileId.id) {
-              uploadResponse.push({
-                image: imagePath,
-                googleFileId: fileId.id,
-                passportFolderId: passportFolderId,
-                webLink: webLink,
-              });
-              // Delete this uploaded file in server
-              Lib.deleteFile("uploads/" + imagePath);
-            }
-          }
-        } else {
-          let fileId = await client.uploadFile(
-            "uploads/" + received.passportImage,
-            passportFolderId
-          );
-          // Get weblink of file
-          let webLink = await client.getWebLink(fileId.id);
-          if (fileId) {
-            uploadResponse.push({
-              image: received.passportImage,
-              googleFileId: fileId.id,
-              passportFolderId: passportFolderId,
-              webLink: webLink,
-            });
-            // Delete this uploaded file in server
-            Lib.deleteFile("uploads/" + received.passportImage);
-          }
+      for (let item of attachments.documents) {
+        // if image is deleted then delete from google drive
+        if (!item.filePath) {
+          if(item.googleFileId) {
+            await client.deleteFile(item.googleFileId);
+          }          
         }
       }
+      
+      attachments.passportImages = attachments.passportImages.filter(item => item.filePath);
+      attachments.documents = attachments.documents.filter(item => item.filePath);
 
-      received.folders = uploadResponse;
+      async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
+        let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
+            // Get weblink of file
+            let webLink = await client.getWebLink(fileId.id);
+            if (fileId) {
+              attachments[documentType].push({
+                filePath: imagePath,
+                googleFileId: fileId.id,
+                folderId: parentFolderId,
+                webLink: webLink
+              });
+              // Delete this uploaded file in server
+              await Lib.deleteFile("uploads/" + imagePath);
+            }
+      }
+
+      // Upload passport images
+      if(received.passportImage ) {
+        if(Array.isArray(received.passportImage)) {
+          for (const imagePath of received?.passportImage) {
+            await prepareAttachmentResponse(imagePath, 'passportImages', passportFolderId)
+          }
+        } else {
+          await prepareAttachmentResponse(received.passportImage, 'passportImages', passportFolderId)         
+        }      
+      } 
+
+      // Upload documents
+      if(received.documents) {        
+        if(Array.isArray(received.document)) {
+          for (const imagePath of received?.document) {
+            await prepareAttachmentResponse(imagePath, 'documents', documentsFolderId)
+          }
+        } else {
+          await prepareAttachmentResponse(received.document, 'documents', documentsFolderId);
+        }    
+      } 
      
+      received.attachments = attachments;
       if (received?._oldId && received._oldId !== received._id) {
         // Check if the new "_id" already exists  
         const existingInvestor = await Models.Investor.findById(received._id);      

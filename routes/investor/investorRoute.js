@@ -25,7 +25,7 @@ router.post("/createinvestor",
 
 Middlewares.checkAdminPrivileges,
 Middlewares.StorageMiddlewares.upload.array(
-  "passportImages",
+  "images",
   MAX_FILES_PER_REQUEST
 ), 
 async (req, res) => {
@@ -61,7 +61,7 @@ router.delete("/deleteinvestor/:investorId", async (req, res) => {
 router.put("/updateinvestor",
 Middlewares.checkAdminPrivileges,
 Middlewares.StorageMiddlewares.upload.array(
-  "passportImages",
+  "images",
   MAX_FILES_PER_REQUEST
 ), async (req, res) => {
   try {

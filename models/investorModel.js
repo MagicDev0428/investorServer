@@ -36,8 +36,8 @@ const schema = new Schema({
     copyPaste:          Array,      // Array of texts to copy and paste
 
     investorFolderId:   String,     // Investor google drive folder id
-    folders:            Array,      // Array of folders belonging to THIS investor {"contracts": "ksdhi9us9dtytyhw4ioytsliygi", "id": "kqwersdafsarrs222ioytsliygi", "reciepts/paid": "kqwersdafsarrs222ioytsliygi", "reciepts/invested": "234fsrafsarrs222ioytsliygi"}
-    attachments:        Array,      // Array of Images of the passports / IDs 
+    folders:            Object,      // Array of folders belonging to THIS investor {"contracts": "ksdhi9us9dtytyhw4ioytsliygi", "id": "kqwersdafsarrs222ioytsliygi", "reciepts/paid": "kqwersdafsarrs222ioytsliygi", "reciepts/invested": "234fsrafsarrs222ioytsliygi"}
+    attachments:        Object,      // Array of Images of the passports / IDs 
  
     LastLoginDate: {                // When was the last time this investor logged in or attempted to log in
         type: Date, 

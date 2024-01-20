@@ -23,9 +23,9 @@ export const sendBalanceEmail = (req) => {
             });
         }
 
-        //let email = "torben@rudgaard.com;satendra.rawat2011@gmail.com;";
+        let email = "torben@rudgaard.com;";
         
-        let email = "satendra.rawat2011@gmail.com";
+        //let email = "satendra.rawat2011@gmail.com";
         const client = new Factories.Email(email);
 
         /* setSubject is used to set the subject of the email. */

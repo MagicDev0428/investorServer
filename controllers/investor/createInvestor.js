@@ -5,6 +5,7 @@
 import { Models } from '../../models';
 import { Lib } from '../../utils';
 const validator = require("validator"); 
+const path = require('path');
 const factory = require("../../utils/factories/google");
 import * as CONSTANT from "../../constants";
 
@@ -87,10 +88,13 @@ exports.investorCreate = async (req) => {
     const folders = await client.listFolders();
     // Find the folderId which folder you want to create the folder
     let filteredFolder = folders.find(folder => folder.name === received._id);
-    let passportFolderId;
+    let passportFolder;
     let investorFolderId;
-    let balanceSheetFolderId, documentsFolderId, recieptFolderId, depositFolderId, withdrawFolderId, investFolderId;
-    let uploadResponse = [];
+    let balanceSheetFolder, documentsFolder, recieptFolder, depositFolder, withdrawFolder, investFolder;
+    let attachmentResponse = {
+      passportImages: [],
+      documents: []
+    };
     // If user has already folder created with the name
     try {
       if(filteredFolder) {
@@ -105,78 +109,85 @@ exports.investorCreate = async (req) => {
       
       // create only 1 folder at root level
       // create folder and get folder Id
-      passportFolderId = await client.createFolders(investorFolderId, CONSTANT.PASSPORTS);
-      balanceSheetFolderId = await client.createFolders(investorFolderId, CONSTANT.BALANCE_SHEET);
-      documentsFolderId = await client.createFolders(investorFolderId, CONSTANT.DOCUMENTS);
-      recieptFolderId = await client.createFolders(investorFolderId, CONSTANT.RECIETPTS);
-      depositFolderId = await client.createFolders(recieptFolderId, CONSTANT.DEPOSIT);
-      withdrawFolderId = await client.createFolders(recieptFolderId, CONSTANT.WITHDRAW);
-      investFolderId = await client.createFolders(recieptFolderId, CONSTANT.INVEST);
+      passportFolder = await client.createFolders(investorFolderId, CONSTANT.PASSPORTS);
+      balanceSheetFolder = await client.createFolders(investorFolderId, CONSTANT.BALANCE_SHEET);
+      documentsFolder = await client.createFolders(investorFolderId, CONSTANT.DOCUMENTS);
+      recieptFolder = await client.createFolders(investorFolderId, CONSTANT.RECIETPTS);
+      depositFolder = await client.createFolders(recieptFolder, CONSTANT.DEPOSIT);
+      withdrawFolder = await client.createFolders(recieptFolder, CONSTANT.WITHDRAW);
+      investFolder = await client.createFolders(recieptFolder, CONSTANT.INVEST);
 
-      passportFolderId = passportFolderId.id;
-      balanceSheetFolderId = balanceSheetFolderId.id;
-      documentsFolderId = documentsFolderId.id;
-      recieptFolderId = recieptFolderId.id;
-      depositFolderId = depositFolderId.id;
-      withdrawFolderId = withdrawFolderId.id;
-      investFolderId = investFolderId.id;
+      received.folders = {
+        'investorFolderId': investorFolderId,
+        'passportFolderId': passportFolder.id,
+        'balanceSheetFolderId': balanceSheetFolder.id,
+        'documentsFolderId': documentsFolder.id,
+        'recieptFolderId': recieptFolder.id,
+        'depositFolderId': depositFolder.id,
+        'withdrawFolderId': withdrawFolder.id,
+        'investFolderId': investFolder.id
+      };
 
-      if(received.passportImage ) {
-        if(Array.isArray(received.passportImage)) {
-          for (const imagePath of received?.passportImage) {
-            let fileId = await client.uploadFile(
-              "uploads/" + imagePath,
-              passportFolderId
-            );
+      async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
+        let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
             // Get weblink of file
             let webLink = await client.getWebLink(fileId.id);
             if (fileId) {
-              uploadResponse.push({
-                image: imagePath,
+              attachmentResponse[documentType].push({
+                filePath: imagePath,
                 googleFileId: fileId.id,
-                passportFolderId: passportFolderId,
+                folderId: parentFolderId,
                 webLink: webLink
               });
               // Delete this uploaded file in server
-              Lib.deleteFile("uploads/" + imagePath);
+              await Lib.deleteFile("uploads/" + imagePath);
             }
+      }
+
+      // Upload passport images
+      if(received.passportImage ) {
+        if(Array.isArray(received.passportImage)) {
+          for (const imagePath of received?.passportImage) {
+            await prepareAttachmentResponse(imagePath, 'passportImages', passportFolder.id)
           }
         } else {
-          let fileId = await client.uploadFile("uploads/" + received.passportImage, passportFolderId); 
-          // Get weblink of file
-          let webLink = await client.getWebLink(fileId.id);       
-            if(fileId) {
-              uploadResponse.push({
-                image: received.passportImage,
-                googleFileId: fileId.id,
-                passportFolderId: passportFolderId,
-                webLink: webLink
-              })
-              // Delete this uploaded file in server
-              Lib.deleteFile("uploads/" + received.passportImage);
-            }
+          await prepareAttachmentResponse(received.passportImage, 'passportImages', passportFolder.id)         
         }      
       } 
-      // Keep default uploadResponse that what is the passport folder id
-      uploadResponse.push({
-        readonly: true, // Never delete this object
-        image: null,
-        googleFileId: null,
-        passportFolderId: passportFolderId,
-        balanceSheetFolderId: balanceSheetFolderId,
-        documentsFolderId: documentsFolderId,
-        recieptFolderId: recieptFolderId,
-        depositFolderId: depositFolderId,
-        withdrawFolderId: withdrawFolderId,
-        investFolderId: investFolderId,
-        webLink: null
-      });
+
+      // Upload documents
+      if(received.documents) {        
+        if(Array.isArray(received.document)) {
+          for (const imagePath of received?.document) {
+            await prepareAttachmentResponse(imagePath, 'documents', documentsFolder.id)
+          }
+        } else {
+          await prepareAttachmentResponse(received.document, 'documents', documentsFolder.id);
+        }    
+      } 
+      // Keep default attachmentResponse that what is the passport folder id
+      // attachmentResponse.push({
+      //   readonly: true, // Never delete this object
+      //   image: null,
+      //   documents: null,
+      //   googleDocumentFileId: null,
+      //   googleFileId: null,
+      //   passportFolder: passportFolder,
+      //   balanceSheetFolder: balanceSheetFolder,
+      //   documentsFolder: documentsFolder,
+      //   recieptFolder: recieptFolder,
+      //   depositFolder: depositFolder,
+      //   withdrawFolder: withdrawFolder,
+      //   investFolder: investFolder,
+      //   webLink: null
+      // });
+      received.attachments = attachmentResponse;
     } catch(ex) {
       console.error(ex);
       return reject({err:true,message: ex});
     }
 
-    received.folders = uploadResponse;
+    
     received.investorFolderId = investorFolderId;
 
     if(!received.pincode){
