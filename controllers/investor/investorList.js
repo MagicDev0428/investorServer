@@ -36,7 +36,7 @@ const frontPageFunctionality = (data) => {
 
         // return balanceList && balanceList.length > 0;
     });
-    data.forEach((investorInfo) => {
+    data.forEach(async(investorInfo) => {
 
         const accountBalances = investorInfo.investor.accountBalances;
         const balanceList = accountBalances ? accountBalances.balanceList : null;
@@ -62,7 +62,7 @@ const frontPageFunctionality = (data) => {
                 totalDeposit,
                 emailDateStatus,
                 isBefore15th
-            } = Lib.sumDepositAndEmailStatus(balanceList);
+            } = await Lib.sumDepositAndEmailStatus(balanceList);
 
             // Conditions for current month
             if (isBefore15th) {
@@ -75,23 +75,25 @@ const frontPageFunctionality = (data) => {
                 investorsLeftToPay += totalInvestment
                 // profitAlreadyPaid += totalDeposit
 
-            } else if ((totalDeposit >= totalInvestment && emailDateStatus)) {
+            } else if ((totalDeposit >= totalMonthlyProfit && emailDateStatus)) {
 
                 // total deposit of green adding in profit Already paid
                 profitAlreadyPaid += totalDeposit
                 investorInfo.investor.buttonColor = 'GREEN'
-            } else if (totalDeposit >= totalInvestment && !emailDateStatus) {
+            } else if (totalDeposit >= totalMonthlyProfit && !emailDateStatus) {
 
+              
                 // total deposit of yellow adding in profit Already paid
                 profitAlreadyPaid += totalDeposit
                 investorInfo.investor.buttonColor = 'YELLOW'
-            } else if (totalDeposit <= totalInvestment && !emailDateStatus) {
+            } else if (totalDeposit <= totalMonthlyProfit && !emailDateStatus) {
 
+               
                 // total my investment - total Deposit and then add in profitLeftToPay
                 const remainingAmount = totalInvestment - totalDeposit
                 profitLeftToPay += remainingAmount
                 investorInfo.investor.buttonColor = 'RED'
-            } else if (totalDeposit == 0 && !emailDateStatus) {
+            } else if (totalDeposit <= 0 && !emailDateStatus) {
 
                 // adding all my investment amount in investorLeftToPay
                 investorsLeftToPay += totalInvestment
@@ -228,15 +230,7 @@ const commonStages = (date_) => {
                 totalProfit: {
                     $add: ["$accountInvestments.totalInvested", "$accountInvestments.totalProfitMonthly", "$accountInvestments.totalProfitEnd"],
                 },
-                "accountInvestments.myList": {
-                    $filter: {
-                        input: "$accountInvestments.myList",
-                        as: "myInvestment",
-                        cond: {
-                            $ne: ["$$myInvestment", null]
-                        },
-                    },
-                },
+                
             }
         },
         {
