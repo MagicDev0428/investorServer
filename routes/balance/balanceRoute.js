@@ -8,6 +8,7 @@ import { balanceList } from "../../controllers/balance/balanceList";
 import { investorBalanceList } from "../../controllers/balance/investorBalanceList";
 import { investorBalanceListWithNewInvestment } from "../../controllers/balance/investorBalanceWithNewMyInvestment";
 import { sendBalanceEmail } from "../../controllers/balance/balanceEmail";
+import { investorMonthlyDeposit } from "../../controllers/myInvestment/investorMonthlyDeposit";
 export const router = express.Router();
 
 
@@ -96,3 +97,15 @@ router.post("/sendEmail", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+// get investor deposit for current month
+router.get("/investorMonthlyDeposit/:investorId", async (req, res) => {
+  try {
+    const result = await investorMonthlyDeposit(req.params.investorId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
