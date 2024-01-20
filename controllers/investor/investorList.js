@@ -50,14 +50,13 @@ const frontPageFunctionality = (data) => {
         // 	investorInfo.investor.buttonColor = 'PURPLE'
         // } else 
         if (investorInfo.investor.getInvestmentType == false) {
-                investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
-                    balanceInfo: {
-                        currentMonthDeposit: totalDeposit,
-                        buttonColor: "Purple",
-                    },
-                });
-            } 
-        else if (balanceList) {
+            investorInfo.investor.accountBalances.currentMonthBalanceList.unshift({
+                balanceInfo: {
+                    currentMonthDeposit: totalDeposit,
+                    buttonColor: "Purple",
+                },
+            });
+        } else if (balanceList) {
 
             const {
                 totalDeposit,
@@ -100,13 +99,13 @@ const frontPageFunctionality = (data) => {
             }
 
 
-        }else{
+        } else {
             investorInfo.investor.buttonColor = 'RED'
         }
 
     });
 
-  
+
     return {
         investors: data,
         investorProfitResult: {
@@ -130,12 +129,41 @@ const commonStages = (date_) => {
                     investor: "$_id"
                 },
                 pipeline: [{
+
                         $match: {
                             $expr: {
-                                $eq: ["$investorName", "$$investor"]
-                            },
-                        },
+                                $and: [{
+                                        $eq: ["$investorName", "$$investor"]
+                                    },
+                                    {
+                                        $and: [{
+                                                $lte: [{
+                                                        $dateToString: {
+                                                            format: "%Y-%m",
+                                                            date: "$firstProfitDate",
+                                                        },
+                                                    },
+                                                    date_
+                                                ]
+                                            },
+                                            {
+                                                $gte: [{
+                                                        $dateToString: {
+                                                            format: "%Y-%m",
+                                                            date: "$lastProfitDate",
+                                                        },
+                                                    },
+                                                    date_
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
                     },
+
+
                     {
                         $group: {
                             _id: null,
@@ -145,21 +173,32 @@ const commonStages = (date_) => {
                                 }
                             },
                             totalProfitMonthly: {
-                                
                                 $sum: {
                                     $cond: [{
                                             $and: [{
-                                                    $lte: ["$firstProfitDate", today]
+                                                    $lte: [{
+                                                        $dateToString: {
+                                                            format: "%Y-%m",
+                                                            date: "$firstProfitDate",
+                                                        },
+                                                    }, date_],
                                                 },
                                                 {
-                                                    $gte: ["$lastProfitDate", today]
-                                                }
-                                            ]
+                                                    $gte: [{
+                                                        $dateToString: {
+                                                            format: "%Y-%m",
+                                                            date: "$lastProfitDate",
+                                                        },
+                                                    }, date_],
+                                                },
+                                            ],
                                         },
                                         "$profitMonthly",
-                                        0
-                                    ]
+                                        0,
+                                    ],
                                 }
+
+
                             },
                             totalProfitEnd: {
                                 $sum: {
@@ -188,6 +227,15 @@ const commonStages = (date_) => {
                 totalProfitEnd: "$accountInvestments.totalProfitEnd",
                 totalProfit: {
                     $add: ["$accountInvestments.totalInvested", "$accountInvestments.totalProfitMonthly", "$accountInvestments.totalProfitEnd"],
+                },
+                "accountInvestments.myList": {
+                    $filter: {
+                        input: "$accountInvestments.myList",
+                        as: "myInvestment",
+                        cond: {
+                            $ne: ["$$myInvestment", null]
+                        },
+                    },
                 },
             }
         },
@@ -354,9 +402,12 @@ const investmentAggregate = async () => {
                 from: "investor",
                 pipeline: [{
                         $match: {
-                                $or: [
-                                { status: "ACTIVE" },
-                                { status: "active" } // Add this line if "active" is case-sensitive
+                            $or: [{
+                                    status: "ACTIVE"
+                                },
+                                {
+                                    status: "active"
+                                } // Add this line if "active" is case-sensitive
                             ]
                         }
                     },
@@ -533,7 +584,7 @@ export const investorInfoForDate = async (req) => {
 
 // investor List using date 
 export const investorListForDate = async (req) => {
-    global.show("###### investorList ######");
+    global.show("###### Front Page  ######");
     const received = req ? req.body : null;
 
     return new Promise(async (resolve, reject) => {
