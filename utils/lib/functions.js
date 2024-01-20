@@ -192,7 +192,7 @@ export const deleteFile = (filePath) => {
       // The file was deleted successfully
       console.log('The file was deleted');
     }
-  });
+  });  
 }
 
 export const readFile = function readFile(path) {
