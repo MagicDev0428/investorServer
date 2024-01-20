@@ -113,9 +113,8 @@ exports.investorCreate = async (req) => {
       balanceSheetFolder = await client.createFolders(investorFolderId, CONSTANT.BALANCE_SHEET);
       documentsFolder = await client.createFolders(investorFolderId, CONSTANT.DOCUMENTS);
       recieptFolder = await client.createFolders(investorFolderId, CONSTANT.RECIETPTS);
-      depositFolder = await client.createFolders(recieptFolder, CONSTANT.DEPOSIT);
-      withdrawFolder = await client.createFolders(recieptFolder, CONSTANT.WITHDRAW);
-      investFolder = await client.createFolders(recieptFolder, CONSTANT.INVEST);
+      depositFolder = await client.createFolders(recieptFolder.id, CONSTANT.DEPOSIT);
+      withdrawFolder = await client.createFolders(recieptFolder.id, CONSTANT.WITHDRAW);
 
       received.folders = {
         'investorFolderId': investorFolderId,
@@ -124,8 +123,7 @@ exports.investorCreate = async (req) => {
         'documentsFolderId': documentsFolder.id,
         'recieptFolderId': recieptFolder.id,
         'depositFolderId': depositFolder.id,
-        'withdrawFolderId': withdrawFolder.id,
-        'investFolderId': investFolder.id
+        'withdrawFolderId': withdrawFolder.id
       };
 
       async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
