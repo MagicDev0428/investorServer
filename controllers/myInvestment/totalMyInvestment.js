@@ -108,9 +108,10 @@ export const totalMyInvestment = (investorId) => {
             // checking if investor data exist then resolve the promise otherwise reject it
             if (investorTable) {
 
+                const totalinvestment = investorTable.length !== 0 ? investorTable[0].totalAmountInvested : 0;
                 return resolve({
                     err: false,
-                    totalInvested: investorTable[0].totalAmountInvested
+                    totalInvested: totalinvestment
                 });
 
             }
