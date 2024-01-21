@@ -42,10 +42,11 @@ export const createInvestment = (req) => {
                 });
             }
             // checking id exists in myInvestments
-            const investorExists = await Models.Investor.exists({
-                _id: received.investorName
-            });
-            if (!investorExists) {
+            const investorFolders = await Models.Investor.findOne(
+                    { _id: received.investorName },
+                    'folders'
+                );
+            if (!investorFolders) {
                 return reject({
                     status: 403,
                     err: true,
@@ -64,22 +65,59 @@ export const createInvestment = (req) => {
     received.createdBy = userName?userName:"";
     received.modifiedBy = userName?userName:"";
 
-    // const client = factory.getGoogleDriveInstance();
-    // // use google drive client for list of folders
-    // const folders = await client.listFolders();
+    const client = factory.getGoogleDriveInstance();
 
-    // let filteredFolder = folders.find(folder => folder.name === received.investorName);
-    // console.log("folders ==> ",filteredFolder);
-    // let investorFolderId;
-    // try {
-    //     if(filteredFolder){
-    //         investorFolderId = filteredFolder.id;
-    //     }
+    const recieptFolderId = investorFolders.folders.recieptFolderId;
+    const documentFolderId = investorFolders.folders.documentsFolderId;
+    let attachmentResponse = {
+      receipts: [],
+      contracts: []
+    };
+    try {
+        
+    async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
+        let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
+            // Get weblink of file
+            let webLink = await client.getWebLink(fileId.id);
+            if (fileId) {
+              attachmentResponse[documentType].push({
+                filePath: imagePath,
+                googleFileId: fileId.id,
+                folderId: parentFolderId,
+                webLink: webLink
+              });
+              // Delete this uploaded file in server
+              await Lib.deleteFile("uploads/" + imagePath);
+            }
+      }
 
         
-    // } catch (error) {
-    //     return reject({err:true,message: error});
-    // }
+      // Upload passport images
+      if(received.receipts ) {
+        if(Array.isArray(received.receipts)) {
+          for (const imagePath of received?.receipts) {
+            await prepareAttachmentResponse(imagePath, 'receipts', recieptFolderId)
+          }
+        } else {
+          await prepareAttachmentResponse(received.receipts, 'receipts', recieptFolderId)         
+        }      
+      } 
+
+      // Upload documents
+      if(received.contracts) {        
+        if(Array.isArray(received.contracts)) {
+          for (const imagePath of received?.contracts) {
+            await prepareAttachmentResponse(imagePath, 'contracts', documentFolderId)
+          }
+        } else {
+          await prepareAttachmentResponse(received.contracts, 'contracts', documentFolderId);
+        }    
+      } 
+
+      received.documents = attachmentResponse;
+    } catch (error) {
+        return reject({err:true,message: error});
+    }
 
         const newMyInvestment = new Models.myInvestmentsModel(received);
 

@@ -5,8 +5,13 @@ import {
     Models
 } from "../../models";
 
-import { Lib } from "../../utils";
-const {getInvestorNickName} = require("../investor/getInvestor")
+import {
+    Lib
+} from "../../utils";
+const {
+    getInvestorNickName
+} = require("../investor/getInvestor")
+const factory = require("../../utils/factories/google");
 
 // creating table model
 let myInvestmentTable = Models.myInvestmentsModel;
@@ -31,7 +36,7 @@ export const updateMyInvestment = (req) => {
 
             if (!myInvestmentExists) {
                 return reject({
-                    status:403,
+                    status: 403,
                     err: true,
                     message: `myInvestment id ${received._id} is not exist!`,
                 });
@@ -48,11 +53,14 @@ export const updateMyInvestment = (req) => {
                     message: "Investment No does not exist!",
                 });
             }
+
             // checking id exists in myInvestments
-            const investorExists = await Models.Investor.exists({
-                _id: received.investorName
-            });
-            if (!investorExists) {
+            const investorFolders = await Models.Investor.findOne({
+                    _id: received.investorName
+                },
+                'folders'
+            );
+            if (!investorFolders) {
                 return reject({
                     status: 403,
                     err: true,
@@ -60,42 +68,113 @@ export const updateMyInvestment = (req) => {
                 });
             }
 
-
             const dateTime = new Date().toISOString();
             received.modifiedDate = dateTime;
-           // getting user name from auth token
+            // getting user name from auth token
             const userName = Lib.getAdminName(req.auth);
 
-            received.modifiedBy = userName?userName:"";
+            received.modifiedBy = userName ? userName : "";
 
+
+            // Get the google drive client
+            const client = factory.getGoogleDriveInstance();
+
+            const recieptFolderId = investorFolders.folders.recieptFolderId;
+            const documentFolderId = investorFolders.folders.documentsFolderId;
+
+            let documents = JSON.parse(received.documents);
+
+            // Delete file if user has deleted the saved file in google drive
+            for (let item of documents.receipts) {
+                // if image is deleted then delete from google drive
+                if (!item.filePath) {
+                    if (item.googleFileId) {
+                        await client.deleteFile(item.googleFileId);
+                    }
+                }
+            }
+            for (let item of documents.contracts) {
+                // if image is deleted then delete from google drive
+                if (!item.filePath) {
+                    if (item.googleFileId) {
+                        await client.deleteFile(item.googleFileId);
+                    }
+                }
+            }
+
+            documents.receipts = documents.receipts.filter(item => item.filePath);
+            documents.contracts = documents.contracts.filter(item => item.filePath);
+
+
+            async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
+                let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
+                // Get weblink of file
+                let webLink = await client.getWebLink(fileId.id);
+                if (fileId) {
+                    attachments[documentType].push({
+                        filePath: imagePath,
+                        googleFileId: fileId.id,
+                        folderId: parentFolderId,
+                        webLink: webLink
+                    });
+                    // Delete this uploaded file in server
+                    await Lib.deleteFile("uploads/" + imagePath);
+                }
+            }
+
+            // Upload passport images
+            if (received.receipts) {
+                if (Array.isArray(received.receipts)) {
+                    for (const imagePath of received?.receipts) {
+                        await prepareAttachmentResponse(imagePath, 'receipts', recieptFolderId)
+                    }
+                } else {
+                    await prepareAttachmentResponse(received.receipts, 'receipts', recieptFolderId)
+                }
+            }
+
+            // Upload documents
+            if (received.contracts) {
+                if (Array.isArray(received.contracts)) {
+                    for (const imagePath of received?.contracts) {
+                        await prepareAttachmentResponse(imagePath, 'contracts', documentFolderId)
+                    }
+                } else {
+                    await prepareAttachmentResponse(received.contracts, 'contracts', documentFolderId);
+                }
+            }
+
+            received.documents = documents
             myInvestmentTable = null;
 
             myInvestmentTable = await Models.myInvestmentsModel.findByIdAndUpdate(received._id, received, {
                 new: true,
             });
-       
+
 
             if (myInvestmentTable) {
 
 
-            let  {investors} = await getInvestorNickName(myInvestmentTable.investorName)
+                let {
+                    investors
+                } = await getInvestorNickName(myInvestmentTable.investorName)
 
-            // this is for investment profit logs 
-            let investmentProfit = 0
-            if(myInvestmentTable.investType =='Monthly Profit' ||myInvestmentTable.investType =='Mixed'  ){
-                investmentProfit = myInvestmentTable.profitMonthlyPct
-            }else if(myInvestmentTable.investType =='Annual Profit' || myInvestmentTable.investType =='One-time Profit'){
-                investmentProfit = myInvestmentTable.profitAnnualPct
-            } 
-            // save log for create my investment
-            global.saveLogs({
-                logType:'MY Investment',
-                investorName:investors.nickname,
-                investmentNo:myInvestmentTable.investmentNo,
-                description:`Updated My Investment, ${investors.nickname} invested ฿${myInvestmentTable.amountInvested.toLocaleString()} in #${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
-            })
-            
-            return resolve({
+                // this is for investment profit logs 
+                let investmentProfit = 0
+                if (myInvestmentTable.investType == 'Monthly Profit' || myInvestmentTable.investType == 'Mixed') {
+                    investmentProfit = myInvestmentTable.profitMonthlyPct
+                } else if (myInvestmentTable.investType == 'Annual Profit' || myInvestmentTable.investType == 'One-time Profit') {
+                    investmentProfit = myInvestmentTable.profitAnnualPct
+                }
+                // save log for create my investment
+                global.saveLogs({
+                    logType: 'MY Investment',
+                    investorName: investors.nickname,
+                    investmentNo: myInvestmentTable.investmentNo,
+                    description: `Updated My Investment, ${investors.nickname} invested ฿${myInvestmentTable.amountInvested.toLocaleString()} in #${myInvestmentTable.investmentNo} at ${investmentProfit}%`,
+                })
+
+                return resolve({
                     status: 200,
                     err: false,
                     myInvestments: myInvestmentTable
@@ -109,7 +188,7 @@ export const updateMyInvestment = (req) => {
 
         } catch (error) {
             return reject({
-                status:500,
+                status: 500,
                 err: true,
                 message: error.message
             })

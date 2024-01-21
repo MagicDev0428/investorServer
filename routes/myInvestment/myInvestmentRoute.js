@@ -12,11 +12,11 @@ export const router = express.Router();
 
 // my investment Creation Route
 router.post("/createmyinvestment",
-// Middlewares.checkAdminPrivileges,
-// Middlewares.StorageMiddlewares.upload.array(
-//   "images",
-//   MAX_FILES_PER_REQUEST
-// ), 
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "images",
+  MAX_FILES_PER_REQUEST
+), 
 async (req, res) => {
   try {
     const result = await createInvestment(req);
@@ -58,7 +58,13 @@ router.get("/getmyinvestment/:myinvestmentId", async (req, res) => {
 });
 
 // update my investment 
-router.put("/updatemyinvestment", async (req, res) => {
+router.put("/updatemyinvestment",
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "images",
+  MAX_FILES_PER_REQUEST
+), 
+async (req, res) => {
   try {
     const result = await updateMyInvestment(req);
     res.status(result.status).json(result);

@@ -14,7 +14,7 @@ var myInvestmentsSchema  = new Schema({
     transactionFrom:    String,     // Transfer transaction FROM bank / account 
     transactionTo:      String,     // Transfer transaction TO bank / account 
     transactionNo:      String,     // Transaction number from bank 
-    documents:          Array,      // Array of Images and reciepts ("filename","filename")
+    documents:          Object,      // Array of Images and reciepts ("filename","filename")
 
     profitMonthlyPct:   Number,     // Investors Monthly Profit Procentage
     profitMonthly:      Number,     // Investors Monthly Profit Amount
