@@ -123,24 +123,24 @@ export const updateMyInvestment = (req) => {
             }
 
             // Upload passport images
-            if (received.receipts) {
-                if (Array.isArray(received.receipts)) {
-                    for (const imagePath of received?.receipts) {
+            if (received.receipt) {
+                if (Array.isArray(received.receipt)) {
+                    for (const imagePath of received?.receipt) {
                         await prepareAttachmentResponse(imagePath, 'receipts', recieptFolderId)
                     }
                 } else {
-                    await prepareAttachmentResponse(received.receipts, 'receipts', recieptFolderId)
+                    await prepareAttachmentResponse(received.receipt, 'receipts', recieptFolderId)
                 }
             }
 
             // Upload documents
-            if (received.contracts) {
-                if (Array.isArray(received.contracts)) {
-                    for (const imagePath of received?.contracts) {
+            if (received.contract) {
+                if (Array.isArray(received.contract)) {
+                    for (const imagePath of received?.contract) {
                         await prepareAttachmentResponse(imagePath, 'contracts', documentFolderId)
                     }
                 } else {
-                    await prepareAttachmentResponse(received.contracts, 'contracts', documentFolderId);
+                    await prepareAttachmentResponse(received.contract, 'contracts', documentFolderId);
                 }
             }
 
