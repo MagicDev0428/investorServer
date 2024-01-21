@@ -4,12 +4,20 @@ import { myInvestmentList } from "../../controllers/myInvestment/myInvestmentLis
 import { deleteMyInvestment } from "../../controllers/myInvestment/deleteMyInvestment";
 import { getMyInvestment } from "../../controllers/myInvestment/getMyInvestment";
 import { updateMyInvestment } from "../../controllers/myInvestment/updateMyInvestment";
+import { Middlewares } from "../../utils";
+import { MAX_FILES_PER_REQUEST } from "../../constants";
 
 
 export const router = express.Router();
 
 // my investment Creation Route
-router.post("/createmyinvestment", async (req, res) => {
+router.post("/createmyinvestment",
+// Middlewares.checkAdminPrivileges,
+// Middlewares.StorageMiddlewares.upload.array(
+//   "images",
+//   MAX_FILES_PER_REQUEST
+// ), 
+async (req, res) => {
   try {
     const result = await createInvestment(req);
     res.json(result);

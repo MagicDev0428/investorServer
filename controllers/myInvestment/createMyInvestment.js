@@ -7,6 +7,7 @@ import { Lib } from '../../utils';
 // creating Investment table model
 let myInvestmentTable = Models.myInvestmentsModel
 const {getInvestorNickName} = require("../investor/getInvestor")
+const factory = require("../../utils/factories/google");
 //
 // Create NEW investment with the data from the form
 //
@@ -14,7 +15,8 @@ const {getInvestorNickName} = require("../investor/getInvestor")
 export const createInvestment = (req) => {
   global.show("###### investmentCreate ######");
   let received = req ? req.body : null;
-  if (received) global.show({ received });
+  
+  console.log(req.body);
 
   return new Promise(async (resolve, reject) => {
 
@@ -62,6 +64,22 @@ export const createInvestment = (req) => {
     received.createdBy = userName?userName:"";
     received.modifiedBy = userName?userName:"";
 
+    // const client = factory.getGoogleDriveInstance();
+    // // use google drive client for list of folders
+    // const folders = await client.listFolders();
+
+    // let filteredFolder = folders.find(folder => folder.name === received.investorName);
+    // console.log("folders ==> ",filteredFolder);
+    // let investorFolderId;
+    // try {
+    //     if(filteredFolder){
+    //         investorFolderId = filteredFolder.id;
+    //     }
+
+        
+    // } catch (error) {
+    //     return reject({err:true,message: error});
+    // }
 
         const newMyInvestment = new Models.myInvestmentsModel(received);
 

@@ -13,9 +13,11 @@ import jsondocs from "./docs/index.json";
 import { investorRoutes, documentRoutes,logRoutes,balanceRoute } from "./routes";
 import { Middlewares, Docs } from "./utils";
 import { router as myInvestmentRouter} from "./routes/myInvestment/myInvestmentRoute"
+import{router as frontpage} from "./routes/frontpage/frontPageRoute"
 const investorRoute = require("./routes/investor/investorRoute");
 const adamRoute = require("./routes/adam/adamRoute");
 const investmentRoute = require("./routes/investment/investmentRoute")
+
 // require("./logger/simpleLogger"); // global.show is imported from simpleLogger
 require('./utils/logger/index');
 const factory = require("./utils/factories/google"); // Google factory
@@ -190,6 +192,7 @@ app.use("/log", logRoutes.router);
 app.use("/investments",investmentRoute);
 app.use("/balances",balanceRoute.router);
 app.use("/myinvestment",myInvestmentRouter)
+app.use("/frontpage",frontpage)
 
 // Helper port
 app.set("port", process.env.PORT || 3007);
