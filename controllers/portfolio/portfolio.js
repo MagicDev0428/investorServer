@@ -60,10 +60,10 @@ const investorPortfolioAggregate = () => {
                                 $push: {
                                     $cond: [{
                                             $and: [{
-                                                    $gte: ["$transferDate", firstDayOfMonth]
+                                                    $gte: ["$createdDate", firstDayOfMonth]
                                                 },
                                                 {
-                                                    $lt: ["$transferDate", lastDayOfMonth]
+                                                    $lt: ["$createdDate", lastDayOfMonth]
                                                 }
                                             ]
                                         },
@@ -140,17 +140,7 @@ const investorPortfolioAggregate = () => {
                             totalWithdraw: {
                                 $sum: "$withdraw"
                             },
-                            // total_balance: {
-                            //     $sum: {
-                            //         $subtract: [{
-                            //                 $sum: "$deposit"
-                            //             },
-                            //             {
-                            //                 $sum: "$withdraw"
-                            //             }
-                            //         ],
-                            //     },
-                            // },
+                           
                             investorBalanceList: {
                                 $push: "$$ROOT"
                             }

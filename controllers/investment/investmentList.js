@@ -10,6 +10,9 @@ import { Lib } from "../../utils";
 let investmentTable = Models.investmentModel;
 
 
+
+
+
 //
 // List all from investment collection
 //

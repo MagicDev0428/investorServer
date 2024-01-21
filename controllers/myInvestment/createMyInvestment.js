@@ -122,7 +122,7 @@ export const createInvestment = (req) => {
         return reject({err:true,message: error});
     }
 
-    console.log("this is updated ==> ",received)
+    
         const newMyInvestment = new Models.myInvestmentsModel(received);
 
         myInvestmentTable = null;

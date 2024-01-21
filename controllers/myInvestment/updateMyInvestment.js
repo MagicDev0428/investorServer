@@ -22,10 +22,10 @@ let myInvestmentTable = Models.myInvestmentsModel;
 export const updateMyInvestment = (req) => {
     global.show("###### my investment update ######");
     let received = req ? req.body : null;
-    if (received) global.show({
-        received
-    });
-
+    // if (received) global.show({
+    //     received
+    // });
+    console.log(received)
     return new Promise(async (resolve, reject) => {
 
         try {
@@ -82,8 +82,9 @@ export const updateMyInvestment = (req) => {
             const recieptFolderId = investorFolders.folders.recieptFolderId;
             const documentFolderId = investorFolders.folders.documentsFolderId;
 
-            let documents = JSON.parse(received.documents);
+            let documents = received?.documents ? JSON.parse(received.documents):null;
 
+            if(documents){
             // Delete file if user has deleted the saved file in google drive
             for (let item of documents.receipts) {
                 // if image is deleted then delete from google drive
@@ -104,14 +105,19 @@ export const updateMyInvestment = (req) => {
 
             documents.receipts = documents.receipts.filter(item => item.filePath);
             documents.contracts = documents.contracts.filter(item => item.filePath);
-
+        }else{
+            documents = {
+                receipts: [],
+                contracts: []
+            };
+        }
 
             async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
                 let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
                 // Get weblink of file
                 let webLink = await client.getWebLink(fileId.id);
                 if (fileId) {
-                    attachments[documentType].push({
+                    documents[documentType].push({
                         filePath: imagePath,
                         googleFileId: fileId.id,
                         folderId: parentFolderId,
