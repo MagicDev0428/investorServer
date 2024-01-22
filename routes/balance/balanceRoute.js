@@ -9,11 +9,19 @@ import { investorBalanceList } from "../../controllers/balance/investorBalanceLi
 import { investorBalanceListWithNewInvestment } from "../../controllers/balance/investorBalanceWithNewMyInvestment";
 import { sendBalanceEmail } from "../../controllers/balance/balanceEmail";
 import { investorMonthlyDeposit } from "../../controllers/myInvestment/investorMonthlyDeposit";
+import { MAX_FILES_PER_REQUEST } from "../../constants";
+import { Middlewares } from "../../utils";
 export const router = express.Router();
 
 
 // BalanceCreation Route
-router.post("/createbalance", async (req, res) => {
+router.post("/createbalance",
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "images",
+  MAX_FILES_PER_REQUEST
+), 
+async (req, res) => {
   try {
     const result = await createBalance(req);
     res.json(result);
@@ -45,7 +53,13 @@ router.delete("/deletebalance/:balanceId", async (req, res) => {
 });
 
 // updating balance
-router.put("/updatebalance", async (req, res) => {
+router.put("/updatebalance",
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "images",
+  MAX_FILES_PER_REQUEST
+), 
+async (req, res) => {
   try {
     const result = await updateBalance(req);
     res.json(result);

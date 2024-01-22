@@ -79,7 +79,6 @@ export const createInvestment = (req) => {
         let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
         // Get weblink of file
         let webLink = await client.getWebLink(fileId.id);
-        console.log("file id ==> ",fileId, "  web link ==> ",webLink)
             if (fileId) {
               attachmentResponse[documentType].push({
                 filePath: imagePath,

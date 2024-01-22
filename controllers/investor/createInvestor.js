@@ -210,9 +210,9 @@ exports.investorCreate = async (req) => {
         description:`New Investor ${investorTable._id}  ${investorTable.nickname} from ${investorTable.country}.`,
     })
 
-      return resolve({ err: false, investors: investorTable });
+      return resolve({ status:200,err: false, investors: investorTable });
     }
-    return reject({ err: true, message: "Error in investor creation!" });
+    return resolve({status:204, err: false, investors: []});
     } catch (error) {
        return reject({err:true,message:error.message})
     }

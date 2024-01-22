@@ -4,11 +4,13 @@ import {
 
 import { Lib } from "../../utils";
 const {getInvestorNickName} = require("../investor/getInvestor")
+const factory = require("../../utils/factories/google");
+
 // creating balance table model
 let balanceTable = Models.balanceModel;
 
 
-//
+// 
 // Update EXISTING Balance with the data from the form
 //
 export const updateBalance = (req) => {
@@ -27,6 +29,7 @@ export const updateBalance = (req) => {
                 return reject({err:true,message:"_id is not recieved in form."});
             }
 
+
             const dateTime = new Date().toISOString();
             received.modifiedDate = dateTime;
 
@@ -36,6 +39,66 @@ export const updateBalance = (req) => {
             received.modifiedBy = userName?userName:"";
 
 
+            
+            // checking id exists in myInvestments
+            const investorFolders = await Models.Investor.findOne({
+                    _id: received.investorName
+                },
+                'folders'
+            );
+            if (!investorFolders) {
+                return reject({
+                    status: 403,
+                    err: true,
+                    message: "Investor name does not exist!",
+                });
+            }
+
+             // Get the google drive client
+            const client = factory.getGoogleDriveInstance();
+            //  if deposit is greater than 0 so it's mean it need to upload in deposit folder otherwise in withdraw folder
+            const folderId = Number(received.deposit) > 0 ? investorFolders.folders.depositFolderId:investorFolders.folders.withdrawFolderId ;
+            let attachments = received?.attachments ? JSON.parse(received.attachments):null;
+
+            if(attachments){
+            // Delete file if user has deleted the saved file in google drive
+            for (let item of attachments) {
+                // if image is deleted then delete from google drive
+                if (!item.filePath) {
+                    if (item.googleFileId) {
+                        await client.deleteFile(item.googleFileId);
+                        }
+                    }
+                }     
+            }
+
+            attachments = documents.filter(item => item.filePath);
+            async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
+                let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
+                // Get weblink of file
+                let webLink = await client.getWebLink(fileId.id);
+                if (fileId) {
+                    attachments.push({
+                        filePath: imagePath,
+                        googleFileId: fileId.id,
+                        folderId: parentFolderId,
+                        webLink: webLink
+                    });
+                    // Delete this uploaded file in server
+                    await Lib.deleteFile("uploads/" + imagePath);
+                }
+            }
+
+                        // Upload passport images
+            if (received.receipt) {
+                if (Array.isArray(received.receipt)) {
+                    for (const imagePath of received?.receipt) {
+                        await prepareAttachmentResponse(imagePath, 'receipts', folderId)
+                    }
+                } else {
+                    await prepareAttachmentResponse(received.receipt, 'receipts', folderId)
+                }
+            }
             balanceTable = null;
             balanceTable = await Models.balanceModel.findOneAndUpdate({
                     _id: received._id

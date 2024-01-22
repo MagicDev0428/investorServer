@@ -557,14 +557,16 @@ export const investorInfoForDate = async (req) => {
                 investorTable.investmentAndLogs = investmentResult
 
                 return resolve({
+                    status:200,
                     err: false,
                     result: investorTable
                 });
 
             }
             return reject({
-                err: true,
-                message: "Unable to get investor info!"
+                status:204,
+                err: false,
+                result: []
             });
         } catch (error) {
             return reject({
@@ -609,13 +611,15 @@ export const investorListForDate = async (req) => {
                 investorTable.investmentAndLogs = investmentResult
 
                 return resolve({
+                    status:200,
                     err: false,
                     result: investorTable
                 });
             }
-            return reject({
-                err: true,
-                message: "Unable to get investor list!"
+            return resolve({
+                status:204,
+                err: false,
+                result: []
             });
         } catch (error) {
             return reject({

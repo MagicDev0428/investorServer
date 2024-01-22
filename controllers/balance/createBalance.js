@@ -8,6 +8,7 @@ import {
 
 import{Lib} from "../../utils"
 const {getInvestorNickName} = require("../investor/getInvestor")
+const factory = require("../../utils/factories/google");
 // creating Balance table model
 let balanceTable = Models.balanceModel;
 
@@ -57,19 +58,54 @@ export const createBalance = (req) => {
 
 
               // check recieved.investorName exist in investors or not
-            const investorExist = await Models.Investor.exists({
-                _id: received.investorName
-            });
-
-           
-            if (!investorExist){
+            // checking id exists in myInvestments
+            const investorFolders = await Models.Investor.findOne(
+                    { _id: received.investorName },
+                    'folders'
+                );
+            if (!investorFolders) {
                 return reject({
+                   
                     err: true,
-                    message: `Investor id ${received.investorName} is not exist in investor collection!`,
+                    message: "Investor id does not exist!",
                 });
             }
 
 
+            const client = factory.getGoogleDriveInstance();
+            //  if deposit is greater than 0 so it's mean it need to upload in deposit folder otherwise in withdraw folder
+            const folderId = Number(received.deposit) > 0 ? investorFolders.folders.depositFolderId:investorFolders.folders.withdrawFolderId ;
+            
+            let attachments = []
+
+       async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
+        let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
+        // Get weblink of file
+        let webLink = await client.getWebLink(fileId.id);
+            if (fileId) {
+              attachments.push({
+                filePath: imagePath,
+                googleFileId: fileId.id,
+                folderId: parentFolderId,
+                webLink: webLink
+              });
+              // Delete this uploaded file in server
+              await Lib.deleteFile("uploads/" + imagePath);
+            }
+      }
+
+            // Upload passport images
+      if(received.receipt ) {
+        // receipts
+       
+        if(Array.isArray(received.receipt)) {
+          for (const imagePath of received?.receipt) {
+            await prepareAttachmentResponse(imagePath, 'receipts', folderId)
+          }
+        } else {
+          await prepareAttachmentResponse(received.receipt, 'receipts', folderId)         
+        }      
+      } 
             // creating new balances instance
             const newbalances = new Models.balanceModel(received);
 

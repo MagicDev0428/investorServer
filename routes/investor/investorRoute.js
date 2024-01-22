@@ -31,7 +31,7 @@ Middlewares.StorageMiddlewares.upload.array(
 async (req, res) => {
   try {
     const result = await investorCreate(req);
-    res.json(result);
+    res.status(result.status).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -97,7 +97,7 @@ router.get("/investorinfo/:investorId", async (req, res) => {
 router.post("/investorinfobydate", async (req, res) => {
   try {
     const result = await investorInfoForDate(req);
-    res.json(result);
+    res.status(result.status).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -106,7 +106,7 @@ router.post("/investorinfobydate", async (req, res) => {
 router.post("/investorlistbydate", async (req, res) => {
   try {
     const result = await investorListForDate(req);
-    res.json(result);
+    res.status(result.status).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
