@@ -1,52 +1,30 @@
-// Investor Model
-// This model is the structure containing all information about the INVESTOR
+// Invoice Model
+// This model is the structure containing all information about INVOICES
 //
 import mongoose from 'mongoose'; 
 const Schema = mongoose.Schema;
+const invoiceSchema = new Schema({
 
-const schema = new Schema({
-    _id:                String,     // REQUIRED Investor Name
-    nickname:           String,     // REQUIRED The investors Nick Name 
-
-    status: {                       // REQUIRED [ ACTIVE, PENDING, DISABLED, FROZEN ]
-        type: String,
-        default: 'ACTIVE'
-    },     
-
-    pincode:            String,     // REQUIRED Pincode for logging in "0202" 
-
-    address:            String,     // Address 
-    postcode:           String,     // Postcode
-    city:               String,     // City 
-    country:            String,     // Country
-    email:              String,     // Email address
-    phone:              String,     // Mobile Phone
-    facebook:           String,     // Facebook Link
-    passport:           String,     // Passport Number
-
-    beneficiaryName:    String,     // Beneficiary Name
-    beneficiaryEmail:   String,     // Beneficiary Email
-    beneficiaryPhone:   String,     // Beneficiary Mobile Phone
-
-    transferType:       String,     // Money Transfer Type "Envelope", "Thai Bank", "Foreign Bank", "Crypto Wallet", "Western Union", "WISE", "Other Transfer"
-    transferInfo:       String,     // Money Transfer Information (bank etc.)
-    currency:           String,     // Prefered currency of the investor
-
-    hiddenRemark:       String,     // Hidden Description that only we can see
-    copyPaste:          Array,      // Array of texts to copy and paste
-
-    investorFolderId:   String,     // Investor google drive folder id
-    folders:            Object,      // Array of folders belonging to THIS investor {"contracts": "ksdhi9us9dtytyhw4ioytsliygi", "id": "kqwersdafsarrs222ioytsliygi", "reciepts/paid": "kqwersdafsarrs222ioytsliygi", "reciepts/invested": "234fsrafsarrs222ioytsliygi"}
-    attachments:        Object,      // Array of Images of the passports / IDs 
- 
-    LastLoginDate: {                // When was the last time this investor logged in or attempted to log in
+    invoiceDate: {                  // REQUIRED Date of Invoice
         type: Date, 
-        default: null
+        default: Date.now
     },
-    loginAttempts: {                // Number of wrong attempts today, after 3 wrong attempts we change investor.status = "FROZEN"
-        type: Number, default: 0, 
-    },   
+    name:               String,     // REQUIRED Invoice Name
+    description:        String,     // Invoice description
 
+    invoiceLines:       Object,     // Array of lines who belong to invoice 
+
+//  {
+//     "lineNo"  : 1,
+//     "Text"    : "BTC profit (all normal investors)",
+//     "Amount"  : 13,587,232
+//  },
+//  {
+//     "lineNo"  : 2,
+//     "Text"    : "Profit Michael  (108,000 / 2 = 54,000)",
+//     "Amount"  : 54,000
+//  },
+// etc.....
 
     createdDate: {                  // When was this investment created
         type: Date, 
@@ -62,4 +40,4 @@ const schema = new Schema({
 
 }, { versionKey: false });          // Don't want to insert _v in document
 
-export const Investor = mongoose.model('Investor', schema,'investor');
+export const Invoice = mongoose.model('Invoice', invoiceSchema, 'invoice');
