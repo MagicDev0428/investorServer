@@ -4,50 +4,6 @@ import {
 // creating investor table model
 let investorTable = Models.Investor;
 
-const investorTotalInvestment = () => {
-    const currentDate = new Date();
-    return [{
-        $lookup: {
-            from: "myInvestments",
-            let: {
-                investor: "$_id"
-            },
-            pipeline: [{
-                    $match: {
-                        $expr: {
-                            $eq: ["$investorName", "$$investor"]
-                        },
-                    },
-                },
-                {
-                    $group: {
-                        _id: null,
-
-                        totalInvested: {
-                            $sum: {
-                                $cond: {
-                                    if: {
-                                        $and: [{
-                                                $lte: ["$firstProfitDate", currentDate]
-                                            },
-                                            {
-                                                $gte: ["$lastProfitDate", currentDate]
-                                            }
-                                        ]
-                                    },
-                                    then: "$amountInvested",
-                                    else: 0
-                                }
-                            }
-                        },
-
-                    },
-                },
-            ],
-            as: "accountInvestments",
-        },
-    }, ]
-}
 
 export const totalMyInvestment = (investorId) => {
     global.show("###### Get investor total investment ###### ");

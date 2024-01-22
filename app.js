@@ -167,13 +167,13 @@ app.use(function (req, res, next) {
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(jsondocs));
 
 // // use auth for all endpoints
-app.use(checkJwt);
+// app.use(checkJwt);
 
-// setting user name in global variable 
-app.use((req, res, next) => {
-  global.userName = Lib.getAdminName(req.auth);
-  next();
-});
+// // setting user name in global variable 
+// app.use((req, res, next) => {
+//   global.userName = Lib.getAdminName(req.auth);
+//   next();
+// });
 /**
  * ROUTES
  */
