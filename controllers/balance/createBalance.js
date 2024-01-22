@@ -21,9 +21,10 @@ export const createBalance = (req) => {
 
     global.show("###### Create Balance ######")
     let received = req ? req.body : null;
-    if (received) global.show({
-        received
-    });
+    // if (received) global.show({
+    //     received
+    // });
+    console.log(received)
 
     return new Promise(async (resolve, reject) => {
 
@@ -106,6 +107,9 @@ export const createBalance = (req) => {
           await prepareAttachmentResponse(received.receipt, 'receipts', folderId)         
         }      
       } 
+      
+      // adding attachments
+      received.attachments = attachments
             // creating new balances instance
             const newbalances = new Models.balanceModel(received);
 

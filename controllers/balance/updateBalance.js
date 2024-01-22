@@ -17,10 +17,11 @@ export const updateBalance = (req) => {
 
     global.show("###### update balance ######")
     let received = req ? req.body : null;
-    if (received) global.show({
-        received
-    });
+    // if (received) global.show({
+    //     received
+    // });
 
+    console.log(received)
     return new Promise(async (resolve, reject) => {
         try {
 
@@ -70,9 +71,9 @@ export const updateBalance = (req) => {
                         }
                     }
                 }     
+                attachments = attachments.filter(item => item.filePath);
             }
 
-            attachments = documents.filter(item => item.filePath);
             async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
                 let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
                 // Get weblink of file
@@ -99,6 +100,10 @@ export const updateBalance = (req) => {
                     await prepareAttachmentResponse(received.receipt, 'receipts', folderId)
                 }
             }
+
+            // adding attachments
+            received.attachments = attachments
+
             balanceTable = null;
             balanceTable = await Models.balanceModel.findOneAndUpdate({
                     _id: received._id
