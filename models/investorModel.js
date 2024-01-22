@@ -3,7 +3,6 @@
 //
 import mongoose from 'mongoose'; 
 const Schema = mongoose.Schema;
-
 const schema = new Schema({
     _id:                String,     // REQUIRED Investor Name
     nickname:           String,     // REQUIRED The investors Nick Name 
@@ -38,7 +37,7 @@ const schema = new Schema({
     investorFolderId:   String,     // Investor google drive folder id
     folders:            Object,      // Array of folders belonging to THIS investor {"contracts": "ksdhi9us9dtytyhw4ioytsliygi", "id": "kqwersdafsarrs222ioytsliygi", "reciepts/paid": "kqwersdafsarrs222ioytsliygi", "reciepts/invested": "234fsrafsarrs222ioytsliygi"}
     attachments:        Object,      // Array of Images of the passports / IDs 
- 
+    
     LastLoginDate: {                // When was the last time this investor logged in or attempted to log in
         type: Date, 
         default: null
@@ -46,7 +45,6 @@ const schema = new Schema({
     loginAttempts: {                // Number of wrong attempts today, after 3 wrong attempts we change investor.status = "FROZEN"
         type: Number, default: 0, 
     },   
-
 
     createdDate: {                  // When was this investment created
         type: Date, 
