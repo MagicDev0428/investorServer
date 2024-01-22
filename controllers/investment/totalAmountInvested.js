@@ -30,25 +30,17 @@ export const totalAmountInvested = (investmentId) => {
 
 
             investmentTable = null;
-            investmentTable = await Models.myInvestmentsModel.find({investmentNo: investmentId})
-            // let toalAmountInvested = null;
-            // investmentTable = await Models.myInvestmentsModel.aggregate([{
-            //         $match: {
-            //             investmentNo: investmentId
-            //         }
-            //     },
-            //     // {
-            //     //     $group: {
-            //     //         _id: null,
-            //     //         totalAmountInvested: {
-                           
-            //     //                  $sum: {
-            //     //                     $ifNull: ["$amountInvested", 0]
-            //     //                 }
-            //     //         }
-            //     //     }
-            //     // }
-            // ]);
+            
+            investmentTable = await Models.myInvestmentsModel.aggregate([
+                  { $match: { investmentNo: Number(investmentId) } },
+                    {
+                        $group: {
+                            _id: null,
+                            totalAmountInvested: { $sum: "$amountInvested" }
+                        }
+                    }
+            ]);
+            
             // checking if investor data exist then resolve the promise otherwise reject it
             if (investmentTable) {
 
