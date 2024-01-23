@@ -46,9 +46,15 @@ const investorPortfolioAggregate = () => {
                                                 }
                                             ]
                                         },
-                                        "$profitMonthly",
+                                        {
+                                            $add: [
+                                                "$profitMonthly",
+                                                "$profitAnnual",  
+                                                "$profitEnd"      
+                                            ]
+                                        },
                                         0
-                                    ]
+                                    ] 
                                 }
                             },
                             totalProfitEnd: {
