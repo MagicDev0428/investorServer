@@ -134,7 +134,7 @@ let investorTable = Models.Investor;
 //                             totalWithdraw: {
 //                                 $sum: "$withdraw"
 //                             },
-                           
+
 //                             investorBalanceList: {
 //                                 $push: "$$ROOT"
 //                             }
@@ -207,15 +207,13 @@ let investorTable = Models.Investor;
 const investorPortfolioAggregate = () => {
     const today = new Date();
 
-    return [
-        {
+    return [{
             $lookup: {
                 from: "myInvestments",
                 let: {
                     investor: "$_id"
                 },
-                pipeline: [
-                    {
+                pipeline: [{
                         $match: {
                             $expr: {
                                 $eq: ["$investorName", "$$investor"]
@@ -230,12 +228,10 @@ const investorPortfolioAggregate = () => {
                                     $ifNull: ["$amountInvested", 0]
                                 }
                             },
-                            totalProfitMonthly: {
+                            totalMonthlyProfit: {
                                 $sum: {
-                                    $cond: [
-                                        {
-                                            $and: [
-                                                {
+                                    $cond: [{
+                                            $and: [{
                                                     $lte: ["$firstProfitDate", today]
                                                 },
                                                 {
@@ -244,16 +240,22 @@ const investorPortfolioAggregate = () => {
                                             ]
                                         },
                                         {
-                                            $add: [
-                                                "$profitMonthly",
-                                                "$profitAnnual",
-                                                "$profitEnd"
+                                            $add: [{
+                                                    $ifNull: ["$profitMonthly", 0]
+                                                },
+                                                {
+                                                    $ifNull: ["$profitAnnual", 0]
+                                                },
+                                                {
+                                                    $ifNull: ["$profitEnd", 0]
+                                                }
                                             ]
                                         },
                                         0
                                     ]
                                 }
                             },
+
                             totalProfitEnd: {
                                 $sum: {
                                     $ifNull: ["$profitEnd", 0]
@@ -277,13 +279,18 @@ const investorPortfolioAggregate = () => {
                 preserveNullAndEmptyArrays: true,
             },
         },
+
         {
             $addFields: {
                 "accountInvestments.newMyInvestments": {
                     $map: {
                         input: "$accountInvestments.newMyInvestments",
                         as: "investment",
-                        in: { $mergeObjects: ["$$investment", { newInvestment: true }] }
+                        in: {
+                            $mergeObjects: ["$$investment", {
+                                newInvestment: true
+                            }]
+                        }
                     }
                 }
             }
@@ -294,8 +301,7 @@ const investorPortfolioAggregate = () => {
                 let: {
                     investor: "$_id"
                 },
-                pipeline: [
-                    {
+                pipeline: [{
                         $match: {
                             $expr: {
                                 $eq: ["$investorName", "$$investor"]
@@ -341,25 +347,25 @@ const investorPortfolioAggregate = () => {
                         "$accountBalances",
                         {
                             investorBalanceList: {
-                                $concatArrays: [
-                                    { $ifNull: ["$accountInvestments.newMyInvestments", []] },
-                                    { $ifNull: ["$accountBalances.investorBalanceList", []] },
+                                $concatArrays: [{
+                                        $ifNull: ["$accountInvestments.newMyInvestments", []]
+                                    },
+                                    {
+                                        $ifNull: ["$accountBalances.investorBalanceList", []]
+                                    },
                                 ],
                             },
                         },
                     ],
                 },
                 profitInPercentage: {
-                    $multiply: [
-                        {
-                            $cond: [
-                                {
+                    $multiply: [{
+                            $cond: [{
                                     $eq: ["$accountInvestments.allInvestments", 0]
                                 },
                                 0,
                                 {
-                                    $multiply: [
-                                        {
+                                    $multiply: [{
                                             $divide: ["$accountBalances.totalProfitPaid", "$accountInvestments.allInvestments"]
                                         },
                                         100
