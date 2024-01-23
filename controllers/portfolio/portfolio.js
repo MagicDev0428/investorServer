@@ -57,20 +57,21 @@ const investorPortfolioAggregate = () => {
                                 }
                             },
                             newMyInvestments: {
-                                $push: {
-                                    $cond: [{
-                                            $and: [{
-                                                    $gte: ["$transferDate", firstDayOfMonth]
-                                                },
-                                                {
-                                                    $lt: ["$transferDate", lastDayOfMonth]
-                                                }
-                                            ]
-                                        },
-                                        "$$ROOT",
-                                        null
-                                    ]
-                                }
+                                $push: "$$ROOT",
+                                // {
+                                //     $cond: [{
+                                //             $and: [{
+                                //                     $gte: ["$transferDate", firstDayOfMonth]
+                                //                 },
+                                //                 {
+                                //                     $lt: ["$transferDate", lastDayOfMonth]
+                                //                 }
+                                //             ]
+                                //         },
+                                //         "$$ROOT",
+                                //         null
+                                //     ]
+                                // }
                             },
                             myInvestmentList: {
                                 $push: "$$ROOT"
@@ -88,20 +89,6 @@ const investorPortfolioAggregate = () => {
             },
         },
 
-
-        {
-            $addFields: {
-                "accountInvestments.newMyInvestments": {
-                    $filter: {
-                        input: "$accountInvestments.newMyInvestments",
-                        as: "investment",
-                        cond: {
-                            $ne: ["$$investment", null]
-                        },
-                    },
-                },
-            },
-        },
         {
             $addFields: {
                             "accountInvestments.newMyInvestments": {
