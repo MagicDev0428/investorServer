@@ -226,7 +226,7 @@ exports.adamInvestors = async () => {
 
   return new Promise(async (resolve, reject) => {
     try{
-    const investorsNames = await Models.Investor.find({}, "_id");
+    const investorsNames = await Models.Investor.find({}, "_id nickname");
 
     const investments = await Models.investmentModel.find(
       {},

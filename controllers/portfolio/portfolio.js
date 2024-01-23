@@ -7,20 +7,215 @@ import {
 let investorTable = Models.Investor;
 
 
+// const investorPortfolioAggregate = () => {
+//     // Common stages for the aggregation pipeline
+
+//     const today = new Date();
+//     // const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+//     // const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+//     return [{
+//             $lookup: {
+//                 from: "myInvestments",
+//                 let: {
+//                     investor: "$_id"
+//                 },
+//                 pipeline: [{
+//                         $match: {
+//                             $expr: {
+//                                 $eq: ["$investorName", "$$investor"]
+//                             },
+//                         },
+//                     },
+//                     {
+//                         $group: {
+//                             _id: null,
+//                             allInvestments: {
+//                                 $sum: {
+//                                     $ifNull: ["$amountInvested", 0]
+//                                 }
+//                             },
+//                             totalProfitMonthly: {
+//                                 $sum: {
+//                                     $cond: [{
+//                                             $and: [{
+//                                                     $lte: ["$firstProfitDate", today]
+//                                                 },
+//                                                 {
+//                                                     $gte: ["$lastProfitDate", today]
+//                                                 }
+//                                             ]
+//                                         },
+//                                         // {
+//                                         //     $add: [
+//                                         //         "$profitMonthly",
+//                                         //         "$profitAnnual",  
+//                                         //         "$profitEnd"      
+//                                         //     ]
+//                                         // },
+//                                         "$profitMonthly",
+//                                         0
+//                                     ] 
+//                                 }
+//                             },
+//                             totalProfitEnd: {
+//                                 $sum: {
+//                                     $ifNull: ["$profitEnd", 0]
+//                                 }
+//                             },
+//                             newMyInvestments: {
+//                                 $push: "$$ROOT",
+//                                 // {
+//                                 //     $cond: [{
+//                                 //             $and: [{
+//                                 //                     $gte: ["$transferDate", firstDayOfMonth]
+//                                 //                 },
+//                                 //                 {
+//                                 //                     $lt: ["$transferDate", lastDayOfMonth]
+//                                 //                 }
+//                                 //             ]
+//                                 //         },
+//                                 //         "$$ROOT",
+//                                 //         null
+//                                 //     ]
+//                                 // }
+//                             },
+//                             myInvestmentList: {
+//                                 $push: "$$ROOT"
+//                             },
+//                         },
+//                     },
+//                 ],
+//                 as: "accountInvestments",
+//             },
+//         },
+//         {
+//             $unwind: {
+//                 path: "$accountInvestments",
+//                 preserveNullAndEmptyArrays: true,
+//             },
+//         },
+
+//         {
+//             $addFields: {
+//                             "accountInvestments.newMyInvestments": {
+//                                 $map: {
+//                                     input: "$accountInvestments.newMyInvestments",
+//                                     as: "investment",
+//                                     in: { $mergeObjects: ["$$investment", { newInvestment: true }] }
+//                                 }
+//                             }
+//                         }
+//                     },
+//         {
+//             $lookup: {
+//                 from: "balance",
+//                 let: {
+//                     investor: "$_id"
+//                 },
+//                 pipeline: [{
+//                         $match: {
+//                             $expr: {
+//                                 $eq: ["$investorName", "$$investor"]
+//                             },
+//                         },
+//                     },
+//                     {
+//                         $sort: {
+//                             "profitMonth": -1
+//                         } // Sorting in ascending order, adjust as needed
+//                     },
+//                     {
+//                         $group: {
+//                             _id: null,
+//                             totalProfitPaid: {
+//                                 $sum: "$deposit"
+//                             },
+//                             totalWithdraw: {
+//                                 $sum: "$withdraw"
+//                             },
+                           
+//                             investorBalanceList: {
+//                                 $push: "$$ROOT"
+//                             }
+//                         },
+//                     },
+//                 ],
+//                 as: "accountBalances",
+//             },
+//         },
+//         {
+//             $unwind: {
+//                 path: "$accountBalances",
+//                 preserveNullAndEmptyArrays: true,
+//             },
+//         },
+//         {
+//             $addFields: {
+//                 newestBalance: {
+//                     $arrayElemAt: ["$accountBalances.investorBalanceList", 0],
+//                 },
+//                 accountBalances: {
+//                     $mergeObjects: [
+//                         "$accountBalances",
+//                         {
+//                             investorBalanceList: {
+//                                 $concatArrays: [{
+//                                         $ifNull: ["$accountInvestments.newMyInvestments", []]
+//                                     },
+//                                     {
+//                                         $ifNull: ["$accountBalances.investorBalanceList", []]
+//                                     },
+//                                 ],
+//                             },
+//                         },
+//                     ],
+//                 },
+//                 profitInPercentage: {
+//                     $multiply: [{
+//                             $cond: [{
+//                                     $eq: ["$accountInvestments.allInvestments", 0]
+//                                 },
+//                                 0, // Avoid division by zero
+//                                 {
+//                                     $multiply: [{
+//                                             $divide: ["$accountBalances.totalProfitPaid", "$accountInvestments.allInvestments"]
+//                                         },
+//                                         100
+//                                     ]
+//                                 }
+//                             ]
+//                         },
+//                         1 // Convert the result to a number (optional)
+//                     ]
+//                 },
+//             },
+//         },
+
+
+
+//         {
+//             $project: {
+//                 _id: 0,
+//                 investor: "$$ROOT",
+//             },
+//         },
+
+
+//     ];
+// };
 const investorPortfolioAggregate = () => {
-    // Common stages for the aggregation pipeline
-
     const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-    return [{
+    return [
+        {
             $lookup: {
                 from: "myInvestments",
                 let: {
                     investor: "$_id"
                 },
-                pipeline: [{
+                pipeline: [
+                    {
                         $match: {
                             $expr: {
                                 $eq: ["$investorName", "$$investor"]
@@ -37,8 +232,10 @@ const investorPortfolioAggregate = () => {
                             },
                             totalProfitMonthly: {
                                 $sum: {
-                                    $cond: [{
-                                            $and: [{
+                                    $cond: [
+                                        {
+                                            $and: [
+                                                {
                                                     $lte: ["$firstProfitDate", today]
                                                 },
                                                 {
@@ -49,12 +246,12 @@ const investorPortfolioAggregate = () => {
                                         {
                                             $add: [
                                                 "$profitMonthly",
-                                                "$profitAnnual",  
-                                                "$profitEnd"      
+                                                "$profitAnnual",
+                                                "$profitEnd"
                                             ]
                                         },
                                         0
-                                    ] 
+                                    ]
                                 }
                             },
                             totalProfitEnd: {
@@ -64,20 +261,6 @@ const investorPortfolioAggregate = () => {
                             },
                             newMyInvestments: {
                                 $push: "$$ROOT",
-                                // {
-                                //     $cond: [{
-                                //             $and: [{
-                                //                     $gte: ["$transferDate", firstDayOfMonth]
-                                //                 },
-                                //                 {
-                                //                     $lt: ["$transferDate", lastDayOfMonth]
-                                //                 }
-                                //             ]
-                                //         },
-                                //         "$$ROOT",
-                                //         null
-                                //     ]
-                                // }
                             },
                             myInvestmentList: {
                                 $push: "$$ROOT"
@@ -94,25 +277,25 @@ const investorPortfolioAggregate = () => {
                 preserveNullAndEmptyArrays: true,
             },
         },
-
         {
             $addFields: {
-                            "accountInvestments.newMyInvestments": {
-                                $map: {
-                                    input: "$accountInvestments.newMyInvestments",
-                                    as: "investment",
-                                    in: { $mergeObjects: ["$$investment", { newInvestment: true }] }
-                                }
-                            }
-                        }
-                    },
+                "accountInvestments.newMyInvestments": {
+                    $map: {
+                        input: "$accountInvestments.newMyInvestments",
+                        as: "investment",
+                        in: { $mergeObjects: ["$$investment", { newInvestment: true }] }
+                    }
+                }
+            }
+        },
         {
             $lookup: {
                 from: "balance",
                 let: {
                     investor: "$_id"
                 },
-                pipeline: [{
+                pipeline: [
+                    {
                         $match: {
                             $expr: {
                                 $eq: ["$investorName", "$$investor"]
@@ -122,7 +305,7 @@ const investorPortfolioAggregate = () => {
                     {
                         $sort: {
                             "profitMonth": -1
-                        } // Sorting in ascending order, adjust as needed
+                        }
                     },
                     {
                         $group: {
@@ -133,7 +316,6 @@ const investorPortfolioAggregate = () => {
                             totalWithdraw: {
                                 $sum: "$withdraw"
                             },
-                           
                             investorBalanceList: {
                                 $push: "$$ROOT"
                             }
@@ -159,25 +341,25 @@ const investorPortfolioAggregate = () => {
                         "$accountBalances",
                         {
                             investorBalanceList: {
-                                $concatArrays: [{
-                                        $ifNull: ["$accountInvestments.newMyInvestments", []]
-                                    },
-                                    {
-                                        $ifNull: ["$accountBalances.investorBalanceList", []]
-                                    },
+                                $concatArrays: [
+                                    { $ifNull: ["$accountInvestments.newMyInvestments", []] },
+                                    { $ifNull: ["$accountBalances.investorBalanceList", []] },
                                 ],
                             },
                         },
                     ],
                 },
                 profitInPercentage: {
-                    $multiply: [{
-                            $cond: [{
+                    $multiply: [
+                        {
+                            $cond: [
+                                {
                                     $eq: ["$accountInvestments.allInvestments", 0]
                                 },
-                                0, // Avoid division by zero
+                                0,
                                 {
-                                    $multiply: [{
+                                    $multiply: [
+                                        {
                                             $divide: ["$accountBalances.totalProfitPaid", "$accountInvestments.allInvestments"]
                                         },
                                         100
@@ -185,22 +367,17 @@ const investorPortfolioAggregate = () => {
                                 }
                             ]
                         },
-                        1 // Convert the result to a number (optional)
+                        1
                     ]
                 },
             },
         },
-
-
-
         {
             $project: {
                 _id: 0,
                 investor: "$$ROOT",
             },
         },
-
-
     ];
 };
 
