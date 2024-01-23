@@ -50,18 +50,17 @@ exports.adamCreate = (req) => {
    
 
     if (adamTable) {
-      let  {investors} = await getInvestorNickName(adamTable.investorName)
-      
-
-      if(investors){
+      if(adamTable.investorName){
+      var  {investors} = await getInvestorNickName(adamTable.investorName)
+      }
+     
       // calling global save logs
       global.saveLogs({
         logType:'ADAM',
-        investorName:investors.nickname,
-        investmentNo:adamTable.investmentNo,
-        description:`New Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
+        investorName:investors?investors.nickname:"",
+        investmentNo:adamTable?.investmentNo?adamTable.investmentNo:"",
+        description:`New Transfer from ${adamTable.transactionFrom} to ${adamTable.transactionTo} for ${adamTable.amount.toLocaleString()}`,
       })
-    }
       return resolve({ err: false, adams: adamTable });
     }
     return reject({ err: true, message: "Error in adam creation!" });
@@ -120,15 +119,18 @@ exports.adamDelete = (adamId) => {
 
     if (adamTable) {
 
-      const  {investors} = await getInvestorNickName(adamTable.investorName)
-      if(investors){
+    if(adamTable.investorName){
+      var  {investors} = await getInvestorNickName(adamTable.investorName)
+      }
+      
+      // calling global save logs
       global.saveLogs({
         logType:'ADAM',
-        investorName:investors.nickname,
-        investmentNo:adamTable.investmentNo,
-        description:`Delete Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
-      })
-    }
+        investorName:investors?investors.nickname:"",
+        investmentNo:adamTable?.investmentNo?adamTable.investmentNo:"",
+      description:`Delete Transfer from ${adamTable.transactionFrom} to ${adamTable.transactionTo} for ${adamTable.amount.toLocaleString()}`,
+    })
+    
       return resolve({ err: false, adams: adamTable });
     }
     return reject({
@@ -197,19 +199,18 @@ exports.adamUpdate = (req) => {
     );
    
     if (adamTable) {
-
-      let  {investors} = await getInvestorNickName(adamTable.investorName)
+    if(adamTable.investorName){
+      var  {investors} = await getInvestorNickName(adamTable.investorName)
+      }
       
-      if(investors){          
-      // save log for update adam
+      // calling global save logs
       global.saveLogs({
         logType:'ADAM',
-        investorName:investors.nickname,
-        investmentNo:adamTable.investmentNo,
-        description:`Update Transfer from ${adamTable.transferFrom} to ${adamTable.transferTo} for ${adamTable.amount}`,
-      })
+        investorName:investors?investors.nickname:"",
+        investmentNo:adamTable?.investmentNo?adamTable.investmentNo:"",
+      description:`Update Transfer from ${adamTable.transactionFrom} to ${adamTable.transactionTo} for ${adamTable.amount.toLocaleString()}.`,
+    })
 
-    }
       return resolve({ err: false, adams: adamTable });
     }
     return reject({ err: true, message: "Unable to update Adam!" });
