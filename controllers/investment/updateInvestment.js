@@ -17,9 +17,7 @@ let investmentTable = Models.investmentModel;
 export const updateInvestment = (req) => {
     global.show("###### investmentSave ######");
     let received = req ? req.body : null;
-    if (received) global.show({
-        received
-    });
+    console.log(received);
 
     return new Promise(async (resolve, reject) => {
 
