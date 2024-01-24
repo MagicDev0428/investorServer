@@ -51,7 +51,13 @@ router.delete("/deleteinvestment/:investmentId", async (req, res) => {
 
 
 // updating Investment
-router.put("/updateinvestment", async (req, res) => {
+router.put("/updateinvestment",
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "images",
+  MAX_FILES_PER_REQUEST
+), 
+ async (req, res) => {
   try {
     const result = await updateInvestment(req);
     res.json(result);
