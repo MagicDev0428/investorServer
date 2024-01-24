@@ -91,14 +91,15 @@ export const  sumDepositAndEmailStatus = (objectsArray) => {
 	const result = objectsArray.reduce(
 		(accumulator, obj) => {
 
+      console.log(obj)
 			// Check if the profitMonthPaid property is true for the current object
-			if (obj.profitMonthPaid) {
+			if (obj.profitMonthPaid || obj.profitOtherPaid) {
 				// Add the deposit amount to the sum
 				accumulator.totalDeposit += obj.deposit;
 			}
 
 			// Check if emailDate is null for any object
-			if (obj.emailDate === null) {
+			if (obj.emailDate === null || !obj.emailDate) {
 				accumulator.emailDateStatus = false;
 			}
 

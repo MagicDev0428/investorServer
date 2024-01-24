@@ -5,7 +5,9 @@ import {
     Models
 } from "../../models";
 
-import { Lib } from "../../utils";
+import {
+    Lib
+} from "../../utils";
 
 const factory = require("../../utils/factories/google");
 // creating table model
@@ -37,31 +39,32 @@ export const updateInvestment = (req) => {
 
             const dateTime = new Date().toISOString();
             received.modifiedDate = dateTime;
-           // getting user name from auth token
+            // getting user name from auth token
             const userName = Lib.getAdminName(req.auth);
 
-            received.modifiedBy = userName?userName:"";
+            received.modifiedBy = userName ? userName : "";
 
-            received.name =  received.name.replace(/[./]/g, "");
-            const client = factory.getGoogleDriveInstance(); 
-            let attachments = JSON.parse(received.attachments);  
+            received.name = received.name.replace(/[./]/g, "");
+            const client = factory.getGoogleDriveInstance();
+            let attachments = JSON.parse(received.attachments);
 
-                  // Delete file if user has deleted the saved file in google drive
+
+
+            // Delete file if user has deleted the saved file in google drive
             for (let item of attachments.receipts) {
                 // if image is deleted then delete from google drive
                 if (!item.filePath) {
-                if(item.googleFileId) {
-                    await client.deleteFile(item.googleFileId);
-                }          
+                    if (item.googleFileId) {
+                        await client.deleteFile(item.googleFileId);
+                    }
                 }
             }
             attachments.receipts = attachments.receipts.filter(item => item.filePath);
-
             async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
                 let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
-                    // Get weblink of file
-                    let webLink = await client.getWebLink(fileId.id);
-                    if (fileId) {
+                // Get weblink of file
+                let webLink = await client.getWebLink(fileId.id);
+                if (fileId) {
                     attachments[documentType].push({
                         filePath: imagePath,
                         googleFileId: fileId.id,
@@ -70,37 +73,42 @@ export const updateInvestment = (req) => {
                     });
                     // Delete this uploaded file in server
                     await Lib.deleteFile("uploads/" + imagePath);
-                    }
+                }
             }
 
-                              
-            if(received.receipt) {        
-                if(Array.isArray(received.receipt)) {
-                for (const imagePath of received?.receipt) {
-                    await prepareAttachmentResponse(imagePath, 'receipts', investmentReceiptFolder.id)
-                }
-                } else {
-                await prepareAttachmentResponse(received.receipt, 'receipts', investmentReceiptFolder.id);
-                }    
-            } 
 
-            let updatedFolderName = await client.renameFolder(attachments.investmentFolderId, `[${received._id}] ${received.name}`); 
-            console.log(updatedFolderName)
+            if (received.receipt) {
+                if (Array.isArray(received.receipt)) {
+                    for (const imagePath of received?.receipt) {
+                        await prepareAttachmentResponse(imagePath, 'receipts', attachments.investmentFolderId)
+                    }
+                } else {
+                    await prepareAttachmentResponse(received.receipt, 'receipts', attachments.investmentFolderId);
+                }
+            }
+
+
+            // updating attachments
+            received.attachments = attachments
+
+            // updating  folder name 
+            await client.renameFolder(attachments.investmentFolderId, `[${received._id}] ${received.name}`);
+            
             investmentTable = null;
 
             investmentTable = await Models.investmentModel.findByIdAndUpdate(received._id, received, {
                 new: true,
             });
-          
+
             if (investmentTable) {
 
 
-             
-                 // save log for to create investment 
+
+                // save log for to create investment 
                 global.saveLogs({
-                    logType:'Investment',
-                    investmentNo:investmentTable._id,
-                    description:`Updated the Investment ${investmentTable._id} for ${investmentTable.investAmount}.`,
+                    logType: 'Investment',
+                    investmentNo: investmentTable._id,
+                    description: `Updated the Investment ${investmentTable._id} for ${investmentTable.investAmount}.`,
                 })
                 return resolve({
                     status: 200,
