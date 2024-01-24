@@ -5,7 +5,7 @@
 import {
     Models
 } from '../../models';
-
+const factory = require("../../utils/factories/google");
 // creating Investment table model
 let investmentTable = Models.investmentModel
 
@@ -55,8 +55,19 @@ export const deleteInvestment = (investmentId) => {
                     message: "Investment already have adam transactions.",
                 });
             }
-            // Check that investment allready exist based _id
 
+            const investmentResult = await Models.investmentModel.findById({_id:investmentId},'attachments name');
+            console.log("this is investment result -< ",investmentResult)
+            if(investmentResult.attachments.investmentFolderId){
+
+            
+            const client = factory.getGoogleDriveInstance();
+            // Rename the investor folder by _Del + "<investor>"
+            await client.renameFolder(
+                investmentResult.attachments.investmentFolderId, 
+                "_Del " + `[${investmentResult._id}] ${investmentResult.name}`
+            );
+            }
             // IF he exist then DELETE the investment
             investmentTable = null;
             investmentTable = await Models.investmentModel.findOneAndDelete({
@@ -78,7 +89,7 @@ export const deleteInvestment = (investmentId) => {
                     investmentNo:investmentTable._id,
                     description:`Delete Investment ${investmentTable._id} for ${investmentTable.investAmount} paying ${investmentProfit}%`,
                 })
-                return resolve({
+                return resolve({ 
                     err: false,
                     investments: investmentTable
                 });

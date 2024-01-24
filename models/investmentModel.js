@@ -26,7 +26,7 @@ var investmentSchema = new Schema(
 
     name:                 String,   // Name and Folder Name of the invesment  
     explanation:          String,   // Description/Explanation 
-    attachments:          Array,    // Array of Images and documents ("filename","filename")
+    attachments:          Object,    // Array of Images and documents ("filename","filename")
 
     createdDate: {                  // When was this investment created
         type: Date, 

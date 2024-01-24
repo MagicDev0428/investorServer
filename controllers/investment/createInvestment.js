@@ -7,6 +7,7 @@ import {
 } from '../../models';
 
 import { Lib } from '../../utils';
+const factory = require("../../utils/factories/google");
 // creating Investment table model
 let investmentTable = Models.investmentModel
 
@@ -63,7 +64,55 @@ export const createInvestment = (req) => {
                     message: `Investment id ${received._id} is already exist!`,
                 });
 
-            // received._id = new Date().getTime();
+                received.name =  received.name.replace(/[./]/g, "");
+                let investmentFolderId = null;
+                let attachmentResponse = {
+                    investmentFolderId: '',
+                    receipts: [] 
+                    };
+                const client = factory.getGoogleDriveInstance();
+                // use google drive client for list of folders
+                const folders = await client.listFolders();
+                let filteredFolder = folders.find(folder => folder.name === 'Investments');
+                if(filteredFolder){
+                    investmentFolderId = filteredFolder.id;
+                }else{
+                    let res = await client.createFolders(null, "Investments");
+                    investmentFolderId = res.id;
+                }
+                
+                const investmentReceiptFolder = await client.createFolders(investmentFolderId,`[${received._id}] ${received.name}`)
+                attachmentResponse.investmentFolderId = investmentReceiptFolder.id;
+
+                async function prepareAttachmentResponse(imagePath, documentType, parentFolderId) {
+                let fileId = await client.uploadFile("uploads/" + imagePath, parentFolderId);
+                    // Get weblink of file
+                    let webLink = await client.getWebLink(fileId.id);
+                    if (fileId) {
+                    attachmentResponse[documentType].push({
+                        filePath: imagePath,
+                        googleFileId: fileId.id,
+                        folderId: parentFolderId,
+                        webLink: webLink
+                    });
+                    // Delete this uploaded file in server
+                    await Lib.deleteFile("uploads/" + imagePath);
+                    }
+            }
+
+                  // Upload documents
+                if(received.receipt) {        
+                    if(Array.isArray(received.receipt)) {
+                    for (const imagePath of received?.receipt) {
+                        await prepareAttachmentResponse(imagePath, 'receipts', investmentReceiptFolder.id)
+                    }
+                    } else {
+                    await prepareAttachmentResponse(received.receipt, 'receipts', investmentReceiptFolder.id);
+                    }    
+                } 
+
+                // adding files object to store
+                received.attachments = attachmentResponse;
             // creating new investment instance
             const newinvestment = new Models.investmentModel(received);
 

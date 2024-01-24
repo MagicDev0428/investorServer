@@ -1,5 +1,5 @@
 import express from "express";
-import { Lib } from "../../utils";
+import { Lib, Middlewares } from "../../utils";
 import { investmentNo } from "../../controllers/investment/investmentNo";
 import {createInvestment} from"../../controllers/investment/createInvestment";
 import {deleteInvestment}  from "../../controllers/investment/deleteInvestment";
@@ -10,10 +10,17 @@ import {investmentInfo}  from "../../controllers/investment/investmentInfo";
 import { allInvestments } from "../../controllers/investment/allInvestment";
 import { getAllMyInvestmentsOfInvestment } from "../../controllers/investment/investmentMyInvestments";
 import { totalAmountInvested } from "../../controllers/investment/totalAmountInvested";
+import { MAX_FILES_PER_REQUEST } from "../../constants";
 const router = express.Router();
 
 // Investment Creation Route
-router.post("/createinvestment", async (req, res) => {
+router.post("/createinvestment",
+Middlewares.checkAdminPrivileges,
+Middlewares.StorageMiddlewares.upload.array(
+  "images",
+  MAX_FILES_PER_REQUEST
+), 
+ async (req, res) => {
   try {
     const result = await createInvestment(req);
     res.json(result);
